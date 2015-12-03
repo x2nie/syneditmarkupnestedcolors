@@ -92,7 +92,7 @@ begin
   F := TSynDemoHlFold.Create(self);
   SynEdit3.Highlighter := F;
   M := TSynEditMarkupFoldColors.Create(SynEdit3);
-  M.DefaultGroup := 1;
+  M.DefaultGroup := 0;
   SynEdit3.MarkupManager.AddMarkUp(M);
 
 end;

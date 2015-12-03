@@ -43,13 +43,14 @@ type
                                          const aStartCol: TLazSynDisplayTokenBound;
                                          const AnRtlInfo: TLazSynDisplayRtlInfo;
                                          out   ANextPhys, ANextLog: Integer); override;
+
     procedure PrepareMarkupForRow(aRow : Integer); override;
     property DefaultGroup : integer read FDefaultGroup write FDefaultGroup;
   end;
 
 implementation
 uses
-  SynEdit, SynEditFoldedView;
+  SynEdit,SynEditTypes, SynEditFoldedView;
 
   function CompareFI(Item1, Item2: Pointer): Integer;
   begin
@@ -84,6 +85,7 @@ begin
   //MarkupInfo.BackAlpha := 255;
   MarkupInfo.Style := [];
   MarkupInfo.StyleMask := [];
+  MarkupInfo.FrameEdges:= sfeLeft;//sfeBottom;//
 
   SetLength(Colors, 6);
   Colors[0] := clRed;
@@ -146,6 +148,7 @@ begin
   end;
 end;
 
+
 procedure TSynEditMarkupFoldColors.PrepareMarkupForRow(aRow: Integer);
 var
   i,y,iy: Integer;
@@ -164,7 +167,7 @@ var
     x := Length(FHighlights);
     SetLength(FHighlights, x+1);
     with FHighlights[x] do begin
-      Border := True;
+      Border := ANode.LineIndex + 1 <> aRow;
       Y  := aRow;//ANode.LineIndex + 1;
       X  := ANode.LogXStart + 1;
       X2 := X+2; //ANode.LogXEnd + 1;
@@ -180,7 +183,7 @@ var
       else
         ColorIdx := -1;
 
-
+      {
       if sfaOpen in ANode.FoldAction then
         lvl := ANode.NestLvlStart
       else
@@ -188,9 +191,9 @@ var
 
       //ColorIdx := ANode.NodeIndex mod (length(Colors));
 
-      //lvl := ANode.NestLvlStart;
+      lvl := ANode.NestLvlStart;
       ColorIdx := lvl mod (length(Colors));
-
+      }
 
 
     end;
@@ -199,6 +202,7 @@ var
   procedure AddHighlight( ANode: TSynFoldNodeInfo );
   var x,lvl : integer;
   begin
+    //exit; //debug
     x := Length(FHighlights);
     SetLength(FHighlights, x+1);
     with FHighlights[x] do begin
@@ -255,7 +259,7 @@ begin
   try
     NodeList.ActionFilter := [
         {sfaMarkup,}
-        {sfaFold,}
+        sfaFold
         //sfaFoldFold
         //sfaFoldHide
         //sfaSingleLine

@@ -25,17 +25,17 @@ object Form1: TForm1
     Height = 467
     Top = 0
     Width = 630
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 2
+    TabIndex = 0
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Pascal'
-      ClientHeight = 246
+      ClientHeight = 441
       ClientWidth = 622
       inline SynEdit1: TSynEdit
         Left = 0
-        Height = 246
+        Height = 441
         Top = 0
         Width = 622
         Align = alClient
