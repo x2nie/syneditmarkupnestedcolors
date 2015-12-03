@@ -11,17 +11,23 @@ uses
 
 type
 
+  TMarkupFoldColorInfo = record
+    Y, X, X2: Integer;
+    ColorIdx: Integer;
+  end;
+
+
   { TSynEditMarkupFoldColors }
 
   TSynEditMarkupFoldColors = class(TSynEditMarkup)
   private
      // Physical Position
-    FHighlightPos1: TWordPoint;
-    Found : Boolean;
+    FHighlights : array of TMarkupFoldColorInfo;
     Colors : array of TColor;
-    ColorIndex : integer;
+    CurrentY : integer;
   protected
-
+    // Notifications about Changes to the text
+    procedure DoTextChanged(StartLine, EndLine, ACountDiff: Integer); override; // 1 based
   public
     constructor Create(ASynEdit : TSynEditBase);
     function GetMarkupAttributeAtRowCol(const aRow: Integer;
@@ -64,43 +70,89 @@ end;
 function TSynEditMarkupFoldColors.GetMarkupAttributeAtRowCol(
   const aRow: Integer; const aStartCol: TLazSynDisplayTokenBound;
   const AnRtlInfo: TLazSynDisplayRtlInfo): TSynSelectedColor;
+var
+  i : integer;
 begin
   Result := nil;
-  if (FHighlightPos1.y = aRow) and  //Found and
-   (aStartCol.Logical >= FHighlightPos1.x) and (aStartCol.Logical < FHighlightPos1.X2) then
-  begin
-    Result := MarkupInfo;
-    MarkupInfo.SetFrameBoundsLog(FHighlightPos1.x, FHighlightPos1.x2);
-    MarkupInfo.Foreground := Colors[ColorIndex];
-  end
+  if (CurrentY = aRow) then
+    for i := 0 to length(FHighlights)-1 do
+      with FHighlights[i] do
+        if (aStartCol.Logical >= x) and (aStartCol.Logical < X2) then
+        begin
+          Result := MarkupInfo;
+          MarkupInfo.SetFrameBoundsLog(x, x2);
+          if ColorIdx >= 0 then
+            MarkupInfo.Foreground := Colors[ColorIdx]
+          else
+            MarkupInfo.Foreground := clFuchsia;
+          break;
+        end
 end;
 
 procedure TSynEditMarkupFoldColors.GetNextMarkupColAfterRowCol(
   const aRow: Integer; const aStartCol: TLazSynDisplayTokenBound;
   const AnRtlInfo: TLazSynDisplayRtlInfo; out ANextPhys, ANextLog: Integer);
-  Procedure CheckCol(Column: Integer; var Result: Integer);
+  Procedure CheckCol(HlposX: Integer; var Result: Integer);
   begin
-    if (Column <= aStartCol.Logical) or ((Result >= 0) and (Result < Column)) then exit;
-    Result := Column;
+    if (HlposX <= aStartCol.Logical) or ((Result >= 0) and (Result < HlposX)) then exit;
+    Result := HlposX;
   end;
+var i : integer;
 begin
   ANextLog := -1;
   ANextPhys := -1;
-  if (FHighlightPos1.y = aRow) then begin
-    CheckCol(FHighlightPos1.X, ANextLog);
-    CheckCol(FHighlightPos1.X2, ANextLog);
+  if (CurrentY = aRow) then
+  for i := 0 to length(FHighlights)-1 do begin
+    if FHighlights[i].X  <= aStartCol.Logical then
+      continue;
+    if FHighlights[i].X2  < aStartCol.Logical then
+      continue;
+    ANextLog := FHighlights[i].X;
+    break;
+    //CheckCol(FHighlights[i].X, ANextLog);
+    //CheckCol(FHighlights[i].X2, ANextLog);
   end;
 end;
 
 procedure TSynEditMarkupFoldColors.PrepareMarkupForRow(aRow: Integer);
+  procedure AddHighlight( ANode: TSynFoldNodeInfo );
+  var x,lvl : integer;
+  begin
+    x := Length(FHighlights);
+    SetLength(FHighlights, x+1);
+    with FHighlights[x] do begin
+      Y  := ANode.LineIndex + 1;
+      X  := ANode.LogXStart + 1;
+      X2 := ANode.LogXEnd + 1;
+      if sfaOpen in ANode.FoldAction then begin
+        lvl := ANode.FoldLvlStart;
+        ColorIdx := lvl mod (length(Colors));
+      end
+      else
+        if sfaClose in ANode.FoldAction then begin
+          lvl := ANode.FoldLvlEnd;
+          ColorIdx := lvl mod (length(Colors));
+        end
+      else
+        ColorIdx := -1;
+      {if sfaOpen in ANode.FoldAction then
+        lvl := ANode.NestLvlStart
+      else
+        lvl := ANode.NestLvlEnd;
+      ColorIdx := ANode.NodeIndex mod (length(Colors));
+      }
+
+    end;
+  end;
 var
-  i,y,lvl: Integer;
+  i,y: Integer;
   NodeList: TLazSynFoldNodeInfoList;
   HL: TSynCustomFoldHighlighter;
-  StartNode, CloseNode, Node3, TmpNode: TSynFoldNodeInfo;
+  TmpNode: TSynFoldNodeInfo;
 begin
-  //inherited PrepareMarkupForRow(aRow);
-  Found := False;
+  CurrentY := aRow;
+  SetLength(FHighlights,0); //reset needed to prevent using of invalid area
+
   if not (TCustomSynEdit(self.SynEdit).Highlighter is TSynCustomFoldHighlighter) then
     exit;
 
@@ -110,32 +162,47 @@ begin
   HL.CurrentLines := Lines;
   HL.FoldNodeInfo[y].ClearFilter; // only needed once, in case the line was already used
 
-  i := 0;
+
   NodeList := HL.FoldNodeInfo[y];
   NodeList.AddReference;
   try
-    NodeList.ActionFilter := [sfaMarkup];
-    TmpNode := NodeList[i];
-    while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) {(TmpNode.LogXEnd < LogCaret.X-1)} do
-    begin
-      inc(i);
+    NodeList.ActionFilter := [
+        {sfaMarkup,}
+        {sfaFold,}
+        //sfaFoldFold
+        //sfaFoldHide
+        //sfaSingleLine
+        //sfaMultiLine
+        //sfaOpen
+        ];
+    //NodeList.FoldFlags:= [sfbIncludeDisabled];
+    i := 0;
+    repeat
       TmpNode := NodeList[i];
-    end;
-    if (sfaInvalid in TmpNode.FoldAction) then
-        exit;
 
-    Found := True;
-    FHighlightPos1.Y  := TmpNode.LineIndex + 1;
-    FHighlightPos1.X  := TmpNode.LogXStart + 1;
-    FHighlightPos1.X2 := TmpNode.LogXEnd + 1;
-    if sfaOpen in TmpNode.FoldAction then
-      lvl := TmpNode.FoldLvlStart
-    else
-      lvl := TmpNode.FoldLvlEnd;
-    ColorIndex := lvl mod (length(Colors));
+      //find till valid
+      {
+      while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) do
+      begin
+        inc(i);
+        TmpNode := NodeList[i];
+      end;
+      if not (sfaInvalid in TmpNode.FoldAction) then
+      }
+          AddHighlight(TmpNode);
+
+      inc(i);
+    until i >= NodeList.Count;
+
   finally
     NodeList.ReleaseReference;
   end;
+end;
+
+procedure TSynEditMarkupFoldColors.DoTextChanged(StartLine, EndLine,
+  ACountDiff: Integer);
+begin
+  inherited DoTextChanged(StartLine, EndLine, ACountDiff);
 end;
 
 end.
