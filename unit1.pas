@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, SynEdit, SynHighlighterPas, Forms, Controls,
   Graphics, Dialogs, ExtCtrls, ComCtrls, SynEditMarkupWordGroup,
-  SynHighlighterLFM;
+  SynHighlighterLFM, SynHighlighterPython, SynHighlighterHTML;
 
 type
 
@@ -23,11 +23,17 @@ type
     SynEdit1: TSynEdit;
     SynEdit2: TSynEdit;
     SynEdit3: TSynEdit;
+    SynEdit4: TSynEdit;
+    SynEdit5: TSynEdit;
     SynFreePascalSyn1: TSynFreePascalSyn;
+    SynHTMLSyn1: TSynHTMLSyn;
     SynLFMSyn1: TSynLFMSyn;
+    SynPythonSyn1: TSynPythonSyn;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
+    TabSheet4: TTabSheet;
+    TabSheet5: TTabSheet;
     procedure FormCreate(Sender: TObject);
   private
     { private declarations }
@@ -79,7 +85,7 @@ begin
   //Markup := TMarkupWordGroupAccess.Create(SynEdit1);
   //Markup.Lines := SynEdit1.TextBuffer;
   //Markup.Highlighter := SynEdit1.Highlighter;
-  self.SynFreePascalSyn1.FoldConfig[ord(cfbtProcedure)].Enabled := False;
+  self.SynFreePascalSyn1.FoldConfig[ord(cfbtProcedure)].Enabled := True;
   M := TSynEditMarkupFoldColors.Create(SynEdit1);
   M.DefaultGroup := 1;
   SynEdit1.MarkupManager.AddMarkUp(M);
@@ -94,6 +100,14 @@ begin
   M := TSynEditMarkupFoldColors.Create(SynEdit3);
   M.DefaultGroup := 0;
   SynEdit3.MarkupManager.AddMarkUp(M);
+
+  M := TSynEditMarkupFoldColors.Create(SynEdit4);
+  M.DefaultGroup := 1;
+  SynEdit4.MarkupManager.AddMarkUp(M);
+
+  M := TSynEditMarkupFoldColors.Create(SynEdit5);
+  M.DefaultGroup := 1;
+  SynEdit5.MarkupManager.AddMarkUp(M);
 
 end;
 

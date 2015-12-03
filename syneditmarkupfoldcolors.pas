@@ -181,9 +181,13 @@ var
           ColorIdx := lvl mod (length(Colors));
         end
       else
+      begin
         ColorIdx := -1;
+        lvl := ANode.NestLvlStart;
+        ColorIdx := lvl mod (length(Colors));
+      end;
 
-      {
+
       if sfaOpen in ANode.FoldAction then
         lvl := ANode.NestLvlStart
       else
@@ -192,8 +196,8 @@ var
       //ColorIdx := ANode.NodeIndex mod (length(Colors));
 
       lvl := ANode.NestLvlStart;
-      ColorIdx := lvl mod (length(Colors));
-      }
+      //ColorIdx := lvl mod (length(Colors));
+
 
 
     end;
@@ -298,8 +302,8 @@ begin
   Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
   Nest.IncludeOpeningOnLine := True; //False; //
 
-  i := 0; while i <  Nest.Count do
-  //i := Nest.Count -1;  while i >= 0 do
+  //i := 0; while i <  Nest.Count do
+  i := Nest.Count -1;  while i >= 0 do
   begin
       TmpNode := Nest.HLNode[i];
 
@@ -314,8 +318,9 @@ begin
 
           AddVerticalLine(TmpNode);
 
-      inc(i);
-      //dec(i);
+      //inc(i);
+      dec(i);
+      //break;//debug
   end;
   (*
   EXIT;
