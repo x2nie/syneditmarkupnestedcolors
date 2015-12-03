@@ -142,14 +142,15 @@ var
       else
         ColorIdx := -1;
 
-
-      {if sfaOpen in ANode.FoldAction then
+      {
+      if sfaOpen in ANode.FoldAction then
         lvl := ANode.NestLvlStart
       else
         lvl := ANode.NestLvlEnd;
-      //ColorIdx := ANode.NodeIndex mod (length(Colors));
       }
-      lvl := ANode.NestLvlStart;
+      //ColorIdx := ANode.NodeIndex mod (length(Colors));
+
+      //lvl := ANode.NestLvlStart;
       ColorIdx := lvl mod (length(Colors));
 
 
