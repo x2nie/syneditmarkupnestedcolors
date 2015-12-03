@@ -162,9 +162,7 @@ var
     x  := ANode.LogXStart + 1;
     for i := 0 to Pred(length(FHighlights)) do
       if FHighlights[i].X = x then
-        ;//exit;
-
-
+        exit;
 
     x := Length(FHighlights);
     SetLength(FHighlights, x+1);
@@ -172,7 +170,7 @@ var
       Border := ANode.LineIndex + 1 <> aRow;
       Y  := aRow;//ANode.LineIndex + 1;
       X  := ANode.LogXStart + 1;
-      X2 := X+2; //ANode.LogXEnd + 1;
+      X2 := X+1; //ANode.LogXEnd + 1;
       if sfaOpen in ANode.FoldAction then begin
         lvl := ANode.FoldLvlStart;
         ColorIdx := lvl mod (length(Colors));
@@ -189,7 +187,7 @@ var
         ColorIdx := lvl mod (length(Colors));
       end;
 
-
+      {
       if sfaOpen in ANode.FoldAction then
         lvl := ANode.NestLvlStart
       else
@@ -199,7 +197,7 @@ var
 
       lvl := ANode.NestLvlStart;
       //ColorIdx := lvl mod (length(Colors));
-
+      }
 
 
     end;
@@ -305,7 +303,7 @@ begin
   Nest.IncludeOpeningOnLine := True; //False; //
 
   //i := 0; while i <  Nest.Count do
-  i := Nest.Count -1;  while i >= 0 do
+  i := Nest.Count -1;  while i >= 0 do  //from right to left
   begin
       TmpNode := Nest.HLNode[i];
 
