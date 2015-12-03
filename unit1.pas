@@ -22,11 +22,12 @@ type
     Panel1: TPanel;
     SynEdit1: TSynEdit;
     SynEdit2: TSynEdit;
+    SynEdit3: TSynEdit;
     SynFreePascalSyn1: TSynFreePascalSyn;
     SynLFMSyn1: TSynLFMSyn;
-    SynPasSyn1: TSynPasSyn;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
     procedure FormCreate(Sender: TObject);
   private
     { private declarations }
@@ -42,7 +43,7 @@ var
 implementation
 
 uses
-  SynEditMarkupFoldColors;
+  SynEditMarkupFoldColors, foldhl;
 
 {$R *.lfm}
 
@@ -73,10 +74,12 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 var M : TSynEditMarkupFoldColors;
+  F : TSynDemoHlFold;
 begin
   //Markup := TMarkupWordGroupAccess.Create(SynEdit1);
   //Markup.Lines := SynEdit1.TextBuffer;
   //Markup.Highlighter := SynEdit1.Highlighter;
+  self.SynFreePascalSyn1.FoldConfig[ord(cfbtProcedure)].Enabled := False;
   M := TSynEditMarkupFoldColors.Create(SynEdit1);
   M.DefaultGroup := 1;
   SynEdit1.MarkupManager.AddMarkUp(M);
@@ -85,6 +88,13 @@ begin
   M := TSynEditMarkupFoldColors.Create(SynEdit2);
   M.DefaultGroup := 1;
   SynEdit2.MarkupManager.AddMarkUp(M);
+
+  F := TSynDemoHlFold.Create(self);
+  SynEdit3.Highlighter := F;
+  M := TSynEditMarkupFoldColors.Create(SynEdit3);
+  M.DefaultGroup := 1;
+  SynEdit3.MarkupManager.AddMarkUp(M);
+
 end;
 
 end.

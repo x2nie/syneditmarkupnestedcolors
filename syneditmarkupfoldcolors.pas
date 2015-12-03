@@ -14,6 +14,7 @@ type
   TMarkupFoldColorInfo = record
     Y, X, X2: Integer;
     ColorIdx: Integer;
+    Border  : Boolean;
   end;
 
 
@@ -53,7 +54,7 @@ constructor TSynEditMarkupFoldColors.Create(ASynEdit: TSynEditBase);
 begin
   inherited Create(ASynEdit);
   MarkupInfo.Foreground := clGreen;
-  MarkupInfo.FrameColor := clOlive;
+  //MarkupInfo.FrameColor := clOlive;
   MarkupInfo.Background := clNone; //clFuchsia;
   //MarkupInfo.BackPriority := 1000;
   //MarkupInfo.BackAlpha := 255;
@@ -64,7 +65,7 @@ begin
   Colors[0] := clRed;
   Colors[1] := $000098F7; //orange
   Colors[2] := $0022CC40; //green
-  Colors[3] := $0098CC42; //teal
+  Colors[3] := $00D1D54A; //$0098CC42; //teal
   Colors[4] := $00FF682A; //blue
   Colors[5] := $00CF00C4; //purple
 end;
@@ -79,15 +80,19 @@ begin
   if (CurrentY = aRow) then
     for i := 0 to length(FHighlights)-1 do
       with FHighlights[i] do
-        if (aStartCol.Logical >= x) and (aStartCol.Logical <= X2) then
+        if (aStartCol.Logical >= x) and (aStartCol.Logical < X2) then
         begin
           Result := MarkupInfo;
           MarkupInfo.SetFrameBoundsLog(x, x2);
           if ColorIdx >= 0 then
             MarkupInfo.Foreground := Colors[ColorIdx]
           else
-            MarkupInfo.Foreground := clFuchsia;
-          MarkupInfo.FrameColor:= MarkupInfo.Foreground;
+            Result := nil;
+
+          if Border then
+            MarkupInfo.FrameColor:= MarkupInfo.Foreground
+          else
+            MarkupInfo.FrameColor:= clNone;
           break;
         end
 end;
@@ -121,15 +126,16 @@ procedure TSynEditMarkupFoldColors.PrepareMarkupForRow(aRow: Integer);
 var
   i,y,iy: Integer;
 
-  procedure AddHighlight( ANode: TSynFoldNodeInfo );
+  procedure AddVerticalLine( ANode: TSynFoldNodeInfo );
   var x,lvl : integer;
   begin
     x := Length(FHighlights);
     SetLength(FHighlights, x+1);
     with FHighlights[x] do begin
+      Border := True;
       Y  := aRow;//ANode.LineIndex + 1;
       X  := ANode.LogXStart + 1;
-      X2 := X; //ANode.LogXEnd + 1;
+      X2 := X+2; //ANode.LogXEnd + 1;
       if sfaOpen in ANode.FoldAction then begin
         lvl := ANode.FoldLvlStart;
         ColorIdx := lvl mod (length(Colors));
@@ -157,6 +163,39 @@ var
 
     end;
   end;
+
+  procedure AddHighlight( ANode: TSynFoldNodeInfo );
+  var x,lvl : integer;
+  begin
+    x := Length(FHighlights);
+    SetLength(FHighlights, x+1);
+    with FHighlights[x] do begin
+      Border := False;
+      Y  := ANode.LineIndex + 1;
+      X  := ANode.LogXStart + 1;
+      X2 := ANode.LogXEnd + 1;
+      if sfaOpen in ANode.FoldAction then begin
+        lvl := ANode.FoldLvlStart;
+        //lvl := ANode.NestLvlStart; //http://forum.lazarus.freepascal.org/index.php/topic,30122.msg194841.html#msg194841
+        ColorIdx := lvl mod (length(Colors));
+      end
+      else
+        if sfaClose in ANode.FoldAction then begin
+          lvl := ANode.FoldLvlEnd;
+          ColorIdx := lvl mod (length(Colors));
+        end
+      else
+        ColorIdx := -1;
+      {if sfaOpen in ANode.FoldAction then
+        lvl := ANode.NestLvlStart
+      else
+        lvl := ANode.NestLvlEnd;
+      ColorIdx := ANode.NodeIndex mod (length(Colors));
+      }
+
+    end;
+  end;
+
 var
   NodeList: TLazSynFoldNodeInfoList;
   HL: TSynCustomFoldHighlighter;
@@ -176,6 +215,7 @@ begin
   HL.FoldNodeInfo[y].ClearFilter; // only needed once, in case the line was already used
 
   //EXPERIMENTAL
+  (* *)
   iy := aRow-1;
   Nest := TLazSynEditNestedFoldsList.Create(@GetFoldHighLighter);
   Nest.ResetFilter;
@@ -199,14 +239,14 @@ begin
       end;
       if not (sfaInvalid in TmpNode.FoldAction) then
       }
-          AddHighlight(TmpNode);
+          AddVerticalLine(TmpNode);
 
       inc(i);
       //dec(i);
   end;
-
+  (*
   EXIT;
-
+  *)
 
   NodeList := HL.FoldNodeInfo[y];
   NodeList.AddReference;
@@ -226,14 +266,12 @@ begin
       TmpNode := NodeList[i];
 
       //find till valid
-      {
       while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) do
       begin
         inc(i);
         TmpNode := NodeList[i];
       end;
       if not (sfaInvalid in TmpNode.FoldAction) then
-      }
           AddHighlight(TmpNode);
 
       inc(i);
