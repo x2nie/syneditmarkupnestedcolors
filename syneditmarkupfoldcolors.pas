@@ -108,17 +108,19 @@ begin
       with FHighlights[i] do
         if (aStartCol.Logical >= x) and (aStartCol.Logical < X2) then
         begin
-          Result := MarkupInfo;
-          MarkupInfo.SetFrameBoundsLog(x, x2);
           if ColorIdx >= 0 then
-            MarkupInfo.Foreground := Colors[ColorIdx]
-          else
-            Result := nil;
-
-          if Border then
-            MarkupInfo.FrameColor:= MarkupInfo.Foreground
-          else
+          begin
             MarkupInfo.FrameColor:= clNone;
+            MarkupInfo.Foreground:= clNone;
+
+            Result := MarkupInfo;
+            MarkupInfo.SetFrameBoundsLog(x, x2);
+            if Border then
+              MarkupInfo.FrameColor:= Colors[ColorIdx]
+            else
+              MarkupInfo.Foreground := Colors[ColorIdx]
+          end;
+
           break;
         end
 end;
@@ -160,7 +162,7 @@ var
     x  := ANode.LogXStart + 1;
     for i := 0 to Pred(length(FHighlights)) do
       if FHighlights[i].X = x then
-        exit;
+        ;//exit;
 
 
 
