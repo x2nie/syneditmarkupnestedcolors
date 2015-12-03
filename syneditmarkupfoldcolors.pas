@@ -21,10 +21,12 @@ type
 
   TSynEditMarkupFoldColors = class(TSynEditMarkup)
   private
+    FDefaultGroup: integer;
      // Physical Position
     FHighlights : array of TMarkupFoldColorInfo;
     Colors : array of TColor;
     CurrentY : integer;
+    function GetFoldHighLighter: TSynCustomFoldHighlighter;
   protected
     // Notifications about Changes to the text
     procedure DoTextChanged(StartLine, EndLine, ACountDiff: Integer); override; // 1 based
@@ -38,12 +40,12 @@ type
                                          const AnRtlInfo: TLazSynDisplayRtlInfo;
                                          out   ANextPhys, ANextLog: Integer); override;
     procedure PrepareMarkupForRow(aRow : Integer); override;
-
+    property DefaultGroup : integer read FDefaultGroup write FDefaultGroup;
   end;
 
 implementation
 uses
-  SynEdit;
+  SynEdit, SynEditFoldedView;
 
 { TSynEditMarkupFoldColors }
 
@@ -51,7 +53,7 @@ constructor TSynEditMarkupFoldColors.Create(ASynEdit: TSynEditBase);
 begin
   inherited Create(ASynEdit);
   MarkupInfo.Foreground := clGreen;
-  //MarkupInfo.FrameColor := clAqua;
+  MarkupInfo.FrameColor := clOlive;
   MarkupInfo.Background := clNone; //clFuchsia;
   //MarkupInfo.BackPriority := 1000;
   //MarkupInfo.BackAlpha := 255;
@@ -77,7 +79,7 @@ begin
   if (CurrentY = aRow) then
     for i := 0 to length(FHighlights)-1 do
       with FHighlights[i] do
-        if (aStartCol.Logical >= x) and (aStartCol.Logical < X2) then
+        if (aStartCol.Logical >= x) and (aStartCol.Logical <= X2) then
         begin
           Result := MarkupInfo;
           MarkupInfo.SetFrameBoundsLog(x, x2);
@@ -85,6 +87,7 @@ begin
             MarkupInfo.Foreground := Colors[ColorIdx]
           else
             MarkupInfo.Foreground := clFuchsia;
+          MarkupInfo.FrameColor:= MarkupInfo.Foreground;
           break;
         end
 end;
@@ -115,15 +118,18 @@ begin
 end;
 
 procedure TSynEditMarkupFoldColors.PrepareMarkupForRow(aRow: Integer);
+var
+  i,y,iy: Integer;
+
   procedure AddHighlight( ANode: TSynFoldNodeInfo );
   var x,lvl : integer;
   begin
     x := Length(FHighlights);
     SetLength(FHighlights, x+1);
     with FHighlights[x] do begin
-      Y  := ANode.LineIndex + 1;
+      Y  := aRow;//ANode.LineIndex + 1;
       X  := ANode.LogXStart + 1;
-      X2 := ANode.LogXEnd + 1;
+      X2 := X; //ANode.LogXEnd + 1;
       if sfaOpen in ANode.FoldAction then begin
         lvl := ANode.FoldLvlStart;
         ColorIdx := lvl mod (length(Colors));
@@ -135,20 +141,26 @@ procedure TSynEditMarkupFoldColors.PrepareMarkupForRow(aRow: Integer);
         end
       else
         ColorIdx := -1;
+
+
       {if sfaOpen in ANode.FoldAction then
         lvl := ANode.NestLvlStart
       else
         lvl := ANode.NestLvlEnd;
-      ColorIdx := ANode.NodeIndex mod (length(Colors));
+      //ColorIdx := ANode.NodeIndex mod (length(Colors));
       }
+      lvl := ANode.NestLvlStart;
+      ColorIdx := lvl mod (length(Colors));
+
+
 
     end;
   end;
 var
-  i,y: Integer;
   NodeList: TLazSynFoldNodeInfoList;
   HL: TSynCustomFoldHighlighter;
   TmpNode: TSynFoldNodeInfo;
+  Nest : TLazSynEditNestedFoldsList;
 begin
   CurrentY := aRow;
   SetLength(FHighlights,0); //reset needed to prevent using of invalid area
@@ -161,6 +173,38 @@ begin
   HL := TCustomSynEdit(self.SynEdit).Highlighter as TSynCustomFoldHighlighter;
   HL.CurrentLines := Lines;
   HL.FoldNodeInfo[y].ClearFilter; // only needed once, in case the line was already used
+
+  //EXPERIMENTAL
+  iy := aRow-1;
+  Nest := TLazSynEditNestedFoldsList.Create(@GetFoldHighLighter);
+  Nest.ResetFilter;
+  Nest.Clear;
+  Nest.Line := iy;
+  Nest.FoldGroup := FDefaultGroup;//1;//FOLDGROUP_PASCAL;
+  Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
+  Nest.IncludeOpeningOnLine := True; //False; //
+
+  i := 0; while i <  Nest.Count do
+  //i := Nest.Count -1;  while i >= 0 do
+  begin
+      TmpNode := Nest.HLNode[i];
+
+      //find till valid
+      {
+      while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) do
+      begin
+        inc(i);
+        TmpNode := NodeList[i];
+      end;
+      if not (sfaInvalid in TmpNode.FoldAction) then
+      }
+          AddHighlight(TmpNode);
+
+      inc(i);
+      //dec(i);
+  end;
+
+  EXIT;
 
 
   NodeList := HL.FoldNodeInfo[y];
@@ -197,6 +241,11 @@ begin
   finally
     NodeList.ReleaseReference;
   end;
+end;
+
+function TSynEditMarkupFoldColors.GetFoldHighLighter: TSynCustomFoldHighlighter;
+begin
+  result := TCustomSynEdit(self.SynEdit).Highlighter as TSynCustomFoldHighlighter;
 end;
 
 procedure TSynEditMarkupFoldColors.DoTextChanged(StartLine, EndLine,
