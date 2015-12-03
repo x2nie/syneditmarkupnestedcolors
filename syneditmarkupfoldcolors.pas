@@ -11,11 +11,14 @@ uses
 
 type
 
+  PMarkupFoldColorInfo = ^TMarkupFoldColorInfo;
   TMarkupFoldColorInfo = record
     Y, X, X2: Integer;
     ColorIdx: Integer;
     Border  : Boolean;
   end;
+
+  TMarkupFoldColorInfos = array of TMarkupFoldColorInfo;
 
 
   { TSynEditMarkupFoldColors }
@@ -24,7 +27,7 @@ type
   private
     FDefaultGroup: integer;
      // Physical Position
-    FHighlights : array of TMarkupFoldColorInfo;
+    FHighlights : TMarkupFoldColorInfos; //array of TMarkupFoldColorInfo;
     Colors : array of TColor;
     CurrentY : integer;
     function GetFoldHighLighter: TSynCustomFoldHighlighter;
@@ -47,6 +50,27 @@ type
 implementation
 uses
   SynEdit, SynEditFoldedView;
+
+  function CompareFI(Item1, Item2: Pointer): Integer;
+  begin
+    result := PMarkupFoldColorInfo(Item1)^.X - PMarkupFoldColorInfo(Item2)^.X;
+  end;
+
+  function SortLeftMostFI(a: TMarkupFoldColorInfos): TMarkupFoldColorInfos;
+  var
+    l : TFpList;
+    i : integer;
+  begin
+    l := TFpList.Create;
+    for i := 0 to Pred(Length(a)) do
+      l.Add( PMarkupFoldColorInfo(@a[i]) );
+    l.Sort(@CompareFI);
+
+    SetLength(result, Length(a));
+    for i := 0 to Pred(l.Count) do
+      result[i] := PMarkupFoldColorInfo(l[i])^;
+     l.Free;
+  end;
 
 { TSynEditMarkupFoldColors }
 
@@ -127,8 +151,16 @@ var
   i,y,iy: Integer;
 
   procedure AddVerticalLine( ANode: TSynFoldNodeInfo );
-  var x,lvl : integer;
+  var x,i,lvl : integer;
   begin
+    //don't replace; don't add when already found
+    x  := ANode.LogXStart + 1;
+    for i := 0 to Pred(length(FHighlights)) do
+      if FHighlights[i].X = x then
+        exit;
+
+
+
     x := Length(FHighlights);
     SetLength(FHighlights, x+1);
     with FHighlights[x] do begin
@@ -148,12 +180,12 @@ var
       else
         ColorIdx := -1;
 
-      {
+
       if sfaOpen in ANode.FoldAction then
         lvl := ANode.NestLvlStart
       else
         lvl := ANode.NestLvlEnd;
-      }
+
       //ColorIdx := ANode.NodeIndex mod (length(Colors));
 
       //lvl := ANode.NestLvlStart;
@@ -186,11 +218,13 @@ var
         end
       else
         ColorIdx := -1;
+
+
       {if sfaOpen in ANode.FoldAction then
         lvl := ANode.NestLvlStart
       else
         lvl := ANode.NestLvlEnd;
-      ColorIdx := ANode.NodeIndex mod (length(Colors));
+      ColorIdx := lvl mod (length(Colors));
       }
 
     end;
@@ -214,39 +248,7 @@ begin
   HL.CurrentLines := Lines;
   HL.FoldNodeInfo[y].ClearFilter; // only needed once, in case the line was already used
 
-  //EXPERIMENTAL
-  (* *)
-  iy := aRow-1;
-  Nest := TLazSynEditNestedFoldsList.Create(@GetFoldHighLighter);
-  Nest.ResetFilter;
-  Nest.Clear;
-  Nest.Line := iy;
-  Nest.FoldGroup := FDefaultGroup;//1;//FOLDGROUP_PASCAL;
-  Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
-  Nest.IncludeOpeningOnLine := True; //False; //
 
-  i := 0; while i <  Nest.Count do
-  //i := Nest.Count -1;  while i >= 0 do
-  begin
-      TmpNode := Nest.HLNode[i];
-
-      //find till valid
-      {
-      while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) do
-      begin
-        inc(i);
-        TmpNode := NodeList[i];
-      end;
-      if not (sfaInvalid in TmpNode.FoldAction) then
-      }
-          AddVerticalLine(TmpNode);
-
-      inc(i);
-      //dec(i);
-  end;
-  (*
-  EXIT;
-  *)
 
   NodeList := HL.FoldNodeInfo[y];
   NodeList.AddReference;
@@ -280,6 +282,42 @@ begin
   finally
     NodeList.ReleaseReference;
   end;
+
+  //EXPERIMENTAL
+  (* *)
+  iy := aRow-1;
+  Nest := TLazSynEditNestedFoldsList.Create(@GetFoldHighLighter);
+  Nest.ResetFilter;
+  Nest.Clear;
+  Nest.Line := iy;
+  Nest.FoldGroup := FDefaultGroup;//1;//FOLDGROUP_PASCAL;
+  Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
+  Nest.IncludeOpeningOnLine := True; //False; //
+
+  i := 0; while i <  Nest.Count do
+  //i := Nest.Count -1;  while i >= 0 do
+  begin
+      TmpNode := Nest.HLNode[i];
+
+      //find till valid
+
+      while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) do
+      begin
+        inc(i);
+        TmpNode := NodeList[i];
+      end;
+      if not (sfaInvalid in TmpNode.FoldAction) then
+
+          AddVerticalLine(TmpNode);
+
+      inc(i);
+      //dec(i);
+  end;
+  (*
+  EXIT;
+  *)
+
+  FHighlights := SortLeftMostFI(FHighlights);
 end;
 
 function TSynEditMarkupFoldColors.GetFoldHighLighter: TSynCustomFoldHighlighter;
