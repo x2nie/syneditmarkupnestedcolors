@@ -86,10 +86,7 @@ constructor TSynEditMarkupFoldColors.Create(ASynEdit: TSynEditBase);
 begin
   inherited Create(ASynEdit);
   MarkupInfo.Foreground := clGreen;
-  //MarkupInfo.FrameColor := clOlive;
   MarkupInfo.Background := clNone; //clFuchsia;
-  //MarkupInfo.BackPriority := 1000;
-  //MarkupInfo.BackAlpha := 255;
   MarkupInfo.Style := [];
   MarkupInfo.StyleMask := [];
   MarkupInfo.FrameEdges:= sfeLeft;//sfeBottom;//sfeAround;//
@@ -98,7 +95,7 @@ begin
   Colors[0] := clRed;
   Colors[1] := $000098F7; //orange
   Colors[2] := $0022CC40; //green
-  Colors[3] := $00D1D54A; //$0098CC42; //teal
+  Colors[3] := $00D1D54A; // $0098CC42; //teal
   Colors[4] := $00FF682A; //blue
   Colors[5] := $00CF00C4; //purple
 end;
@@ -135,11 +132,6 @@ end;
 procedure TSynEditMarkupFoldColors.GetNextMarkupColAfterRowCol(
   const aRow: Integer; const aStartCol: TLazSynDisplayTokenBound;
   const AnRtlInfo: TLazSynDisplayRtlInfo; out ANextPhys, ANextLog: Integer);
-  Procedure CheckCol(HlposX: Integer; var Result: Integer);
-  begin
-    if (HlposX <= aStartCol.Logical) or ((Result >= 0) and (Result < HlposX)) then exit;
-    Result := HlposX;
-  end;
 var i : integer;
 begin
   ANextLog := -1;
@@ -152,8 +144,6 @@ begin
       continue;
     ANextLog := FHighlights[i].X;
     break;
-    //CheckCol(FHighlights[i].X, ANextLog);
-    //CheckCol(FHighlights[i].X2, ANextLog);
   end;
 end;
 
@@ -274,8 +264,8 @@ procedure TSynEditMarkupFoldColors.DoMarkupParentFoldAtRow(aRow: Integer);
         lvl := ANode.NestLvlStart;
         ColorIdx := lvl mod (length(Colors));
       end;
-      {
 
+      {
       if sfaOpen in ANode.FoldAction then
         lvl := ANode.NestLvlStart
       else
@@ -312,24 +302,20 @@ begin
       TmpNode := Nest.HLNode[i];
 
       //find till valid
-
       while (sfaInvalid in TmpNode.FoldAction) and (i < Nest.Count) do
       begin
         inc(i);
         TmpNode := Nest.HLNode[i];
       end;
       if not (sfaInvalid in TmpNode.FoldAction) then
-
           AddVerticalLine(TmpNode);
 
       //inc(i);
       dec(i);
-      //break;//debug
   end;
 end;
 
 procedure TSynEditMarkupFoldColors.PrepareMarkupForRow(aRow: Integer);
-
 begin
   CurrentY := aRow;
   SetLength(FHighlights,0); //reset needed to prevent using of invalid area
@@ -380,6 +366,7 @@ begin
         until (sfaInvalid in Result.FoldAction)
            or (Result.NestLvlEnd <= StartNode.NestLvlStart);
       end;
+
     begin
       Result := SearchLine(YIndex, NIndex);
       if not (sfaInvalid in Result.FoldAction) then
@@ -400,6 +387,7 @@ begin
       if (Result.LogXEnd = 0) or (sfaLastLineClose in Result.FoldAction) then
         Result.FoldAction := [sfaInvalid]; // LastLine closed Node(maybe force-closed?)
     end;
+
   var y2,i2 : integer;
   begin
     Result := -1;
@@ -467,6 +455,7 @@ begin
     if n < 0 then exit;
 
     Result := GetPairCloseFold(aRow, n);
+    //limit to screen bottom
     if Result > 0 then
     begin
       with TCustomSynEdit(SynEdit) do
