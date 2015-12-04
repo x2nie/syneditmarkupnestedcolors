@@ -6,8 +6,7 @@ interface
 
 uses
   Classes, SysUtils,Graphics, SynEditMarkup, SynEditMiscClasses, Controls,
-  LCLProc, SynEditHighlighter, SynEditHighlighterFoldBase,
-  SynEditMarkupWordGroup;
+  LCLProc, SynEditHighlighter, SynEditHighlighterFoldBase;
 
 type
 
@@ -32,22 +31,22 @@ type
     CurrentY : integer;  //??
     FCaretY : integer;    // flag identify for refresh begin______
     FPrevCaretText : string;  // flag identify for refresh begin______
-    FCaretNodes : TSynFoldNodeInfos;
+
     procedure DoMarkupFoldAtRow(aRow: Integer);
     procedure DoMarkupParentFoldAtRow(aRow: Integer);
     function GetFoldHighLighter: TSynCustomFoldHighlighter;
   protected
     // Notifications about Changes to the text
-    procedure DoTextChanged(StartLine, EndLine, ACountDiff: Integer); override; // 1 based
+    procedure DoTextChanged({%H-}StartLine, EndLine, {%H-}ACountDiff: Integer); override; // 1 based
     procedure DoCaretChanged(Sender: TObject); override;
   public
     constructor Create(ASynEdit : TSynEditBase);
     function GetMarkupAttributeAtRowCol(const aRow: Integer;
                                         const aStartCol: TLazSynDisplayTokenBound;
-                                        const AnRtlInfo: TLazSynDisplayRtlInfo): TSynSelectedColor; override;
+                                        const {%H-}AnRtlInfo: TLazSynDisplayRtlInfo): TSynSelectedColor; override;
     procedure GetNextMarkupColAfterRowCol(const aRow: Integer;
                                          const aStartCol: TLazSynDisplayTokenBound;
-                                         const AnRtlInfo: TLazSynDisplayRtlInfo;
+                                         const {%H-}AnRtlInfo: TLazSynDisplayRtlInfo;
                                          out   ANextPhys, ANextLog: Integer); override;
 
     procedure PrepareMarkupForRow(aRow : Integer); override;
@@ -388,7 +387,6 @@ begin
         Result.FoldAction := [sfaInvalid]; // LastLine closed Node(maybe force-closed?)
     end;
 
-  var y2,i2 : integer;
   begin
     Result := -1;
     y := aRow -1;
@@ -464,7 +462,7 @@ begin
 
   end;
 var
-  EndFoldLine,LineEnd,y : integer;
+  EndFoldLine,y : integer;
 begin
   if EndLine < 0 then exit; //already refreshed by syn
 

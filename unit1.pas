@@ -37,8 +37,7 @@ type
     procedure FormCreate(Sender: TObject);
   private
     { private declarations }
-    colors : array of TColor;
-    Markup : TMarkupWordGroupAccess;
+    procedure AddMarkupFoldColors;
   public
     { public declarations }
   end;
@@ -79,36 +78,31 @@ end;
 { TForm1 }
 
 procedure TForm1.FormCreate(Sender: TObject);
-var M : TSynEditMarkupFoldColors;
+var
   F : TSynDemoHlFold;
 begin
-  //Markup := TMarkupWordGroupAccess.Create(SynEdit1);
-  //Markup.Lines := SynEdit1.TextBuffer;
-  //Markup.Highlighter := SynEdit1.Highlighter;
-  self.SynFreePascalSyn1.FoldConfig[ord(cfbtProcedure)].Enabled := True;
-  M := TSynEditMarkupFoldColors.Create(SynEdit1);
-  M.DefaultGroup := 1;
-  SynEdit1.MarkupManager.AddMarkUp(M);
-
-  SynEdit2.Lines.Text:= ComponentToStringProc(self);
-  M := TSynEditMarkupFoldColors.Create(SynEdit2);
-  M.DefaultGroup := 1;
-  SynEdit2.MarkupManager.AddMarkUp(M);
+  AddMarkupFoldColors();
 
   F := TSynDemoHlFold.Create(self);
   SynEdit3.Highlighter := F;
-  M := TSynEditMarkupFoldColors.Create(SynEdit3);
-  M.DefaultGroup := 0;
-  SynEdit3.MarkupManager.AddMarkUp(M);
+end;
 
-  M := TSynEditMarkupFoldColors.Create(SynEdit4);
-  M.DefaultGroup := 1;
-  SynEdit4.MarkupManager.AddMarkUp(M);
-
-  M := TSynEditMarkupFoldColors.Create(SynEdit5);
-  M.DefaultGroup := 1;
-  SynEdit5.MarkupManager.AddMarkUp(M);
-
+procedure TForm1.AddMarkupFoldColors;
+var
+  M : TSynEditMarkupFoldColors;
+  i : integer;
+  S : TSynEdit;
+begin
+  for i := 0 to Pred(ComponentCount) do
+  begin
+    if Components[i] is TSynEdit then
+    begin
+      S := TSynEdit(Components[i]);
+      M := TSynEditMarkupFoldColors.Create(SynEdit5);
+      M.DefaultGroup := 1;
+      S.MarkupManager.AddMarkUp(M);
+    end;
+  end;
 end;
 
 end.
