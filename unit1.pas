@@ -98,8 +98,8 @@ begin
     if Components[i] is TSynEdit then
     begin
       S := TSynEdit(Components[i]);
-      M := TSynEditMarkupFoldColors.Create(SynEdit5);
-      M.DefaultGroup := 1;
+      M := TSynEditMarkupFoldColors.Create(S);
+      M.DefaultGroup := 0;
       S.MarkupManager.AddMarkUp(M);
     end;
   end;
