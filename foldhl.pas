@@ -101,8 +101,21 @@ type
      Note that ranges to change.
   *)
 
+
+  { TSynDemoFoldHighlighterRange }
+
+  TSynDemoFoldHighlighterRange = class(TSynCustomHighlighterRange)
+  public
+    function MaxFoldLevel: Integer; override;
+  end;
+
+  { TSynDemoFoldHighlighterRange }
+
   //TSynDemoHlFold = class(TSynDemoHlFoldBase)
   TSynDemoHlFold = class(TSynDemoHlContextFoldBase)
+  protected
+    function GetRangeClass: TSynCustomHighlighterRangeClass; override;
+
   public
     procedure Next; override;
   public
@@ -112,6 +125,13 @@ type
   end;
 
 implementation
+
+{ TSynDemoFoldHighlighterRange }
+
+function TSynDemoFoldHighlighterRange.MaxFoldLevel: Integer;
+begin
+  Result:=20;
+end;
 
 { TSynDemoHlFold }
 
@@ -142,6 +162,11 @@ begin
   // Store the range first
   CodeFoldRange.RangeType := Pointer(PtrInt(FCurRange));
   Result := inherited GetRange;
+end;
+
+function TSynDemoHlFold.GetRangeClass: TSynCustomHighlighterRangeClass;
+begin
+  result := TSynDemoFoldHighlighterRange;
 end;
 
 

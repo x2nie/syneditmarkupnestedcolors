@@ -19,7 +19,7 @@ type
   end;
 
   TMarkupFoldColorInfos = array of TMarkupFoldColorInfo;
-
+  TSynFoldNodeInfos     = array of TSynFoldNodeInfo; //for quick compare detection
 
   { TSynEditMarkupFoldColors }
 
@@ -29,13 +29,17 @@ type
      // Physical Position
     FHighlights : TMarkupFoldColorInfos; //array of TMarkupFoldColorInfo;
     Colors : array of TColor;
-    CurrentY : integer;
+    CurrentY : integer;  //??
+    FCaretY : integer;    // flag identify for refresh begin______
+    FPrevCaretText : string;  // flag identify for refresh begin______
+    FCaretNodes : TSynFoldNodeInfos;
     procedure DoMarkupFoldAtRow(aRow: Integer);
     procedure DoMarkupParentFoldAtRow(aRow: Integer);
     function GetFoldHighLighter: TSynCustomFoldHighlighter;
   protected
     // Notifications about Changes to the text
     procedure DoTextChanged(StartLine, EndLine, ACountDiff: Integer); override; // 1 based
+    procedure DoCaretChanged(Sender: TObject); override;
   public
     constructor Create(ASynEdit : TSynEditBase);
     function GetMarkupAttributeAtRowCol(const aRow: Integer;
@@ -52,7 +56,8 @@ type
 
 implementation
 uses
-  Forms,SynEdit,SynEditTypes, SynEditFoldedView;
+  Forms {debug},
+  SynEdit,SynEditTypes, SynEditFoldedView, SynEditMiscProcs;
 
   function CompareFI(Item1, Item2: Pointer): Integer;
   begin
@@ -87,7 +92,7 @@ begin
   //MarkupInfo.BackAlpha := 255;
   MarkupInfo.Style := [];
   MarkupInfo.StyleMask := [];
-  MarkupInfo.FrameEdges:= sfeLeft;//sfeBottom;//
+  MarkupInfo.FrameEdges:= sfeLeft;//sfeBottom;//sfeAround;//
 
   SetLength(Colors, 6);
   Colors[0] := clRed;
@@ -269,8 +274,8 @@ procedure TSynEditMarkupFoldColors.DoMarkupParentFoldAtRow(aRow: Integer);
         lvl := ANode.NestLvlStart;
         ColorIdx := lvl mod (length(Colors));
       end;
-
       {
+
       if sfaOpen in ANode.FoldAction then
         lvl := ANode.NestLvlStart
       else
@@ -278,8 +283,9 @@ procedure TSynEditMarkupFoldColors.DoMarkupParentFoldAtRow(aRow: Integer);
 
       //ColorIdx := ANode.NodeIndex mod (length(Colors));
 
-      lvl := ANode.NestLvlStart;
-      //ColorIdx := lvl mod (length(Colors));
+      lvl := ANode.NestLvlEnd;
+      //lvl := Longint(ANode.FoldTypeCompatible);
+      ColorIdx := lvl mod (length(Colors));
       }
 
 
@@ -342,7 +348,7 @@ begin
   result := TCustomSynEdit(self.SynEdit).Highlighter as TSynCustomFoldHighlighter;
 end;
 
-{$define debug_FC_line_changed}
+{.$define debug_FC_line_changed}
 procedure TSynEditMarkupFoldColors.DoTextChanged(StartLine, EndLine,
   ACountDiff: Integer);
 {$ifdef debug_FC_line_changed}
@@ -350,14 +356,157 @@ var F : TCustomForm;
 begin
   F := GetParentForm(self.SynEdit);
   if F <> nil then
-    F.Caption := Format('Start:%d Endline:%d  Diff:%d',[StartLine, EndLIne, ACountDiff]);
-end;
+    //F.Caption := Format('Start:%d Endline:%d  Diff:%d',[StartLine, EndLIne, ACountDiff]);
+  F.Caption := F.Caption +  Caret.LineText
 {$else}
+
+
+
+  function GetPairCloseFold(aRow, X : integer  ): Integer;
+  var
+    y,i,LCnt : integer;
+    HL: TSynCustomFoldHighlighter;
+    NodeList: TLazSynFoldNodeInfoList;
+    TmpNode, CloseNode: TSynFoldNodeInfo;
+
+    function FindEndNode(StartNode: TSynFoldNodeInfo;
+                       {var} YIndex, NIndex: Integer): TSynFoldNodeInfo;
+      function SearchLine(ALineIdx: Integer; var ANodeIdx: Integer): TSynFoldNodeInfo;
+      begin
+        NodeList.Line := ALineIdx;
+        repeat
+          inc(ANodeIdx);
+          Result := NodeList[ANodeIdx];
+        until (sfaInvalid in Result.FoldAction)
+           or (Result.NestLvlEnd <= StartNode.NestLvlStart);
+      end;
+    begin
+      Result := SearchLine(YIndex, NIndex);
+      if not (sfaInvalid in Result.FoldAction) then
+        exit;
+
+      inc(YIndex);
+      while (YIndex < LCnt) and
+            (HL.FoldBlockMinLevel(YIndex, StartNode.FoldGroup, [sfbIncludeDisabled])
+             > StartNode.NestLvlStart)
+      do
+        inc(YIndex);
+      if YIndex = LCnt then
+        exit;
+
+      NIndex := -1;
+      Result := SearchLine(YIndex, NIndex);
+
+      if (Result.LogXEnd = 0) or (sfaLastLineClose in Result.FoldAction) then
+        Result.FoldAction := [sfaInvalid]; // LastLine closed Node(maybe force-closed?)
+    end;
+  var y2,i2 : integer;
+  begin
+    Result := -1;
+    y := aRow -1;
+
+    HL := TCustomSynEdit(self.SynEdit).Highlighter as TSynCustomFoldHighlighter;
+    HL.CurrentLines := Lines;
+    LCnt := Lines.Count;
+    HL.FoldNodeInfo[y].ClearFilter; // only needed once, in case the line was already used
+
+    NodeList := HL.FoldNodeInfo[y];
+    NodeList.AddReference;
+    try
+      NodeList.ActionFilter := [sfaOpen];
+      i := 0;
+      repeat
+        TmpNode := NodeList[i];
+
+        if TmpNode.LogXStart < X-1 then
+        begin
+          inc(i);
+          continue;
+        end;
+
+        //find till valid
+        while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) do
+        begin
+          inc(i);
+          TmpNode := NodeList[i];
+        end;
+        if not (sfaInvalid in TmpNode.FoldAction) then
+        begin
+          CloseNode := FindEndNode(TmpNode, y, i);
+          //AddHighlight(TmpNode);
+          Result := CloseNode.LineIndex;
+          exit;
+        end;
+
+        inc(i);
+      until i >= NodeList.Count;
+
+    finally
+      NodeList.ReleaseReference;
+    end;
+  end;
+
+
+  function IsFoldMoved( aRow: Integer ): integer;
+  var S : string;
+    i,n : integer;
+  begin
+    Result := -1;
+    n := -1;
+
+    S := Caret.LineText;
+    for i := 1 to Min(Length(S), Length(FPrevCaretText)) do
+    begin
+      if S[i] <> FPrevCaretText[i] then
+      begin
+        n := i;
+        break;
+      end;
+    end;
+
+    if n < 0 then exit;
+
+    Result := GetPairCloseFold(aRow, n);
+    if Result > 0 then
+    begin
+      with TCustomSynEdit(SynEdit) do
+        Result := min(Result, TopLine +LinesInWindow);// . .RowToScreenRow(i);
+    end;
+
+  end;
+var
+  EndFoldLine,LineEnd,y : integer;
 begin
-  //
   if EndLine < 0 then exit; //already refreshed by syn
-end;
+
+  y := Caret.LineBytePos.y;
+  EndFoldLine := IsFoldMoved(y);
+  if EndFoldLine > 0 then
+  begin
+    InvalidateSynLines(y+1, EndFoldLine);
+  end;
+
+  FPrevCaretText := Caret.LineText;
+  // I found that almost anything has been repaint by the SynEdit,
+  // except the trailing space editing: we should repaint them here.
 {$endif}
+end;
+
+procedure TSynEditMarkupFoldColors.DoCaretChanged(Sender: TObject);
+var Y : integer;
+begin
+  Y := Caret.LineBytePos.y;
+  if Y = FCaretY then exit;
+
+  FCaretY := Y;
+  FPrevCaretText := Caret.LineText;
+  {$ifdef debug_FC_line_changed}
+  with GetParentForm(self.SynEdit) do
+    Caption:= Caret.LineText;
+  {$endif}
+end;
+
+
 
 end.
 

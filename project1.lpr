@@ -10,8 +10,6 @@ uses
   Forms, Unit1, SynEditMarkupFoldColors
   { you can add units after this };
 
-{$R *.res}
-
 begin
   RequireDerivedFormResource:=True;
   Application.Initialize;
