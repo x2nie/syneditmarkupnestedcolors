@@ -456,6 +456,7 @@ begin
     //limit to screen bottom
     if Result > 0 then
     begin
+      inc(Result);//because sometime 'end' has trailing vertical line
       with TCustomSynEdit(SynEdit) do
         Result := min(Result, TopLine +LinesInWindow);// . .RowToScreenRow(i);
     end;
