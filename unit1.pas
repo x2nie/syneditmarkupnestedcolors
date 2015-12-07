@@ -38,6 +38,7 @@ type
   private
     { private declarations }
     procedure AddMarkupFoldColors;
+    procedure FillLfmToSynEdit2;
   public
     { public declarations }
   end;
@@ -56,11 +57,11 @@ function ComponentToStringProc(Component: TComponent): string;
 var
   BinStream:TMemoryStream;
   StrStream: TStringStream;
-  s: string;
+  //s: string;
 begin
   BinStream := TMemoryStream.Create;
   try
-    StrStream := TStringStream.Create(s);
+    StrStream := TStringStream.Create('');
     try
       BinStream.WriteComponent(Component);
       BinStream.Seek(0, soFromBeginning);
@@ -83,6 +84,8 @@ var
 begin
   AddMarkupFoldColors();
 
+  FillLfmToSynEdit2();
+
   F := TSynDemoHlFold.Create(self);
   SynEdit3.Highlighter := F;
 end;
@@ -103,6 +106,27 @@ begin
       S.MarkupManager.AddMarkUp(M);
     end;
   end;
+end;
+
+procedure TForm1.FillLfmToSynEdit2;
+var F : TForm1;
+var
+  i : integer;
+  S : TSynEdit;
+begin
+  if self <> Form1 then
+    exit; // avoid infinite loop
+  F := TForm1.Create(nil);
+  for i := 0 to Pred(F.ComponentCount) do
+  begin
+    if F.Components[i] is TSynEdit then
+    begin
+      S := TSynEdit(F.Components[i]);
+      S.Lines.Text := S.Name;
+    end;
+  end;
+  SynEdit2.Lines.Text := ComponentToStringProc(F);
+  F.Free;
 end;
 
 end.
