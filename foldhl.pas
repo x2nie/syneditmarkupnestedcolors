@@ -113,15 +113,24 @@ type
 
   //TSynDemoHlFold = class(TSynDemoHlFoldBase)
   TSynDemoHlFold = class(TSynDemoHlContextFoldBase)
+  private
+    FFoldAttri: TSynHighlighterAttributes;
+    procedure SetFoldAttri(AValue: TSynHighlighterAttributes);
   protected
     function GetRangeClass: TSynCustomHighlighterRangeClass; override;
 
   public
     procedure Next; override;
   public
+    constructor Create(AOwner: TComponent); override;
+
     procedure SetRange(Value: Pointer); override;
     procedure ResetRange; override;
     function GetRange: Pointer; override;
+    function  GetTokenAttribute: TSynHighlighterAttributes; override;
+  published
+    property FoldAttri: TSynHighlighterAttributes read FFoldAttri
+      write SetFoldAttri;
   end;
 
 implementation
@@ -144,6 +153,16 @@ begin
     EndCodeFoldBlock;
 end;
 
+constructor TSynDemoHlFold.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+
+  (* Create and initialize the attributes *)
+  FFoldAttri := TSynHighlighterAttributes.Create('fold', 'fold');
+  AddAttribute(FFoldAttri);
+  FFoldAttri.Style := [fsBold];
+end;
+
 procedure TSynDemoHlFold.SetRange(Value: Pointer);
 begin
   // must call the SetRange in TSynCustomFoldHighlighter
@@ -162,6 +181,21 @@ begin
   // Store the range first
   CodeFoldRange.RangeType := Pointer(PtrInt(FCurRange));
   Result := inherited GetRange;
+end;
+
+function TSynDemoHlFold.GetTokenAttribute: TSynHighlighterAttributes;
+var s : string;
+begin
+  Result:=inherited GetTokenAttribute;
+  s := copy(FLineText, FTokenPos, FTokenEnd - FTokenPos);
+  if (s = '-(-') or (s = '-)-') then
+    Result := FoldAttri
+
+end;
+
+procedure TSynDemoHlFold.SetFoldAttri(AValue: TSynHighlighterAttributes);
+begin
+  FFoldAttri.Assign(AValue);
 end;
 
 function TSynDemoHlFold.GetRangeClass: TSynCustomHighlighterRangeClass;
