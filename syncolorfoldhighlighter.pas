@@ -303,7 +303,7 @@ begin
     BlockEnabled := False;//FFoldConfig[PtrInt(ABlockType)].Enabled;
     FoldBlock := True;
     act := [sfaOpen, sfaOpenFold]; //TODO: sfaOpenFold not for cfbtIfThen
-    act := act + [sfaFold, sfaFoldFold];//x2nie
+    act := act + [sfaFold, sfaFoldFold, sfaMarkup];//x2nie
     if BlockEnabled then
       act := act + FFoldConfig[longint(ABlockType)].FoldActions;
     //if not FAtLineStart then
@@ -326,7 +326,7 @@ begin
   if FCatchNodeInfo then begin // exclude subblocks, because they do not increase the foldlevel yet
     BlockEnabled := False;// FFoldConfig[PtrInt(BlockType)].Enabled;
     act := [sfaClose, sfaCloseFold];
-    act := act + [sfaFold, sfaFoldFold];//x2nie
+    act := act + [sfaFold, sfaFoldFold, sfaMarkup];//x2nie
     if BlockEnabled then
       act := act + FFoldConfig[PtrInt(BlockType)].FoldActions - [sfaFoldFold, sfaFoldHide]; // TODO: Why filter?
     if not DecreaseLevel then
