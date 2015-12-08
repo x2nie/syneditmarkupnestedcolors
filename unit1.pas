@@ -25,6 +25,7 @@ type
     SynEdit3: TSynEdit;
     SynEdit4: TSynEdit;
     SynEdit5: TSynEdit;
+    SynEditColorFold: TSynEdit;
     SynFreePascalSyn1: TSynFreePascalSyn;
     SynHTMLSyn1: TSynHTMLSyn;
     SynLFMSyn1: TSynLFMSyn;
@@ -34,6 +35,7 @@ type
     TabSheet3: TTabSheet;
     TabSheet4: TTabSheet;
     TabSheet5: TTabSheet;
+    TabSheet6: TTabSheet;
     procedure FormCreate(Sender: TObject);
   private
     { private declarations }
@@ -49,7 +51,7 @@ var
 implementation
 
 uses
-  SynEditMarkupFoldColors, foldhl;
+  SynEditMarkupFoldColors, foldhl, SynHighlighterBracket;
 
 {$R *.lfm}
 
@@ -79,15 +81,13 @@ end;
 { TForm1 }
 
 procedure TForm1.FormCreate(Sender: TObject);
-var
-  F : TSynDemoHlFold;
 begin
   AddMarkupFoldColors();
 
   FillLfmToSynEdit2();
+  SynEditColorFold.Highlighter := TSynHighlighterBracket.Create(self);
 
-  F := TSynDemoHlFold.Create(self);
-  SynEdit3.Highlighter := F;
+  SynEdit3.Highlighter := TSynDemoHlFold.Create(self);
 end;
 
 procedure TForm1.AddMarkupFoldColors;

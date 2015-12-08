@@ -118,6 +118,7 @@ type
     procedure SetFoldAttri(AValue: TSynHighlighterAttributes);
   protected
     function GetRangeClass: TSynCustomHighlighterRangeClass; override;
+    procedure InitFoldNodeInfo(AList: TLazSynFoldNodeInfoList; Line: TLineIdx); override;
 
   public
     procedure Next; override;
@@ -145,12 +146,34 @@ end;
 { TSynDemoHlFold }
 
 procedure TSynDemoHlFold.Next;
+var
+  p: PtrInt;
+  FoldBlock, BlockEnabled: Boolean;
+  act: TSynFoldActions;
+  nd: TSynFoldNodeInfo;
 begin
   inherited Next;
   if (copy(FLineText, FTokenPos, FTokenEnd - FTokenPos) = '-(-') then
+  begin
+
+    act := [sfaOpen, sfaOpenFold]; //TODO: sfaOpenFold not for cfbtIfThen
+    {if BlockEnabled then
+      act := act + FFoldConfig[ord(ABlockType)].FoldActions;
+    if not FAtLineStart then
+      act := act - [sfaFoldHide];}
+    //InitNode(nd, +1, ABlockType, act, FoldBlock);
+    //FFoldNodeInfoList.Add(nd);
+
     StartCodeFoldBlock(nil);
+    //CodeFoldRange.FoldStart := Point (FTokenPos, LineIndex );
+    CodeFoldRange.FoldSign[True] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
+  end;
   if (copy(FLineText, FTokenPos, FTokenEnd - FTokenPos) = '-)-') then
+  begin
+    //CodeFoldRange.FoldFinish := Point (FTokenPos, LineIndex );
+    CodeFoldRange.FoldSign[False] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
     EndCodeFoldBlock;
+  end;
 end;
 
 constructor TSynDemoHlFold.Create(AOwner: TComponent);
@@ -203,6 +226,15 @@ begin
   result := TSynDemoFoldHighlighterRange;
 end;
 
+procedure TSynDemoHlFold.InitFoldNodeInfo(AList: TLazSynFoldNodeInfoList;
+  Line: TLineIdx);
+begin
+  inherited InitFoldNodeInfo(AList, Line);
+  StartAtLineIndex(Line);
+  //fStringLen := 0;
+  NextToEol;
+end;
+
 
 (*   This is an EXACT COPY of SynEditHighlighter
 
@@ -228,7 +260,7 @@ begin
   fSpaceAttri := TSynHighlighterAttributes.Create('space', 'space');
   AddAttribute(fSpaceAttri);
   fSpaceAttri.FrameColor := clSilver;
-  fSpaceAttri.FrameEdges := sfeLeft;//sfeAround;
+  fSpaceAttri.FrameEdges := sfeBottom;//sfeLeft;//sfeAround;
 end;
 
 (* Setters for attributes / This allows using in Object inspector*)

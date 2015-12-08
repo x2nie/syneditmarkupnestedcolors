@@ -34,6 +34,7 @@ type
 
     procedure DoMarkupFoldAtRow(aRow: Integer);
     procedure DoMarkupParentFoldAtRow(aRow: Integer);
+    procedure DoMarkupRangeFoldAtRow(aRow: Integer);
     function GetFoldHighLighter: TSynCustomFoldHighlighter;
   protected
     // Notifications about Changes to the text
@@ -88,7 +89,7 @@ begin
   MarkupInfo.Background := clNone; //clFuchsia;
   MarkupInfo.Style := [];
   MarkupInfo.StyleMask := [];
-  MarkupInfo.FrameEdges:= sfeLeft;//sfeBottom;//sfeAround;//
+  MarkupInfo.FrameEdges:= sfeLeft;//sfeAround;//sfeBottom;//
 
   SetLength(Colors, 6);
   Colors[0] := clRed;
@@ -115,11 +116,15 @@ begin
           begin
             MarkupInfo.FrameColor:= clNone;
             MarkupInfo.Foreground:= clNone;
+            MarkupInfo.FrameEdges:= sfeNone;
 
             Result := MarkupInfo;
             MarkupInfo.SetFrameBoundsLog(x, x2);
             if Border then
-              MarkupInfo.FrameColor:= Colors[ColorIdx]
+            begin
+              MarkupInfo.FrameColor:= Colors[ColorIdx];
+              MarkupInfo.FrameEdges:= sfeAround;// sfeLeft;
+            end
             else
               MarkupInfo.Foreground := Colors[ColorIdx]
           end;
@@ -201,7 +206,7 @@ begin
   try
     NodeList.ActionFilter := [
         {sfaMarkup,}
-        sfaFold
+     //   sfaFold
         //sfaFoldFold
         //sfaFoldHide
         //sfaSingleLine
@@ -324,9 +329,107 @@ begin
 
   DoMarkupFoldAtRow(aRow);
   DoMarkupParentFoldAtRow(aRow);
+  //DoMarkupRangeFoldAtRow(aRow);
 
   FHighlights := SortLeftMostFI(FHighlights);
 end;
+
+
+procedure TSynEditMarkupFoldColors.DoMarkupRangeFoldAtRow(aRow: Integer);
+var
+  HL: TSynCustomFoldHighlighter;
+  p1,p2 : TPoint;
+  //Fg : TSynFoldSign;
+  C : integer;
+
+  procedure AddHighlight(ABorder : Boolean; AX,AX2, Lev : integer );
+  var x,lvl : integer;
+
+  begin
+    //exit; //debug
+    //lvl := HL.CurrentCodeFoldBlockLevel;
+    //lvl := HL.FoldSignLevel(aRow-1);
+    //if lvl <= 0 then exit;
+
+    //Fg := HL.CurrentFoldSigns[True];
+    //Fg := HL.FoldSignAtLine(aRow-1, True);
+    //if Fg.Y < 0 then exit;
+
+    x := Length(FHighlights);
+    SetLength(FHighlights, x+1);
+    with FHighlights[x] do begin
+      Border := ABorder;
+      Y  := aRow;//P1.y + 1;
+      X  := AX;// Fg.X1st ;
+      X2 := AX2+1;//Fg.X2 +3 ;
+      ColorIdx := (Lev-1) mod (length(Colors));
+      //lvl := ANode.NestLvlEnd;
+      //
+      //ColorIdx := (lvl-1) mod (length(Colors));
+
+      {if sfaOpen in ANode.FoldAction then begin
+        lvl := ANode.FoldLvlStart;
+        //lvl := ANode.NestLvlStart; //http://forum.lazarus.freepascal.org/index.php/topic,30122.msg194841.html#msg194841
+        ColorIdx := lvl mod (length(Colors));}
+
+
+    end;
+  end;
+
+var
+  y,i,lvl,lvl2 : integer;
+  NodeList: TLazSynFoldNodeInfoList;
+  TmpNode: TSynFoldNodeInfo;
+  p : pointer;
+  HC : TSynCustomHighlighterRange;
+  R : TRect;
+  Prev,Fg : TSynFoldSign;
+
+begin
+  y := aRow -1;
+
+  HL := TCustomSynEdit(self.SynEdit).Highlighter as TSynCustomFoldHighlighter;
+  HL.CurrentLines := Lines;
+  //R := HL.CurrentFoldSigns[Y];
+
+  lvl := HL.FoldSignLevel(y);
+  if lvl <= 0 then exit;
+
+  //1. check if it 'begin' or 'end',  elsewise draw nested
+  Fg := HL.FoldSignAtLine(y, True);
+  if Fg.Y < 0 then exit;
+  if Fg.Y = y then //open tag
+    AddHighlight(False, Fg.X, Fg.X2, lvl)
+  else
+  begin
+    if y > 0 then
+    begin
+      Prev := HL.FoldSignAtLine(y-1, False); //previous range
+      if Prev.Y = y then // current line is the closing tag
+      begin
+        lvl2 := HL.FoldSignLevel(y-1);
+        AddHighlight(False, Prev.X, Prev.X2, lvl2);
+      end
+      else //not closing nor opening. draw parent
+      begin
+        AddHighlight(True, Fg.X1st, Fg.X2, lvl)
+      end;
+    end;
+  end;
+
+
+
+  begin
+    //HC := TSynCustomHighlighterRange(p);
+    P1 := R.TopLeft;
+    P2 := R.BottomRight;
+    C := 0;
+     //HC.FoldRoot;
+     //AddHighlight();
+
+  end;
+end;
+
 
 function TSynEditMarkupFoldColors.GetFoldHighLighter: TSynCustomFoldHighlighter;
 begin
