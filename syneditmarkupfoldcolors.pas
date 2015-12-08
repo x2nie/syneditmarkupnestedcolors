@@ -386,10 +386,10 @@ var
   p : pointer;
   HC : TSynCustomHighlighterRange;
   R : TRect;
-  Prev,Fg : TSynFoldSign;
+  //Prev,Fg : TSynFoldSign;
 
 begin
-  y := aRow -1;
+(*  y := aRow -1;
 
   HL := TCustomSynEdit(self.SynEdit).Highlighter as TSynCustomFoldHighlighter;
   HL.CurrentLines := Lines;
@@ -431,6 +431,7 @@ begin
      //AddHighlight();
 
   end;
+*)
 end;
 
 

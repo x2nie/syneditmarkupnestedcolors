@@ -166,12 +166,12 @@ begin
 
     StartCodeFoldBlock(nil);
     //CodeFoldRange.FoldStart := Point (FTokenPos, LineIndex );
-    CodeFoldRange.FoldSign[True] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
+    //CodeFoldRange.FoldSign[True] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
   end;
   if (copy(FLineText, FTokenPos, FTokenEnd - FTokenPos) = '-)-') then
   begin
     //CodeFoldRange.FoldFinish := Point (FTokenPos, LineIndex );
-    CodeFoldRange.FoldSign[False] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
+    //CodeFoldRange.FoldSign[False] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
     EndCodeFoldBlock;
   end;
 end;
