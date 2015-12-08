@@ -100,43 +100,38 @@ begin
     // At line end
     exit
   else
-  if FLineText[FTokenEnd] in [#9, ' '] then
-    // At Space? Find end of spaces
-    while (FTokenEnd <= l) and (FLineText[FTokenEnd] in [#0..#32]) do inc (FTokenEnd)
-  else
-    // At None-Space? Find end of None-spaces
-    while (FTokenEnd <= l) and not(FLineText[FTokenEnd] in [#9, ' ']) do inc (FTokenEnd);
 
   if FLineText[FTokenEnd] = '{' then
   begin
-
-    //act := [sfaOpen, sfaOpenFold]; //TODO: sfaOpenFold not for cfbtIfThen
-    {if BlockEnabled then
-      act := act + FFoldConfig[ord(ABlockType)].FoldActions;
-    if not FAtLineStart then
-      act := act - [sfaFoldHide];}
-    //InitNode(nd, +1, ABlockType, act, FoldBlock);
-    //FFoldNodeInfoList.Add(nd);
-
     {$ifdef colorfold}
-    StartCodeFoldBlock(FTokenPos, FTokenEnd);
+    StartCodeFoldBlock(FTokenPos-1, FTokenEnd);
     {$else}
     StartCodeFoldBlock(nil);
     //CodeFoldRange.FoldStart := Point (FTokenPos, LineIndex );
     CodeFoldRange.FoldSign[True] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
     {$endif}
+    inc (FTokenEnd);
   end
   else
   if FLineText[FTokenEnd] = '}' then
   begin
     {$ifdef colorfold}
-    EndCodeFoldBlock(FTokenPos, FTokenEnd);
+    EndCodeFoldBlock(FTokenPos-1, FTokenEnd);
     {$else}
     //CodeFoldRange.FoldFinish := Point (FTokenPos, LineIndex );
     CodeFoldRange.FoldSign[False] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
     EndCodeFoldBlock;
     {$endif}
-  end;
+    inc (FTokenEnd);
+  end
+  else
+    if FLineText[FTokenEnd] in [#9, ' '] then
+    // At Space? Find end of spaces
+    while (FTokenEnd <= l) and (FLineText[FTokenEnd] in [#0..#32]) do inc (FTokenEnd)
+  else
+    // At None-Space? Find end of None-spaces
+    while (FTokenEnd <= l) and not(FLineText[FTokenEnd] in [#9, ' ', '{', '}']) do inc (FTokenEnd);
+
 end;
 
 (* Setters for attributes / This allows using in Object inspector*)

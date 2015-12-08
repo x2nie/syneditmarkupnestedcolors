@@ -117,6 +117,7 @@ begin
             MarkupInfo.FrameColor:= clNone;
             MarkupInfo.Foreground:= clNone;
             MarkupInfo.FrameEdges:= sfeNone;
+            MarkupInfo.FrameColor:= clGreen; //debug
 
             Result := MarkupInfo;
             MarkupInfo.SetFrameBoundsLog(x, x2);
@@ -126,7 +127,9 @@ begin
               MarkupInfo.FrameEdges:= sfeAround;// sfeLeft;
             end
             else
-              MarkupInfo.Foreground := Colors[ColorIdx]
+              MarkupInfo.Foreground := Colors[ColorIdx];
+
+            MarkupInfo.FrameEdges:= sfeAround; //debug
           end;
 
           break;
@@ -206,7 +209,7 @@ begin
   try
     NodeList.ActionFilter := [
         {sfaMarkup,}
-     //   sfaFold
+        sfaFold
         //sfaFoldFold
         //sfaFoldHide
         //sfaSingleLine
@@ -328,7 +331,7 @@ begin
     exit;
 
   DoMarkupFoldAtRow(aRow);
-  DoMarkupParentFoldAtRow(aRow);
+ // DoMarkupParentFoldAtRow(aRow);
   //DoMarkupRangeFoldAtRow(aRow);
 
   FHighlights := SortLeftMostFI(FHighlights);
