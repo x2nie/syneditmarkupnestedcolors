@@ -117,19 +117,19 @@ begin
             MarkupInfo.FrameColor:= clNone;
             MarkupInfo.Foreground:= clNone;
             MarkupInfo.FrameEdges:= sfeNone;
-            MarkupInfo.FrameColor:= clGreen; //debug
+            //MarkupInfo.FrameColor:= clGreen; //debug
 
             Result := MarkupInfo;
             MarkupInfo.SetFrameBoundsLog(x, x2);
             if Border then
             begin
               MarkupInfo.FrameColor:= Colors[ColorIdx];
-              MarkupInfo.FrameEdges:= sfeAround;// sfeLeft;
+              MarkupInfo.FrameEdges:= sfeLeft;//sfeAround;//
             end
             else
               MarkupInfo.Foreground := Colors[ColorIdx];
 
-            MarkupInfo.FrameEdges:= sfeAround; //debug
+            //MarkupInfo.FrameEdges:= sfeAround; //debug
           end;
 
           break;
@@ -331,7 +331,7 @@ begin
     exit;
 
   DoMarkupFoldAtRow(aRow);
- // DoMarkupParentFoldAtRow(aRow);
+  DoMarkupParentFoldAtRow(aRow);
   //DoMarkupRangeFoldAtRow(aRow);
 
   FHighlights := SortLeftMostFI(FHighlights);
