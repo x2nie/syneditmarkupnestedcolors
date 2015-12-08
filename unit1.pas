@@ -51,7 +51,8 @@ var
 implementation
 
 uses
-  SynEditMarkupFoldColors, foldhl, SynHighlighterBracket;
+  SynEditMarkupFoldColors, foldhl, SynHighlighterBracket,
+  SynHighlighterLFM2;
 
 {$R *.lfm}
 
@@ -127,6 +128,7 @@ begin
   end;
   SynEdit2.Lines.Text := ComponentToStringProc(F);
   F.Free;
+  SynEdit2.Highlighter := SynHighlighterLFM2.TSynLFMSyn.Create(self);
 end;
 
 end.
