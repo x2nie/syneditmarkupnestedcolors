@@ -7,7 +7,9 @@ interface
 uses
   Classes, SysUtils, FileUtil, SynEdit, SynHighlighterPas, Forms, Controls,
   Graphics, Dialogs, ExtCtrls, ComCtrls, SynEditMarkupWordGroup,
-  SynHighlighterLFM, SynHighlighterPython, SynHighlighterHTML;
+  SynHighlighterLFM,
+  SynHighlighterPython,
+  SynHighlighterHTML;
 
 type
 
@@ -51,6 +53,7 @@ var
 implementation
 
 uses
+  SynEditHighlighterFoldBase,
   SynEditMarkupFoldColors, foldhl, SynHighlighterBracket,
   SynHighlighterLFM2;
 
@@ -83,12 +86,13 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  AddMarkupFoldColors();
 
   FillLfmToSynEdit2();
   SynEditColorFold.Highlighter := TSynHighlighterBracket.Create(self);
 
   SynEdit3.Highlighter := TSynDemoHlFold.Create(self);
+
+  AddMarkupFoldColors();
 end;
 
 procedure TForm1.AddMarkupFoldColors;
@@ -102,6 +106,8 @@ begin
     if Components[i] is TSynEdit then
     begin
       S := TSynEdit(Components[i]);
+      if not (S.Highlighter is TSynCustomFoldHighlighter) then
+        continue;
       M := TSynEditMarkupFoldColors.Create(S);
       M.DefaultGroup := 0;
       S.MarkupManager.AddMarkUp(M);
