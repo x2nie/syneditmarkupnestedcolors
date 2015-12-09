@@ -1370,12 +1370,14 @@ object Form1: TForm1
       Caption = 'Demo Fold'
       ClientHeight = 441
       ClientWidth = 622
+      TabVisible = False
       inline SynEdit3: TSynEdit
         Left = 0
         Height = 441
         Top = 0
         Width = 622
         Align = alClient
+        Color = clMaroon
         Font.Height = -13
         Font.Name = 'Courier New'
         Font.Pitch = fpFixed

@@ -91,7 +91,7 @@ begin
   FillLfmToSynEdit2();
   SynEditColorFold.Highlighter := TSynHighlighterBracket.Create(self);
 
-  SynEdit3.Highlighter := TSynDemoHlFold.Create(self);
+  //SynEdit3.Highlighter := TSynDemoHlFold.Create(self);
 
   AddMarkupFoldColors();
 end;
