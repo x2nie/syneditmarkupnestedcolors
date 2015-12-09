@@ -8,7 +8,7 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, Unit1, SynEditMarkupFoldColors, SynColorFoldHighlighter,
-SynHighlighterBracket
+SynHighlighterBracket, SynGutterFoldDebug
   { you can add units after this };
 
 begin

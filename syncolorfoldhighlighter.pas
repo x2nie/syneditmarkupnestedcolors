@@ -101,10 +101,14 @@ type
               DecreaseLevel: Boolean = True); virtual; reintroduce;
 
   public
+    //function FoldBlockMinLevel(ALineIndex: TLineIdx; const AFilter: TSynFoldBlockFilter): integer; override; overload;
   published
   end;
 
 implementation
+
+uses
+  SynEditMiscProcs;
 
 { TSynColorFoldHighlighterRange }
 
@@ -337,6 +341,49 @@ begin
   end;
   inherited EndCodeFoldBlock(DecreaseLevel);
 end;
+
+{function TSynColorFoldHighlighter.FoldBlockMinLevel(ALineIndex: TLineIdx;
+  const AFilter: TSynFoldBlockFilter): integer;
+var
+  //inf: TSynPasRangeInfo;
+  r, r2: Pointer;
+begin
+  result := inherited FoldBlockMinLevel(ALineIndex, AFilter); exit;
+  Assert(CurrentRanges <> nil, 'TSynCustomFoldHighlighter.FoldBlockMinLevel requires CurrentRanges');
+
+  Result := 0;
+  if (ALineIndex < 0) or (ALineIndex >= CurrentLines.Count - 1) then
+    exit;
+
+  //if AFilter.FoldGroup  in [0, FOLDGROUP_REGION, FOLDGROUP_IFDEF] then
+    //inf := TSynHighlighterPasRangeList(CurrentRanges).PasRangeInfo[ALineIndex];
+
+  //if AFilter.FoldGroup  in [0, FOLDGROUP_PASCAL] then
+  begin
+    // All or Pascal
+    (* Range.EndLevel can be smaller. because Range.MinLevel does not know the LastLineFix
+       Using a copy of FoldBlockEndLevel *)
+    r := CurrentRanges[ALineIndex];
+    if (r <> nil) and (r <> NullRange) then begin
+      //r2 := TSynColorFoldHighlighterRange(CurrentRanges[ALineIndex + 1]);
+      if sfbIncludeDisabled in AFilter.Flags then begin
+        Result := TSynColorFoldHighlighterRange(r).CodeFoldStackSize;
+        //if (r2 <> nil) and (r2 <> NullRange) then
+          //Result := Result + TSynColorFoldHighlighterRange(r2).LastLineCodeFoldLevelFix;
+        // now Result = FoldBlockEndLevel
+        Result := Min(Result, TSynColorFoldHighlighterRange(r).MinimumCodeFoldBlockLevel);
+      end
+      else begin
+        Result := TSynColorFoldHighlighterRange(r).PasFoldEndLevel;
+        //if (r2 <> nil) and (r2 <> NullRange) then
+          //Result := Result + TSynColorFoldHighlighterRange(r2).PasFoldFixLevel;
+        // now Result = FoldBlockEndLevel
+        Result := Min(Result, TSynColorFoldHighlighterRange(r).PasFoldMinLevel);
+      end;
+    end;
+  end;
+
+end; }
 
 end.
 

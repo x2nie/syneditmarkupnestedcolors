@@ -53,6 +53,7 @@ var
 implementation
 
 uses
+  SynGutterFoldDebug,
   SynEditHighlighterFoldBase,
   SynEditMarkupFoldColors, foldhl, SynHighlighterBracket,
   SynHighlighterLFM2;
@@ -108,9 +109,12 @@ begin
       S := TSynEdit(Components[i]);
       if not (S.Highlighter is TSynCustomFoldHighlighter) then
         continue;
+
       M := TSynEditMarkupFoldColors.Create(S);
-      M.DefaultGroup := 0;
+      M.DefaultGroup := 01;
       S.MarkupManager.AddMarkUp(M);
+
+      TSynGutterFoldDebug.Create(S.RightGutter.Parts);
     end;
   end;
 end;

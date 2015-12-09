@@ -117,7 +117,7 @@ begin
             MarkupInfo.FrameColor:= clNone;
             MarkupInfo.Foreground:= clNone;
             MarkupInfo.FrameEdges:= sfeNone;
-            //MarkupInfo.FrameColor:= clGreen; //debug
+            MarkupInfo.FrameColor:= clGreen; //debug
 
             Result := MarkupInfo;
             MarkupInfo.SetFrameBoundsLog(x, x2);
@@ -129,7 +129,7 @@ begin
             else
               MarkupInfo.Foreground := Colors[ColorIdx];
 
-            //MarkupInfo.FrameEdges:= sfeAround; //debug
+            MarkupInfo.FrameEdges:= sfeAround; //debug
           end;
 
           break;
@@ -166,7 +166,7 @@ procedure TSynEditMarkupFoldColors.DoMarkupFoldAtRow(aRow: Integer);
       Border := False;
       Y  := ANode.LineIndex + 1;
       X  := ANode.LogXStart + 1;
-      X2 := ANode.LogXEnd + 1;
+      X2 := ANode.LogXEnd + 1+1;
       if sfaOpen in ANode.FoldAction then begin
         lvl := ANode.FoldLvlStart;
         //lvl := ANode.NestLvlStart; //http://forum.lazarus.freepascal.org/index.php/topic,30122.msg194841.html#msg194841
@@ -300,25 +300,25 @@ begin
   Nest.Clear;
   Nest.Line := y;
   Nest.FoldGroup := FDefaultGroup;//1;//FOLDGROUP_PASCAL;
-  Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
-  Nest.IncludeOpeningOnLine := True; //False; //
+  Nest.FoldFlags :=  [sfbIncludeDisabled]; //[];//
+  Nest.IncludeOpeningOnLine := False; //True; //
 
-  //i := 0; while i <  Nest.Count do
-  i := Nest.Count -1;  while i >= 0 do  //from right to left
+  i := 0; while i <  Nest.Count do
+  //i := Nest.Count -1;  while i >= 0 do  //from right to left
   begin
       TmpNode := Nest.HLNode[i];
 
       //find till valid
-      while (sfaInvalid in TmpNode.FoldAction) and (i < Nest.Count) do
+      {while (sfaInvalid in TmpNode.FoldAction) and (i < Nest.Count) do
       begin
         inc(i);
         TmpNode := Nest.HLNode[i];
       end;
-      if not (sfaInvalid in TmpNode.FoldAction) then
+      if not (sfaInvalid in TmpNode.FoldAction) then}
           AddVerticalLine(TmpNode);
 
-      //inc(i);
-      dec(i);
+      inc(i);
+      //dec(i);
   end;
 end;
 
