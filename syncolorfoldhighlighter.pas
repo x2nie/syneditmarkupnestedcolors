@@ -53,7 +53,62 @@ uses
   SynEditTypes, SynEditHighlighter, SynEditHighlighterFoldBase;
 
 type
+  //http://forum.lazarus.freepascal.org/index.php/topic,7338.msg34697.html#msg34697
+  {
+  You want to look at the procedure SetLine in TSynCustomFoldHighlighter and TSynPasSyn (the pascal highlighter). Maybe also SetRange / ResetRange.
+  But ignore all LevelIfDef* / LevelRegion* => the pascal highlighter keeps 3 different set of counters (all using the same logic). This is because ifdef/region can overlap each other.
 
+  Important is that you re-initialize all the fold levels for the line. A line may get scanned more than once, if you do not reset the level, then your results will increase (as you have it).
+
+  There are 2 important counters:
+  * FoldEndLevel: Level at the end of line (equals start of next line)                                       = EolFoldLevel
+  * FoldMinLevel: Minimum level on this line. This can be lower than the start/end level. See example:       = BolFoldLevel
+    begin       // endlevel = 1 ; minlevel = 0
+    end  begin // endlevel = 1 ; minlevel = 0
+    end         // endlevel = 0 ; minlevel = 0
+
+
+  LastLineFix will not be needed. it is used where a keyword closes a block. but the close ought to be in the last line (fold-able car/type sections)
+    type
+       a=integer;  // the fold ends with this line
+    var               // but it is only known, when parsing the "var"
+       b:a;
+  }
+
+{   http://wiki.lazarus.freepascal.org/SynEdit_Highlighter#Step_3:_Add_Folding
+
+  SynEdit's folding is handled by unit SynEditFoldedView and SynGutterCodeFolding. Highlighters that implement folding are to be based on TSynCustomFoldHighlighter.
+  The basic information for communication between SynEditFoldedView and the HL
+  requires 2 values stored for each line. (Of course the highlighter itself can store more information):
+  -  FoldLevel at the end of line
+  -  Minimum FoldLevel encountered anywhere on the line
+  The Foldlevel indicates how many (nested) folds exist.
+  It goes up whenever a fold begins, and down when a fold ends:
+                               EndLvl   MinLvl
+     Procedure a;               1 -      0
+     Begin                      2 --     1 -
+       b:= 1;                   2 --     2 --
+       if c > b then begin      3 ---    2 --
+         c:=b;                  3 ---    3 ---
+       end else begin           3 ---    2 --
+         b:=c;                  3 ---    3 ---
+       end;                     2 --     2 --
+     end;                       0        0  // The end closes both: begin and procedure fold
+
+    In the line
+     Procedure a;               1 -      0
+    the MinLvl is 0, because the line started with a Level of 0 (and it never went down / no folds closed).
+    Similar in all lines where there is only an opening fold keyword ("begin").
+
+    But the line
+       end else begin           3 ---    2 --
+    starts with a level of 3, and also ends with it (one close, one open). But since it went down first, the minimum level encountered anywhere on the line is 2.
+    Without the MinLvl it would not be possible to tell that a fold ends in this line.
+    There is no such thing as a MaxLvl, because folds that start and end on the same line can not be folded anyway. No need to detect them.
+     if a then begin b:=1; c:=2; end; // no fold on that line
+
+
+}
   { TSynColorFoldHighlighterRange }
 
   TSynColorFoldHighlighterRange = class(TSynCustomHighlighterRange)
@@ -101,6 +156,9 @@ type
               DecreaseLevel: Boolean = True); virtual; reintroduce;
 
   public
+    procedure SetLine(const NewValue: string; LineNumber: Integer); override;
+
+    function FoldBlockEndLevel(ALineIndex: TLineIdx; const AFilter: TSynFoldBlockFilter): integer; override; overload;
     //function FoldBlockMinLevel(ALineIndex: TLineIdx; const AFilter: TSynFoldBlockFilter): integer; override; overload;
   published
   end;
@@ -199,7 +257,7 @@ begin
   Node.FoldType := Pointer(PtrInt(ABlockType));
   Node.FoldTypeCompatible := Pointer(PtrInt(ABlockType));//Pointer(PtrInt(PascalFoldTypeCompatibility[ABlockType]));
   Node.FoldAction := aActions;
-  node.FoldGroup := 0;//FOLDGROUP_PASCAL;
+  node.FoldGroup := 1;//FOLDGROUP_PASCAL;
   if AIsFold then begin
     Node.FoldLvlStart := PasCodeFoldRange.PasFoldEndLevel;
     Node.NestLvlStart := PasCodeFoldRange.CodeFoldStackSize;
@@ -307,7 +365,7 @@ begin
     BlockEnabled := False;//FFoldConfig[PtrInt(ABlockType)].Enabled;
     FoldBlock := True;
     act := [sfaOpen, sfaOpenFold]; //TODO: sfaOpenFold not for cfbtIfThen
-    act := act + [sfaFold, sfaFoldFold, sfaMarkup];//x2nie
+    act := act + [sfaFold,  sfaFoldFold, sfaMarkup];//x2nie
     if BlockEnabled then
       act := act + FFoldConfig[longint(ABlockType)].FoldActions;
     //if not FAtLineStart then
@@ -340,6 +398,66 @@ begin
     FCatchNodeInfoList.Add(nd);
   end;
   inherited EndCodeFoldBlock(DecreaseLevel);
+end;
+
+procedure TSynColorFoldHighlighter.SetLine(const NewValue: string;
+  LineNumber: Integer);
+begin
+  inherited SetLine(NewValue, LineNumber);
+  //PasCodeFoldRange.LastLineCodeFoldLevelFix := 0;
+  PasCodeFoldRange.PasFoldFixLevel := 0;
+  PasCodeFoldRange.PasFoldMinLevel := PasCodeFoldRange.PasFoldEndLevel;
+end;
+
+function TSynColorFoldHighlighter.FoldBlockEndLevel(ALineIndex: TLineIdx;
+  const AFilter: TSynFoldBlockFilter): integer;
+var
+  //inf: TSynPasRangeInfo;
+  r, r2: Pointer;
+begin
+  Assert(CurrentRanges <> nil, 'TSynColorFoldHighlighter.FoldBlockEndLevel requires CurrentRanges');
+
+  Result := 0;
+  if (ALineIndex < 0) or (ALineIndex >= CurrentLines.Count - 1) then
+    exit;
+
+  //if AFilter.FoldGroup  in [0, FOLDGROUP_REGION, FOLDGROUP_IFDEF] then
+    //inf := TSynHighlighterPasRangeList(CurrentRanges).PasRangeInfo[ALineIndex];
+
+  //if AFilter.FoldGroup  in [0, FOLDGROUP_PASCAL] then
+  begin
+    // All or Pascal
+    r := CurrentRanges[ALineIndex];
+    if (r <> nil) and (r <> NullRange) then begin
+      //r2 := TSynColorFoldHighlighterRange(CurrentRanges[ALineIndex + 1]);
+      if sfbIncludeDisabled in AFilter.Flags then begin
+        Result := TSynColorFoldHighlighterRange(r).CodeFoldStackSize;
+        //if (r2 <> nil) and (r2 <> NullRange) then
+          //Result := Result + TSynColorFoldHighlighterRange(r2).LastLineCodeFoldLevelFix;
+      end
+      else begin
+        Result := TSynColorFoldHighlighterRange(r).PasFoldEndLevel;
+        //if (r2 <> nil) and (r2 <> NullRange) then
+          //Result := Result + TSynColorFoldHighlighterRange(r2).PasFoldFixLevel;
+      end;
+    end;
+  end;
+
+  {if AFilter.FoldGroup  in [0, FOLDGROUP_REGION] then begin
+    // All or REGION
+    if FFoldConfig[ord(cfbtRegion)].Enabled or
+       (sfbIncludeDisabled in AFilter.Flags)
+    then
+      Result := Result + inf.EndLevelRegion;
+  end;
+
+  if AFilter.FoldGroup  in [0, FOLDGROUP_IFDEF] then begin
+    // All or IFDEF
+    if FFoldConfig[ord(cfbtIfDef)].Enabled or
+       (sfbIncludeDisabled in AFilter.Flags)
+    then
+      Result := Result + inf.EndLevelIfDef;
+  end;}
 end;
 
 {function TSynColorFoldHighlighter.FoldBlockMinLevel(ALineIndex: TLineIdx;

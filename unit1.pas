@@ -111,7 +111,7 @@ begin
         continue;
 
       M := TSynEditMarkupFoldColors.Create(S);
-      M.DefaultGroup := 01;
+      M.DefaultGroup := 0;
       S.MarkupManager.AddMarkUp(M);
 
       TSynGutterFoldDebug.Create(S.RightGutter.Parts);

@@ -117,7 +117,7 @@ begin
             MarkupInfo.FrameColor:= clNone;
             MarkupInfo.Foreground:= clNone;
             MarkupInfo.FrameEdges:= sfeNone;
-            MarkupInfo.FrameColor:= clGreen; //debug
+            //MarkupInfo.FrameColor:= clGreen; //debug
 
             Result := MarkupInfo;
             MarkupInfo.SetFrameBoundsLog(x, x2);
@@ -129,7 +129,7 @@ begin
             else
               MarkupInfo.Foreground := Colors[ColorIdx];
 
-            MarkupInfo.FrameEdges:= sfeAround; //debug
+            //MarkupInfo.FrameEdges:= sfeAround; //debug
           end;
 
           break;
@@ -300,7 +300,7 @@ begin
   Nest.Clear;
   Nest.Line := y;
   Nest.FoldGroup := FDefaultGroup;//1;//FOLDGROUP_PASCAL;
-  Nest.FoldFlags :=  [sfbIncludeDisabled]; //[];//
+  Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
   Nest.IncludeOpeningOnLine := False; //True; //
 
   i := 0; while i <  Nest.Count do
