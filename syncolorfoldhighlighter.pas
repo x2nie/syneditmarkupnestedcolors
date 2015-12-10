@@ -109,28 +109,7 @@ type
 
 
 }
-  { TSynColorFoldHighlighterRange }
-(*
-  TSynColorFoldHighlighterRange = class(TSynCustomHighlighterRange)
-  private
-    {FPasFoldEndLevel: Smallint;
-    FPasFoldFixLevel: Smallint;
-    FPasFoldMinLevel: Smallint;}
-  public
-    function MaxFoldLevel: Integer; override;
-    function Add(ABlockType: Pointer = nil; IncreaseLevel: Boolean = True):
-        TSynCustomCodeFoldBlock; override;
-    procedure Pop(DecreaseLevel: Boolean = True); override;
-    procedure Clear; override;
-    function Compare(Range: TSynCustomHighlighterRange): integer; override;
-    procedure Assign(Src: TSynCustomHighlighterRange); override;
 
-     {
-    property PasFoldEndLevel: Smallint read FPasFoldEndLevel write FPasFoldEndLevel;
-    property PasFoldFixLevel: Smallint read FPasFoldFixLevel write FPasFoldFixLevel;
-    property PasFoldMinLevel: Smallint read FPasFoldMinLevel write FPasFoldMinLevel;
-    }
-  end;   *)
 
   { TSynColorFoldHighlighter }
 
@@ -139,14 +118,12 @@ type
     FCatchNodeInfo: Boolean;
     FCatchNodeInfoList: TLazSynFoldNodeInfoList;
     //function GetPasCodeFoldRange: TSynCustomHighlighterRange;
-    procedure InitNode(out Node: TSynFoldNodeInfo; SignX, SignX2: Integer;
+    procedure MyInitNode(out Node: TSynFoldNodeInfo; SignX, SignX2: Integer;
                        EndOffs: Integer;
                        ABlockType: Integer; aActions: TSynFoldActions;
                        AIsFold: Boolean);
 
   protected
-    //function GetRangeClass: TSynCustomHighlighterRangeClass; override;
-    //property PasCodeFoldRange: TSynCustomHighlighterRange read GetPasCodeFoldRange;
 
     procedure InitFoldNodeInfo(AList: TLazSynFoldNodeInfoList; Line: TLineIdx); override;
     // Open/Close Folds
@@ -168,81 +145,11 @@ implementation
 uses
   SynEditMiscProcs;
 
-{ TSynColorFoldHighlighterRange }
 
-(*function TSynColorFoldHighlighterRange.MaxFoldLevel: Integer;
-begin
-  // Protect from overly mem consumption, by too many nested folds
-  Result := -1;// 100;
-end;
-
-function TSynColorFoldHighlighterRange.Add(ABlockType: Pointer;
-  IncreaseLevel: Boolean): TSynCustomCodeFoldBlock;
-begin
-  Result:=inherited Add(ABlockType, IncreaseLevel);
-  {Result := inherited Add(ABlockType, True);
-  if IncreaseLevel and assigned(result) then
-    inc(FPasFoldEndLevel);}
-end;
-
-procedure TSynColorFoldHighlighterRange.Pop(DecreaseLevel: Boolean);
-begin
-  inherited Pop(DecreaseLevel);
-  {if assigned(Top.Parent) then begin
-    if DecreaseLevel then
-      dec(FPasFoldEndLevel);
-    if FPasFoldMinLevel > FPasFoldEndLevel then
-      FPasFoldMinLevel := FPasFoldEndLevel;
-  end;
-  inherited Pop(True);
-  }
-end;
-
-procedure TSynColorFoldHighlighterRange.Clear;
-begin
-  inherited Clear;
-  {FPasFoldEndLevel := 0;
-  FPasFoldFixLevel := 0;
-  FPasFoldMinLevel := 0;
-  }
-end;
-
-function TSynColorFoldHighlighterRange.Compare(Range: TSynCustomHighlighterRange
-  ): integer;
-begin
-  Result:=inherited Compare(Range);
-  if Result<>0 then exit;
-
-  //Result:=ord(FMode)-ord(TSynPasSynRange(Range).FMode);
-  //if Result<>0 then exit;
-  //Result := FBracketNestLevel - TSynColorFoldHighlighterRange(Range).FBracketNestLevel;
-  //if Result<>0 then exit;
-  //Result := FLastLineCodeFoldLevelFix - TSynColorFoldHighlighterRange(Range).FLastLineCodeFoldLevelFix;
-  //if Result<>0 then exit;
-{  Result := FPasFoldEndLevel - TSynColorFoldHighlighterRange(Range).FPasFoldEndLevel;
-  if Result<>0 then exit;
-  Result := FPasFoldMinLevel - TSynColorFoldHighlighterRange(Range).FPasFoldMinLevel;
-  if Result<>0 then exit;}
-  //Result := FPasFoldFixLevel - TSynColorFoldHighlighterRange(Range).FPasFoldFixLevel;
-end;
-
-procedure TSynColorFoldHighlighterRange.Assign(Src: TSynCustomHighlighterRange);
-begin
-  if (Src<>nil) and (Src<>TSynCustomHighlighterRange(NullRange)) then begin
-    inherited Assign(Src);
-    //FMode:=TSynColorFoldHighlighterRange(Src).FMode;
-    //FBracketNestLevel:=TSynColorFoldHighlighterRange(Src).FBracketNestLevel;
-    //FLastLineCodeFoldLevelFix := TSynColorFoldHighlighterRange(Src).FLastLineCodeFoldLevelFix;
-//    FPasFoldEndLevel := TSynColorFoldHighlighterRange(Src).FPasFoldEndLevel;
-//    FPasFoldMinLevel := TSynColorFoldHighlighterRange(Src).FPasFoldMinLevel;
-    //FPasFoldFixLevel := TSynColorFoldHighlighterRange(Src).FPasFoldFixLevel;
-  end;
-end;
-*)
 
 { TSynColorFoldHighlighter }
 
-procedure TSynColorFoldHighlighter.InitNode(out Node: TSynFoldNodeInfo;
+procedure TSynColorFoldHighlighter.MyInitNode(out Node: TSynFoldNodeInfo;
   SignX, SignX2: Integer;
   EndOffs: Integer; ABlockType: Integer; aActions: TSynFoldActions;
   AIsFold: Boolean);
@@ -303,16 +210,7 @@ begin
   //
 end;
 
-{function TSynColorFoldHighlighter.GetPasCodeFoldRange: TSynCustomHighlighterRange;
-begin
-  //Result := TSynColorFoldHighlighterRange(CodeFoldRange);
-  Result := CodeFoldRange;
-end;}
 
-{function TSynColorFoldHighlighter.GetRangeClass: TSynCustomHighlighterRangeClass;
-begin
-  Result := TSynColorFoldHighlighterRange;
-end;}
 
 procedure TSynColorFoldHighlighter.InitFoldNodeInfo(
   AList: TLazSynFoldNodeInfoList; Line: TLineIdx);
@@ -372,7 +270,7 @@ begin
       act := act + FFoldConfig[longint(ABlockType)].FoldActions;
     //if not FAtLineStart then
       //act := act - [sfaFoldHide];
-    InitNode(nd, SignX,SignX2, +1, PtrInt(ABlockType), act, FoldBlock);
+    MyInitNode(nd, SignX,SignX2, +1, PtrInt(ABlockType), act, FoldBlock);
     FCatchNodeInfoList.Add(nd);
   end;
   result := inherited StartCodeFoldBlock(ABlockType, IncreaseLevel);
@@ -396,115 +294,13 @@ begin
     if not DecreaseLevel then
       act := act - [sfaFold, sfaFoldFold, sfaFoldHide];
     //if NoMarkup then       exclude(act, sfaMarkup);
-    InitNode(nd, SignX,SignX2, -1, BlockType, act, DecreaseLevel);
+    MyInitNode(nd, SignX,SignX2, -1, BlockType, act, DecreaseLevel);
     FCatchNodeInfoList.Add(nd);
   end;
   inherited EndCodeFoldBlock(DecreaseLevel);
 end;
 
-{procedure TSynColorFoldHighlighter.SetLine(const NewValue: string;
-  LineNumber: Integer);
-begin
-  inherited SetLine(NewValue, LineNumber);
-  //PasCodeFoldRange.LastLineCodeFoldLevelFix := 0;
-  ///PasCodeFoldRange.PasFoldFixLevel := 0;
-  /// PasCodeFoldRange.PasFoldMinLevel := PasCodeFoldRange.PasFoldEndLevel;
-//  CodeFoldRange.MinimumCodeFoldBlockLevel := CodeFoldRange.CodeFoldStackSize; //x2nie
-end;}
 
-(*function TSynColorFoldHighlighter.FoldBlockEndLevel(ALineIndex: TLineIdx;
-  const AFilter: TSynFoldBlockFilter): integer;
-var
-  //inf: TSynPasRangeInfo;
-  r, r2: Pointer;
-begin
-  Assert(CurrentRanges <> nil, 'TSynColorFoldHighlighter.FoldBlockEndLevel requires CurrentRanges');
-
-  Result := 0;
-  if (ALineIndex < 0) or (ALineIndex >= CurrentLines.Count - 1) then
-    exit;
-
-  //if AFilter.FoldGroup  in [0, FOLDGROUP_REGION, FOLDGROUP_IFDEF] then
-    //inf := TSynHighlighterPasRangeList(CurrentRanges).PasRangeInfo[ALineIndex];
-
-  //if AFilter.FoldGroup  in [0, FOLDGROUP_PASCAL] then
-  begin
-    // All or Pascal
-    r := CurrentRanges[ALineIndex];
-    if (r <> nil) and (r <> NullRange) then begin
-      //r2 := TSynColorFoldHighlighterRange(CurrentRanges[ALineIndex + 1]);
-      if sfbIncludeDisabled in AFilter.Flags then begin
-        Result := TSynColorFoldHighlighterRange(r).CodeFoldStackSize;
-        //if (r2 <> nil) and (r2 <> NullRange) then
-          //Result := Result + TSynColorFoldHighlighterRange(r2).LastLineCodeFoldLevelFix;
-      end
-      else begin
-        Result := TSynColorFoldHighlighterRange(r).PasFoldEndLevel;
-        //if (r2 <> nil) and (r2 <> NullRange) then
-          //Result := Result + TSynColorFoldHighlighterRange(r2).PasFoldFixLevel;
-      end;
-    end;
-  end;
-
-  {if AFilter.FoldGroup  in [0, FOLDGROUP_REGION] then begin
-    // All or REGION
-    if FFoldConfig[ord(cfbtRegion)].Enabled or
-       (sfbIncludeDisabled in AFilter.Flags)
-    then
-      Result := Result + inf.EndLevelRegion;
-  end;
-
-  if AFilter.FoldGroup  in [0, FOLDGROUP_IFDEF] then begin
-    // All or IFDEF
-    if FFoldConfig[ord(cfbtIfDef)].Enabled or
-       (sfbIncludeDisabled in AFilter.Flags)
-    then
-      Result := Result + inf.EndLevelIfDef;
-  end;}
-end;*)
-
-{function TSynColorFoldHighlighter.FoldBlockMinLevel(ALineIndex: TLineIdx;
-  const AFilter: TSynFoldBlockFilter): integer;
-var
-  //inf: TSynPasRangeInfo;
-  r, r2: Pointer;
-begin
-  result := inherited FoldBlockMinLevel(ALineIndex, AFilter); exit;
-  Assert(CurrentRanges <> nil, 'TSynCustomFoldHighlighter.FoldBlockMinLevel requires CurrentRanges');
-
-  Result := 0;
-  if (ALineIndex < 0) or (ALineIndex >= CurrentLines.Count - 1) then
-    exit;
-
-  //if AFilter.FoldGroup  in [0, FOLDGROUP_REGION, FOLDGROUP_IFDEF] then
-    //inf := TSynHighlighterPasRangeList(CurrentRanges).PasRangeInfo[ALineIndex];
-
-  //if AFilter.FoldGroup  in [0, FOLDGROUP_PASCAL] then
-  begin
-    // All or Pascal
-    (* Range.EndLevel can be smaller. because Range.MinLevel does not know the LastLineFix
-       Using a copy of FoldBlockEndLevel *)
-    r := CurrentRanges[ALineIndex];
-    if (r <> nil) and (r <> NullRange) then begin
-      //r2 := TSynColorFoldHighlighterRange(CurrentRanges[ALineIndex + 1]);
-      if sfbIncludeDisabled in AFilter.Flags then begin
-        Result := TSynColorFoldHighlighterRange(r).CodeFoldStackSize;
-        //if (r2 <> nil) and (r2 <> NullRange) then
-          //Result := Result + TSynColorFoldHighlighterRange(r2).LastLineCodeFoldLevelFix;
-        // now Result = FoldBlockEndLevel
-        Result := Min(Result, TSynColorFoldHighlighterRange(r).MinimumCodeFoldBlockLevel);
-      end
-      else begin
-        Result := TSynColorFoldHighlighterRange(r).PasFoldEndLevel;
-        //if (r2 <> nil) and (r2 <> NullRange) then
-          //Result := Result + TSynColorFoldHighlighterRange(r2).PasFoldFixLevel;
-        // now Result = FoldBlockEndLevel
-        Result := Min(Result, TSynColorFoldHighlighterRange(r).PasFoldMinLevel);
-      end;
-    end;
-  end;
-
-end; }
 
 end.
 

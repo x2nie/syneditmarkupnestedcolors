@@ -87,6 +87,8 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
+  if self <> Form1 then
+    exit; // avoid infinite loop
 
   FillLfmToSynEdit2();
   SynEditColorFold.Highlighter := TSynHighlighterBracket.Create(self);

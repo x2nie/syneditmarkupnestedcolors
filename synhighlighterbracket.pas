@@ -106,9 +106,10 @@ begin
     {$ifdef colorfold}
     StartCodeFoldBlock(FTokenPos-1, FTokenEnd);
     {$else}
-    StartCodeFoldBlock(nil);
+    StartCodeFoldBlock(FTokenPos-1, FTokenEnd);
+    {StartCodeFoldBlock(nil);
     //CodeFoldRange.FoldStart := Point (FTokenPos, LineIndex );
-    CodeFoldRange.FoldSign[True] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
+    CodeFoldRange.FoldSign[True] := FoldSign(FTokenPos, FTokenEnd, LineIndex);}
     {$endif}
     inc (FTokenEnd);
   end
@@ -118,9 +119,11 @@ begin
     {$ifdef colorfold}
     EndCodeFoldBlock(FTokenPos-1, FTokenEnd);
     {$else}
-    //CodeFoldRange.FoldFinish := Point (FTokenPos, LineIndex );
+    { //CodeFoldRange.FoldFinish := Point (FTokenPos, LineIndex );
     CodeFoldRange.FoldSign[False] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
-    EndCodeFoldBlock;
+    EndCodeFoldBlock;}
+    EndCodeFoldBlock(FTokenPos-1, FTokenEnd);
+
     {$endif}
     inc (FTokenEnd);
   end

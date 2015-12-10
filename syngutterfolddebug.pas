@@ -16,7 +16,7 @@ type
   private
     procedure PaintFoldLvl(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer);
     procedure PaintPasFoldLvl(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer);
-    procedure PaintColorFoldLvl(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer);
+    //procedure PaintColorFoldLvl(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer);
 
   public
     constructor Create(AOwner: TComponent); override;
@@ -88,8 +88,8 @@ begin
 
       if iLine > 0 then begin
         r := TSynCustomHighlighterRange(RngLst.Range[iLine-1]);
-        s:= format(' %5d         %2d %2d  ',
-                   [i, //r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
+        s:= format(' %3d         %2d %2d  ',
+                   [iLine, //r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
                     r.CodeFoldStackSize, r.MinimumCodeFoldBlockLevel //, r.LastLineCodeFoldLevelFix
                    ]
                   );
@@ -174,7 +174,7 @@ begin
 
 end;
 
-procedure TSynGutterFoldDebug.PaintColorFoldLvl(Canvas: TCanvas; AClip: TRect;
+{procedure TSynGutterFoldDebug.PaintColorFoldLvl(Canvas: TCanvas; AClip: TRect;
   FirstLine, LastLine: integer);
 var
   TextDrawer: TheTextDrawer;
@@ -239,7 +239,7 @@ begin
     TextDrawer.EndDrawing;
   end;
 
-end;
+end; }
 
 constructor TSynGutterFoldDebug.Create(AOwner: TComponent);
 begin
