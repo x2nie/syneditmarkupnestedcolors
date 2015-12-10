@@ -1095,11 +1095,11 @@ begin
   //AList.Invalidate;
 
   FIsCollectingNodeInfo := True;
-  FCollectingNodeInfoList := TLazSynFoldNodeInfoList(AList);
 
+  FCollectingNodeInfoList := TLazSynFoldNodeInfoList(AList);
   StartAtLineIndex(Line);
-  //fStringLen := 0;
   NextToEol;
+
   FIsCollectingNodeInfo := False;
 end;
 
@@ -1171,7 +1171,7 @@ begin
 
   //Start
   if FinishingABlock = False then
-  begin // exclude subblocks, because they do not increase the foldlevel yet
+  begin
     BlockEnabled := False;//FFoldConfig[PtrInt(ABlockType)].Enabled;
     //FoldBlock := True;
     act := [sfaOpen, sfaOpenFold]; //TODO: sfaOpenFold not for cfbtIfThen
@@ -1183,12 +1183,6 @@ begin
       //InitNode(nd, SignX,SignX2, +1, PtrInt(ABlockType), act, FoldBlock);
       DoInitNode(nd, LogX1, LogX2, FinishingABlock, ABlockType, act, True);
 
-
-      {MyInitNode(var Node: TSynFoldNodeInfo; LogX1, LogX2: Integer;
-                       //EndOffs: Integer;
-                       FinishingABlock: Boolean;
-                       ABlockType: Pointer; aActions: TSynFoldActions;
-                       AIsFold: Boolean);}
   end
   else
   //Finish
