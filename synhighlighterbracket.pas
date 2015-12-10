@@ -30,10 +30,10 @@ type
   private
     FFoldAttri: TSynHighlighterAttributes;
     fIdentifierAttri: TSynHighlighterAttributes;
-    fSpaceAttri: TSynHighlighterAttributes;
+    //fSpaceAttri: TSynHighlighterAttributes;
     procedure SetFoldAttri(AValue: TSynHighlighterAttributes);
     procedure SetIdentifierAttri(AValue: TSynHighlighterAttributes);
-    procedure SetSpaceAttri(AValue: TSynHighlighterAttributes);
+    //procedure SetSpaceAttri(AValue: TSynHighlighterAttributes);
   protected
     // accesible for the other examples
     FTokenPos, FTokenEnd: Integer;
@@ -54,8 +54,8 @@ type
     (* Define 4 Attributes, for the different highlights. *)
     property IdentifierAttri: TSynHighlighterAttributes read fIdentifierAttri
       write SetIdentifierAttri;
-    property SpaceAttri: TSynHighlighterAttributes read fSpaceAttri
-      write SetSpaceAttri;
+    //property SpaceAttri: TSynHighlighterAttributes read fSpaceAttri
+      //write SetSpaceAttri;
     property FoldAttri: TSynHighlighterAttributes read FFoldAttri
       write SetFoldAttri;
   end;
@@ -75,10 +75,10 @@ begin
   fIdentifierAttri := TSynHighlighterAttributes.Create('ident', 'ident');
   AddAttribute(fIdentifierAttri);
 
-  fSpaceAttri := TSynHighlighterAttributes.Create('space', 'space');
+  {fSpaceAttri := TSynHighlighterAttributes.Create('space', 'space');
   AddAttribute(fSpaceAttri);
   fSpaceAttri.FrameColor := clSilver;
-  fSpaceAttri.FrameEdges := sfeBottom;//sfeLeft;//sfeAround;
+  fSpaceAttri.FrameEdges := sfeBottom;//sfeLeft;//sfeAround;}
 end;
 
 procedure TSynHighlighterBracket.Next;
@@ -146,10 +146,10 @@ begin
 end;
 
 
-procedure TSynHighlighterBracket.SetSpaceAttri(AValue: TSynHighlighterAttributes);
+{procedure TSynHighlighterBracket.SetSpaceAttri(AValue: TSynHighlighterAttributes);
 begin
   fSpaceAttri.Assign(AValue);
-end;
+end;}
 
 
 procedure TSynHighlighterBracket.SetLine(const NewValue: String; LineNumber: Integer);
@@ -180,7 +180,7 @@ begin
   // Match the text, specified by FTokenPos and FTokenEnd
 
   if FLineText[FTokenPos] in [#9, ' '] then
-    Result := SpaceAttri
+    Result := WhitespaceAttribute
   else
     if FLineText[FTokenPos] in ['{', '}'] then
       Result := FoldAttri
@@ -204,7 +204,7 @@ begin
   case Index of
     //SYN_ATTR_COMMENT: Result := fSpecialAttri;
     SYN_ATTR_IDENTIFIER: Result := fIdentifierAttri;
-    SYN_ATTR_WHITESPACE: Result := fSpaceAttri;
+    //SYN_ATTR_WHITESPACE: Result := fSpaceAttri;
     else Result := nil;
   end;
 end;
@@ -216,7 +216,7 @@ begin
   // Map Attribute into a unique number
   a := GetTokenAttribute;
   Result := 0;
-  if a = fSpaceAttri then Result := 1;
+  //if a = fSpaceAttri then Result := 1;
   if a = fIdentifierAttri then Result := 3;
   if a = FFoldAttri then Result := 4;
 end;

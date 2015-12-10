@@ -117,8 +117,8 @@ type
     FFoldAttri: TSynHighlighterAttributes;
     procedure SetFoldAttri(AValue: TSynHighlighterAttributes);
   protected
-    function GetRangeClass: TSynCustomHighlighterRangeClass; override;
-    procedure InitFoldNodeInfo(AList: TLazSynFoldNodeInfoList; Line: TLineIdx); override;
+    //function GetRangeClass: TSynCustomHighlighterRangeClass; override;
+    //procedure InitFoldNodeInfo(AList: TLazSynFoldNodeInfoList; Line: TLineIdx); override;
 
   public
     procedure Next; override;
@@ -221,19 +221,19 @@ begin
   FFoldAttri.Assign(AValue);
 end;
 
-function TSynDemoHlFold.GetRangeClass: TSynCustomHighlighterRangeClass;
+{function TSynDemoHlFold.GetRangeClass: TSynCustomHighlighterRangeClass;
 begin
   result := TSynDemoFoldHighlighterRange;
-end;
+end;}
 
-procedure TSynDemoHlFold.InitFoldNodeInfo(AList: TLazSynFoldNodeInfoList;
+{procedure TSynDemoHlFold.InitFoldNodeInfo(AList: TLazSynFoldNodeInfoList;
   Line: TLineIdx);
 begin
-  inherited InitFoldNodeInfo(AList, Line);
+  //inherited InitFoldNodeInfo(AList, Line);
   StartAtLineIndex(Line);
   //fStringLen := 0;
   NextToEol;
-end;
+end;}
 
 
 (*   This is an EXACT COPY of SynEditHighlighter

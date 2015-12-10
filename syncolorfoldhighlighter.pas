@@ -158,7 +158,7 @@ type
   public
     procedure SetLine(const NewValue: string; LineNumber: Integer); override;
 
-    function FoldBlockEndLevel(ALineIndex: TLineIdx; const AFilter: TSynFoldBlockFilter): integer; override; overload;
+    //function FoldBlockEndLevel(ALineIndex: TLineIdx; const AFilter: TSynFoldBlockFilter): integer; override; overload;
     //function FoldBlockMinLevel(ALineIndex: TLineIdx; const AFilter: TSynFoldBlockFilter): integer; override; overload;
   published
   end;
@@ -409,7 +409,7 @@ begin
   PasCodeFoldRange.PasFoldMinLevel := PasCodeFoldRange.PasFoldEndLevel;
 end;
 
-function TSynColorFoldHighlighter.FoldBlockEndLevel(ALineIndex: TLineIdx;
+(*function TSynColorFoldHighlighter.FoldBlockEndLevel(ALineIndex: TLineIdx;
   const AFilter: TSynFoldBlockFilter): integer;
 var
   //inf: TSynPasRangeInfo;
@@ -458,7 +458,7 @@ begin
     then
       Result := Result + inf.EndLevelIfDef;
   end;}
-end;
+end;*)
 
 {function TSynColorFoldHighlighter.FoldBlockMinLevel(ALineIndex: TLineIdx;
   const AFilter: TSynFoldBlockFilter): integer;
