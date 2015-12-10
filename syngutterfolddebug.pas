@@ -223,7 +223,7 @@ begin
       if iLine > 0 then begin
         r := TSynColorFoldHighlighterRange(RngLst.Range[iLine-1]);
         s:= format('%2d %2d %2d  %2d %2d  ',
-                   [r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
+                   [//r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
                     r.CodeFoldStackSize, r.MinimumCodeFoldBlockLevel //, r.LastLineCodeFoldLevelFix
                    ]
                   );
@@ -254,9 +254,9 @@ begin
   Canvas.Pen.Color := clAqua;
   with AClip do
   canvas.Line(left,top,right,bottom);
-  if TCustomSynEdit(self.SynEdit).Highlighter is TSynColorFoldHighlighter then //higher checked first
+  {if TCustomSynEdit(self.SynEdit).Highlighter is TSynColorFoldHighlighter then //higher checked first
     PaintColorFoldLvl(Canvas, AClip, FirstLine, LastLine)
-  else
+  else}
   if TCustomSynEdit(self.SynEdit).Highlighter is TSynPasSyn then //lower
     PaintPasFoldLvl(Canvas, AClip, FirstLine, LastLine)
   else
