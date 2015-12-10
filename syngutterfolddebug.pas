@@ -87,7 +87,7 @@ begin
       rcLine.Bottom := rcLine.Bottom + LineHeight;
 
       if iLine > 0 then begin
-        r := TSynColorFoldHighlighterRange(RngLst.Range[iLine-1]);
+        r := TSynCustomHighlighterRange(RngLst.Range[iLine-1]);
         s:= format(' %5d         %2d %2d  ',
                    [i, //r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
                     r.CodeFoldStackSize, r.MinimumCodeFoldBlockLevel //, r.LastLineCodeFoldLevelFix
@@ -183,7 +183,7 @@ var
   dc: HDC;
   s: String;
   RngLst: TSynHighlighterRangeList;
-  r: TSynColorFoldHighlighterRange;//TSynPasSynRange;
+  r: TSynCustomHighlighterRange;//TSynPasSynRange;
   HL : TSynColorFoldHighlighterAccess;
 begin
   if TCustomSynEdit(SynEdit).Highlighter = nil then exit;
@@ -221,7 +221,7 @@ begin
       rcLine.Bottom := rcLine.Bottom + LineHeight;
 
       if iLine > 0 then begin
-        r := TSynColorFoldHighlighterRange(RngLst.Range[iLine-1]);
+        r := TSynCustomHighlighterRange(RngLst.Range[iLine-1]);
         s:= format('%2d %2d %2d  %2d %2d  ',
                    [//r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
                     r.CodeFoldStackSize, r.MinimumCodeFoldBlockLevel //, r.LastLineCodeFoldLevelFix
