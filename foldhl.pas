@@ -164,15 +164,18 @@ begin
     //InitNode(nd, +1, ABlockType, act, FoldBlock);
     //FFoldNodeInfoList.Add(nd);
 
-    StartCodeFoldBlock(nil);
+    //StartCodeFoldBlock(nil);
     //CodeFoldRange.FoldStart := Point (FTokenPos, LineIndex );
     //CodeFoldRange.FoldSign[True] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
+    StartCodeFoldBlock(FTokenPos-1, FTokenEnd);
+
   end;
   if (copy(FLineText, FTokenPos, FTokenEnd - FTokenPos) = '-)-') then
   begin
     //CodeFoldRange.FoldFinish := Point (FTokenPos, LineIndex );
     //CodeFoldRange.FoldSign[False] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
-    EndCodeFoldBlock;
+    //EndCodeFoldBlock;
+    EndCodeFoldBlock(FTokenPos-1, FTokenEnd);
   end;
 end;
 

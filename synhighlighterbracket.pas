@@ -20,7 +20,7 @@ uses
   SynEditHighlighterFoldBase, SynColorFoldHighlighter
   ;
 
-{$define colorfold}
+{.$define colorfold}
 type
 
   { TSynHighlighterBracket }
