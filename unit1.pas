@@ -59,7 +59,7 @@ implementation
 uses
   SynGutterFoldDebug,
   SynEditHighlighterFoldBase,
-  SynEditMarkupFoldColors, foldhl, SynHighlighterBracket
+  SynEditMarkupFoldColoring, foldhl, SynHighlighterBracket
   ;
 
 {$R *.lfm}
