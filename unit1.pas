@@ -112,11 +112,13 @@ begin
       if not (S.Highlighter is TSynCustomFoldHighlighter) then
         continue;
 
+      S.LineHighlightColor.Background:=panel1.Color;
+      TSynGutterFoldDebug.Create(S.RightGutter.Parts);
+
+      //continue; //debug
       M := TSynEditMarkupFoldColors.Create(S);
       M.DefaultGroup := 0;
       S.MarkupManager.AddMarkUp(M);
-      S.LineHighlightColor.Background:=panel1.Color;
-      TSynGutterFoldDebug.Create(S.RightGutter.Parts);
     end;
   end;
 end;

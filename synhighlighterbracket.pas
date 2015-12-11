@@ -103,29 +103,29 @@ begin
 
   if FLineText[FTokenEnd] = '{' then
   begin
+    inc (FTokenEnd);
     {$ifdef colorfold}
     StartCodeFoldBlock(FTokenPos-1, FTokenEnd);
     {$else}
-    StartCodeFoldBlock(FTokenPos-1, FTokenEnd);
-    {StartCodeFoldBlock(nil);
+    //StartCodeFoldBlock(FTokenPos-1, FTokenEnd);
+    StartCodeFoldBlock(nil);
     //CodeFoldRange.FoldStart := Point (FTokenPos, LineIndex );
-    CodeFoldRange.FoldSign[True] := FoldSign(FTokenPos, FTokenEnd, LineIndex);}
+    //CodeFoldRange.FoldSign[True] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
     {$endif}
-    inc (FTokenEnd);
   end
   else
   if FLineText[FTokenEnd] = '}' then
   begin
+    inc (FTokenEnd);
     {$ifdef colorfold}
     EndCodeFoldBlock(FTokenPos-1, FTokenEnd);
     {$else}
-    { //CodeFoldRange.FoldFinish := Point (FTokenPos, LineIndex );
-    CodeFoldRange.FoldSign[False] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
-    EndCodeFoldBlock;}
-    EndCodeFoldBlock(FTokenPos-1, FTokenEnd);
+     //CodeFoldRange.FoldFinish := Point (FTokenPos, LineIndex );
+    //CodeFoldRange.FoldSign[False] := FoldSign(FTokenPos, FTokenEnd, LineIndex);
+    EndCodeFoldBlock;
+    //EndCodeFoldBlock(FTokenPos-1, FTokenEnd);
 
     {$endif}
-    inc (FTokenEnd);
   end
   else
     if FLineText[FTokenEnd] in [#9, ' '] then

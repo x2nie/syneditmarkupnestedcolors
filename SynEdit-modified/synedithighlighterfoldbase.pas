@@ -314,15 +314,12 @@ type
       write FRootCodeFoldBlock;
 
     // Open/Close Folds
+    procedure GetTokenBounds(out LogX1,LogX2 : Integer); virtual;
     function StartCodeFoldBlock(ABlockType: Pointer;
-              IncreaseLevel: Boolean = true): TSynCustomCodeFoldBlock; virtual; overload;
-    function StartCodeFoldBlock(LogX1,LogX2 : Integer; ABlockType: Pointer=nil;
-              IncreaseLevel: Boolean = true): TSynCustomCodeFoldBlock; virtual; overload;
+              IncreaseLevel: Boolean = true): TSynCustomCodeFoldBlock; virtual;
     procedure EndCodeFoldBlock(DecreaseLevel: Boolean = True); virtual;
-    procedure EndCodeFoldBlock(LogX1,LogX2 : Integer;
-              DecreaseLevel: Boolean = True); virtual; overload;
     procedure CollectNodeInfo(FinishingABlock : Boolean; ABlockType: Pointer;
-              LevelChanged: Boolean; LogX1, LogX2: Integer); virtual;
+              LevelChanged: Boolean); virtual;
     procedure DoInitNode(var Node: TSynFoldNodeInfo; LogX1, LogX2: Integer;
                        //EndOffs: Integer;
                        FinishingABlock: Boolean;
@@ -1129,45 +1126,44 @@ begin
   end;
 end;
 
+procedure TSynCustomFoldHighlighter.GetTokenBounds(out LogX1, LogX2: Integer);
+var p : pchar; L : integer;
+begin
+  LogX1 := self.GetTokenPos;
+  self.GetTokenEx(p,L);
+  LogX2 := LogX1 + L -1;
+end;
+
 function TSynCustomFoldHighlighter.StartCodeFoldBlock(ABlockType: Pointer;
   IncreaseLevel: Boolean = True): TSynCustomCodeFoldBlock;
 begin
-  Result:=CodeFoldRange.Add(ABlockType, IncreaseLevel);
-end;
-
-function TSynCustomFoldHighlighter.StartCodeFoldBlock(LogX1, LogX2: Integer;
-  ABlockType: Pointer; IncreaseLevel: Boolean): TSynCustomCodeFoldBlock;
-begin
   if FIsCollectingNodeInfo then
-    CollectNodeInfo(False, ABlockType, IncreaseLevel, LogX1, LogX2);
+    CollectNodeInfo(False, ABlockType, IncreaseLevel);
 
-  result := StartCodeFoldBlock(ABlockType, IncreaseLevel);
+  Result:=CodeFoldRange.Add(ABlockType, IncreaseLevel);
 end;
 
 procedure TSynCustomFoldHighlighter.EndCodeFoldBlock(DecreaseLevel: Boolean = True);
 begin
+  if FIsCollectingNodeInfo then
+    CollectNodeInfo(True, nil, DecreaseLevel);
+
   CodeFoldRange.Pop(DecreaseLevel);
 end;
 
-procedure TSynCustomFoldHighlighter.EndCodeFoldBlock(LogX1, LogX2: Integer;
-  DecreaseLevel: Boolean);
-begin
-  if FIsCollectingNodeInfo then
-    CollectNodeInfo(True, nil, DecreaseLevel, LogX1, LogX2);
-
-  EndCodeFoldBlock(DecreaseLevel);
-end;
-
 procedure TSynCustomFoldHighlighter.CollectNodeInfo(FinishingABlock: Boolean;
-  ABlockType: Pointer; LevelChanged: Boolean; LogX1, LogX2: Integer);
+  ABlockType: Pointer; LevelChanged: Boolean);
 var
   //DecreaseLevel,
   BlockEnabled: Boolean;
   act: TSynFoldActions;
   BlockType: Integer;
+  LogX1, LogX2: Integer;
   nd: TSynFoldNodeInfo;
 begin
   if not IsCollectingNodeInfo then exit;
+
+  GetTokenBounds(LogX1, LogX2);
 
   //Start
   if FinishingABlock = False then
