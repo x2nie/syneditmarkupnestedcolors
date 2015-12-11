@@ -143,7 +143,7 @@ begin
   end;
   SynEdit2.Lines.Text := ComponentToStringProc(F);
   F.Free;
-  SynEdit2.Highlighter := SynHighlighterLFM2.TSynLFMSyn.Create(self);
+  //SynEdit2.Highlighter := SynHighlighterLFM2.TSynLFMSyn.Create(self);
 end;
 
 end.

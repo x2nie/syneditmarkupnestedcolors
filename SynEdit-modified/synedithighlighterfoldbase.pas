@@ -132,6 +132,7 @@ type
     NodeIndex: Integer;          // Indicates the position within the list of info nodes (depends on search-Filter)
     AllNodeIndex: Integer;       // Indicates the position within the unfiltered list of info nodes
     LogXStart, LogXEnd: Integer; // -1 previous line ( 0-based)
+    LogVertGuideX : integer;     // similar to LogXStart, but XML based is different drawing vertical line (nested color markup)
     FoldLvlStart, FoldLvlEnd: Integer; // FoldLvl within each FoldGroup
     NestLvlStart, NestLvlEnd: Integer; // include disabled nodes, e.g markup (within each FoldGroup)
     FoldAction: TSynFoldActions;
@@ -314,13 +315,13 @@ type
       write FRootCodeFoldBlock;
 
     // Open/Close Folds
-    procedure GetTokenBounds(out LogX1,LogX2 : Integer); virtual;
+    procedure GetTokenBounds(out LogX1,LogX2,LogVertGuideX : Integer); virtual;
     function StartCodeFoldBlock(ABlockType: Pointer;
               IncreaseLevel: Boolean = true): TSynCustomCodeFoldBlock; virtual;
     procedure EndCodeFoldBlock(DecreaseLevel: Boolean = True); virtual;
     procedure CollectNodeInfo(FinishingABlock : Boolean; ABlockType: Pointer;
               LevelChanged: Boolean); virtual;
-    procedure DoInitNode(var Node: TSynFoldNodeInfo; LogX1, LogX2: Integer;
+    procedure DoInitNode(var Node: TSynFoldNodeInfo;
                        //EndOffs: Integer;
                        FinishingABlock: Boolean;
                        ABlockType: Pointer; aActions: TSynFoldActions;
@@ -1126,12 +1127,14 @@ begin
   end;
 end;
 
-procedure TSynCustomFoldHighlighter.GetTokenBounds(out LogX1, LogX2: Integer);
+procedure TSynCustomFoldHighlighter.GetTokenBounds(out LogX1, LogX2,
+  LogVertGuideX: Integer); //Vert Guide Line, used by nested color markup
 var p : pchar; L : integer;
 begin
-  LogX1 := self.GetTokenPos;
-  self.GetTokenEx(p,L);
+  GetTokenEx(p,L);
+  LogX1 := GetTokenPos;
   LogX2 := LogX1 + L -1;
+  LogVertGuideX := LogX1;
 end;
 
 function TSynCustomFoldHighlighter.StartCodeFoldBlock(ABlockType: Pointer;
@@ -1158,12 +1161,10 @@ var
   BlockEnabled: Boolean;
   act: TSynFoldActions;
   BlockType: Integer;
-  LogX1, LogX2: Integer;
   nd: TSynFoldNodeInfo;
 begin
   if not IsCollectingNodeInfo then exit;
 
-  GetTokenBounds(LogX1, LogX2);
 
   //Start
   if FinishingABlock = False then
@@ -1177,7 +1178,7 @@ begin
     //if not FAtLineStart then
       //act := act - [sfaFoldHide];
       //InitNode(nd, SignX,SignX2, +1, PtrInt(ABlockType), act, FoldBlock);
-      DoInitNode(nd, LogX1, LogX2, FinishingABlock, ABlockType, act, True);
+      DoInitNode(nd, FinishingABlock, ABlockType, act, True);
 
   end
   else
@@ -1191,7 +1192,7 @@ begin
     if not LevelChanged then
       act := act - [sfaFold, sfaFoldFold, sfaFoldHide];
     //InitNode(nd, SignX,SignX2, -1, BlockType, act, DecreaseLevel);
-    DoInitNode(nd, LogX1, LogX2, FinishingABlock, ABlockType, act, LevelChanged);
+    DoInitNode(nd, FinishingABlock, ABlockType, act, LevelChanged);
 
   end;
 
@@ -1200,13 +1201,18 @@ begin
 end;
 
 procedure TSynCustomFoldHighlighter.DoInitNode(var Node: TSynFoldNodeInfo;
-  LogX1, LogX2: Integer; FinishingABlock: Boolean; ABlockType: Pointer;
+  FinishingABlock: Boolean; ABlockType: Pointer;
   aActions: TSynFoldActions; AIsFold: Boolean);
 var
   OneLine: Boolean;
   EndOffs, i: Integer;
   nd: PSynFoldNodeInfo;
+  LogX1V: integer; //used for vertical line in nested color markup
+  LogX1, LogX2: Integer;
+
 begin
+  GetTokenBounds(LogX1, LogX2, LogX1V);
+
   aActions := aActions + [sfaMultiLine];
   if FinishingABlock then
     EndOffs := -1
@@ -1215,6 +1221,7 @@ begin
   Node.LineIndex := LineIndex;
   Node.LogXStart := LogX1;
   Node.LogXEnd := LogX2;
+  Node.LogVertGuideX:=LogX1V;
   Node.FoldType := ABlockType;// Pointer(PtrInt(ABlockType));
   Node.FoldTypeCompatible := ABlockType;// Pointer(PtrInt(ABlockType));//Pointer(PtrInt(PascalFoldTypeCompatibility[ABlockType]));
   Node.FoldAction := aActions;

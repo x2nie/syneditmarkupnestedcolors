@@ -166,7 +166,7 @@ procedure TSynEditMarkupFoldColors.DoMarkupFoldAtRow(aRow: Integer);
       Border := False;
       Y  := ANode.LineIndex + 1;
       X  := ANode.LogXStart + 1;
-      X2 := ANode.LogXEnd + 1+1;
+      X2 := ANode.LogXEnd + 1;
       if sfaOpen in ANode.FoldAction then begin
         lvl := ANode.FoldLvlStart;
         //lvl := ANode.NestLvlStart; //http://forum.lazarus.freepascal.org/index.php/topic,30122.msg194841.html#msg194841
@@ -254,7 +254,11 @@ procedure TSynEditMarkupFoldColors.DoMarkupParentFoldAtRow(aRow: Integer);
     with FHighlights[x] do begin
       Border := ANode.LineIndex + 1 <> aRow;
       Y  := aRow;//ANode.LineIndex + 1;
-      X  := ANode.LogXStart + 1;
+      if ANode.LineIndex + 1 = aRow then //mean on open/close tag
+        X  := ANode.LogXStart + 1
+      else
+        X  := ANode.LogVertGuideX + 1;
+
       X2 := X+1; //ANode.LogXEnd + 1;
       if sfaOpen in ANode.FoldAction then begin
         lvl := ANode.FoldLvlStart;
