@@ -25,9 +25,9 @@ object Form1: TForm1
     Height = 467
     Top = 0
     Width = 630
-    ActivePage = TabSheet2
+    ActivePage = TabSheet5
     Align = alClient
-    TabIndex = 1
+    TabIndex = 5
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Pascal'
@@ -3116,7 +3116,7 @@ object Form1: TForm1
         Gutter.MouseActions = <>
         RightGutter.Width = 0
         RightGutter.MouseActions = <>
-        Highlighter = SynHTMLSyn1
+        Highlighter = SynXMLSyn1
         Keystrokes = <        
           item
             Command = ecUp
@@ -3542,104 +3542,39 @@ object Form1: TForm1
         MouseTextActions = <>
         MouseSelActions = <>
         Lines.Strings = (
-          '<!DOCTYPE HTML>'
-          '<html>'
-          ''
-          '<head>'
-          #9'<meta charset="UTF-8">'
-          ''
-          #9'<title>Portfolio | Chris Coyier</title>'
-          ''
-          #9'<!--[if !IE]><!-->'
-          #9#9'<link rel="stylesheet" href="/css/main.css" />'
-          #9'<!--<![endif]-->'
-          ''
-          #9'<!--[if gte IE 7]>'
-          #9#9'<link rel="stylesheet" type="text/css" href="/css/main.css" media="screen, projection" />'
-          #9'<![endif]-->'
-          ''
-          #9'<!--[if IE 6]>'
-          #9#9'<link rel="stylesheet" type="text/css" href="http://universal-ie6-css.googlecode.com/files/ie6.0.3.css" media="screen, projection" />'
-          #9'<![endif]-->'
-          '</head>'
-          ''
-          '<body id="home">'
-          ''
-          #9'<header>'
-          #9#9'<a id="logo" href="/">Site Title</a>'
-          #9#9'<div id="slogan">web craftsman, blogger, author, speaker</div>'
-          ''
-          #9#9'<nav>'
-          #9#9#9'<?php include("inc/main-menu.php"); ?>'
-          #9#9'</nav>'
-          #9'</header>'
-          ''
-          #9'<section class="container">'
-          ''
-          #9#9'<article>'
-          #9#9#9'<h1>Hipsters</h1>'
-          ''
-          #9#9#9'<img src="//chriscoyier.net/images/hipster.jpg" alt="Hipster and Company" height="120" width="570" />'
-          ''
-          #9#9#9'<p>You can&#8217;t dress up as a hipster for Halloween. Their attire is already so bizarre that there isn&#8217;t an'
-          #9#9#9'exaggeration of it that looks like a costume. It would just look like you are another hipster about to read a poem about reading poems.</p>'
-          ''
-          #9#9#9'<h2>Secondary Title</h2>'
-          #9#9#9'<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>'
-          #9#9'</article>'
-          ''
-          #9#9'<article>'
-          #9#9#9'<!-- Additional Article -->'
-          #9#9'</article>'
-          ''
-          #9'</section>'
-          ''
-          #9'<aside>'
-          #9#9'<h3>My Major Projects</h3>'
-          #9#9'<dl>'
-          #9#9#9'<dt><a href="http://aremysitesup.com">Are My Sites Up?</a></dt>'
-          #9#9#9'<dd>Monitor your sites</dd>'
-          ''
-          #9#9#9'<dt><a href="http://css-tricks.com">CSS-Tricks</a></dt>'
-          #9#9#9'<dd>A web design community</dd>'
-          ''
-          #9#9#9'<dt><a href="http://digwp.com">Digging Into WordPress</a></dt>'
-          #9#9#9'<dd>Learn about WordPress</dd>'
-          #9#9'</dl>'
-          #9'</aside>'
-          ''
-          #9'<footer class="container">'
-          #9#9'<h4>People I Enjoy</h4>'
-          #9#9'<ul class="col">'
-          #9#9#9'<li><a href="http://fastfoodreviewed.com">Jesse Lynch</a></li>'
-          #9#9#9'<li><a href="http://jeffcampana.com">Jeff Campana</a></li>'
-          #9#9#9'<li><a href="http://perishablepress.com">Jeff Starr</a></li>'
-          #9#9'</ul>'
-          #9#9'<ul class="col">'
-          #9#9#9'<li><a href="http://davidwalsh.name">David Walsh</a></li>'
-          #9#9#9'<li><a href="http://thestrategicretreat.com">Jeff Penman</a></li>'
-          #9#9#9'<li><a href="http://http://shiftedfrequency.com">Richard Felix Jr.</a></li>'
-          #9#9'</ul>'
-          ''
-          #9#9'<h4>Sandwiches</h4>'
-          #9#9'<ul class="col container" id="sandwich-list">'
-          #9#9#9'<li><a href="http://jimmyjohns.com">Jimmy Johns</a></li>'
-          #9#9#9'<li><a href="http://subway.com">Subway</a></li>'
-          #9#9#9'<li><a href="http://potbelly.com">Potbelly</a></li>'
-          #9#9'</ul>'
-          ''
-          #9#9'&copy;2007-<?php echo date("Y"); ?> Chris Coyier'
-          #9'</footer>'
-          ''
-          #9'<script src=''//ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js?ver=1.3.2''></script>'
-          #9'<script src=''/js/main.js''></script>'
-          ''
-          #9'<!-- Google Analytics Code -->'
-          #9'<?php include_once("inc/analytics.php"); ?>'
-          ''
-          '</body>'
-          ''
-          '</html>'
+          '<?xml version="1.0" encoding="UTF-8"?>'
+          '<breakfast_menu>'
+          '     <food>'
+          '          <name>Belgian Waffles</name>'
+          '          <price>$5.95</price>'
+          '          <description>Two of our famous Belgian Waffles with plenty of real maple syrup</description>'
+          '          <calories>650</calories>'
+          '     </food>'
+          '     <food>'
+          '          <name>Strawberry Belgian Waffles</name>'
+          '          <price>$7.95</price>'
+          '          <description>Light Belgian waffles covered with strawberries and whipped cream</description>'
+          '          <calories>900</calories>'
+          '     </food>'
+          '     <food>'
+          '          <name>Berry-Berry Belgian Waffles</name>'
+          '          <price>$8.95</price>'
+          '          <description>Light Belgian waffles covered with an assortment of fresh berries and whipped cream</description>'
+          '          <calories>900</calories>'
+          '     </food>'
+          '     <food>'
+          '          <name>French Toast</name>'
+          '          <price>$4.50</price>'
+          '          <description>Thick slices made from our homemade sourdough bread</description>'
+          '          <calories>600</calories>'
+          '     </food>'
+          '     <food>'
+          '          <name>Homestyle Breakfast</name>'
+          '          <price>$6.95</price>'
+          '          <description>Two eggs, bacon or sausage, toast, and our ever-popular hash browns</description>'
+          '          <calories>950</calories>'
+          '     </food>'
+          '</breakfast_menu>'
         )
         VisibleSpecialChars = [vscSpace, vscTabAtLast]
         SelectedColor.BackPriority = 50
@@ -3703,8 +3638,8 @@ object Form1: TForm1
     DirectiveAttri.Foreground = clFuchsia
     CompilerMode = pcmObjFPC
     NestedComments = True
-    left = 416
-    top = 88
+    left = 432
+    top = 72
   end
   object SynLFMSyn1: TSynLFMSyn
     DefaultFilter = 'Lazarus Form Files (*.lfm)|*.lfm'
@@ -3723,5 +3658,12 @@ object Form1: TForm1
     Enabled = False
     left = 158
     top = 251
+  end
+  object SynXMLSyn1: TSynXMLSyn
+    DefaultFilter = 'XML Document (*.xml,*.xsd,*.xsl,*.xslt,*.dtd)|*.xml;*.xsd;*.xsl;*.xslt;*.dtd'
+    Enabled = False
+    WantBracesParsed = False
+    left = 160
+    top = 304
   end
 end

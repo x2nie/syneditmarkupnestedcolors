@@ -9,7 +9,7 @@ uses
   Graphics, Dialogs, ExtCtrls, ComCtrls, SynEditMarkupWordGroup,
   SynHighlighterLFM,
   SynHighlighterPython,
-  SynHighlighterHTML;
+  SynHighlighterHTML, SynHighlighterXML;
 
 type
 
@@ -32,6 +32,7 @@ type
     SynHTMLSyn1: TSynHTMLSyn;
     SynLFMSyn1: TSynLFMSyn;
     SynPythonSyn1: TSynPythonSyn;
+    SynXMLSyn1: TSynXMLSyn;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
