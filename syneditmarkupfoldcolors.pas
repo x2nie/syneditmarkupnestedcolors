@@ -116,6 +116,7 @@ begin
           begin
             MarkupInfo.FrameColor:= clNone;
             MarkupInfo.Foreground:= clNone;
+            MarkupInfo.Background:= clNone;
             MarkupInfo.FrameEdges:= sfeNone;
             //MarkupInfo.FrameColor:= clGreen; //debug
 
@@ -130,6 +131,15 @@ begin
               MarkupInfo.Foreground := Colors[ColorIdx];
 
             //MarkupInfo.FrameEdges:= sfeAround; //debug
+
+            //2nd debug
+            if x > x2 then
+            begin
+              MarkupInfo.Background:= clYellow;
+              MarkupInfo.SetFrameBoundsLog(x-1, x2+20);
+              MarkupInfo.FrameColor:= clBlue; //debug
+            end;
+
           end;
 
           break;
@@ -222,11 +232,11 @@ begin
       TmpNode := NodeList[i];
 
       //find till valid
-      while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) do
+      {while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) do
       begin
         inc(i);
         TmpNode := NodeList[i];
-      end;
+      end;}
       if not (sfaInvalid in TmpNode.FoldAction) then
           AddHighlight(TmpNode);
 
@@ -255,7 +265,11 @@ procedure TSynEditMarkupFoldColors.DoMarkupParentFoldAtRow(aRow: Integer);
       Border := ANode.LineIndex + 1 <> aRow;
       Y  := aRow;//ANode.LineIndex + 1;
       if ANode.LineIndex + 1 = aRow then //mean on open/close tag
-        X  := ANode.LogXStart + 1
+      begin
+        //X  := ANode.LogXStart + 1
+        ColorIdx := -1;
+        exit;
+      end
       else
         X  := ANode.LogVertGuideX + 1;
 

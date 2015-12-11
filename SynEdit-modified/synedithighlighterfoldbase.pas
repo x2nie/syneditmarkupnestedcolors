@@ -1133,7 +1133,7 @@ var p : pchar; L : integer;
 begin
   GetTokenEx(p,L);
   LogX1 := GetTokenPos;
-  LogX2 := LogX1 + L -1;
+  LogX2 := LogX1 + L ;
   LogVertGuideX := LogX1;
 end;
 

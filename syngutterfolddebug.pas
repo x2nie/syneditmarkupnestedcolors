@@ -17,7 +17,7 @@ type
     procedure PaintFoldLvl(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer);
     procedure PaintPasFoldLvl(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer);
     //procedure PaintColorFoldLvl(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer);
-
+    function GetFoldHighLighter: TSynCustomFoldHighlighter;
   public
     constructor Create(AOwner: TComponent); override;
     //destructor Destroy; override;
@@ -50,7 +50,20 @@ var
   RngLst: TSynHighlighterRangeList;
   r:  TSynCustomHighlighterRange;//TSynPasSynRange;
   HL : TSynCustomFoldHighlighterAccess;
-begin
+  Y,NestCount,KeyWords : integer;
+  Nest : TLazSynEditNestedFoldsList;
+  TmpNode: TSynFoldNodeInfo;
+  NodeList: TLazSynFoldNodeInfoList;
+  x1st,x1,x2 : integer;
+ begin
+   //y := aRow-1;
+   Nest := TLazSynEditNestedFoldsList.Create(@GetFoldHighLighter);
+   Nest.ResetFilter;
+   Nest.Clear;
+   Nest.FoldGroup := 0;//FDefaultGroup;//1;//FOLDGROUP_PASCAL;
+   Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
+   Nest.IncludeOpeningOnLine := False; //True; //
+
   if TCustomSynEdit(SynEdit).Highlighter = nil then exit;
   if not(TCustomSynEdit(SynEdit).Highlighter is TSynCustomFoldHighlighter)  then exit;
   //TCustomSynEdit(SynEdit).Highlighter.CurrentLines := TheLinesView;
@@ -64,6 +77,7 @@ begin
 
   HL := TSynCustomFoldHighlighterAccess( TCustomSynEdit(self.SynEdit).Highlighter );
   RngLst := HL.CurrentRanges;
+
   // Clear all
   TextDrawer.BeginDrawing(dc);
   try
@@ -86,11 +100,47 @@ begin
       rcLine.Top := rcLine.Bottom;
       rcLine.Bottom := rcLine.Bottom + LineHeight;
 
+      if iLine = TCustomSynEdit(SynEdit).TopLine then
+        s := 'Kwd Nst   End Min'
+      else
       if iLine > 0 then begin
+        y := iLine -1;
+        Keywords := HL.FoldNodeInfo[y].Count;
+        NodeList := HL.FoldNodeInfo[y];
+        x1st := -9;
+        x1   := -9;
+        x2   := -9;
+            NodeList.AddReference;
+            if NodeList.Count > 0 then
+            try
+              NodeList.ActionFilter := [
+                  {sfaMarkup,}
+                  sfaFold
+                  //sfaFoldFold
+                  //sfaFoldHide
+                  //sfaSingleLine
+                  //sfaMultiLine
+                  //sfaOpen
+                  ];
+              //NodeList.FoldFlags:= [sfbIncludeDisabled];
+                TmpNode := NodeList[0];
+                 x1st := TmpNode.LogVertGuideX;
+                  x1   := TmpNode.LogXStart;
+                  x2   := TmpNode.LogXEnd;
+                  y    := TmpNode.LineIndex;
+            finally
+              NodeList.ReleaseReference;
+            end;
+        //TmpNode := NodeList[i];
+        Nest.Line := iLine -1;
+
+        NestCount:= Nest.Count;
         r := TSynCustomHighlighterRange(RngLst.Range[iLine-1]);
-        s:= format(' %3d         %2d %2d  ',
-                   [iLine, //r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
+        s:= format(' %2d  %2d     %2d %2d   %3d| %2d..%2d ,%2d',
+                   [//iLine, //r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
+                    KeyWords, NestCount,
                     r.CodeFoldStackSize, r.MinimumCodeFoldBlockLevel //, r.LastLineCodeFoldLevelFix
+                    ,x1st,x1,x2,y
                    ]
                   );
       end
@@ -174,6 +224,11 @@ begin
 
 end;
 
+function TSynGutterFoldDebug.GetFoldHighLighter: TSynCustomFoldHighlighter;
+begin
+  result := TCustomSynEdit(self.SynEdit).Highlighter as TSynCustomFoldHighlighter;
+end;
+
 {procedure TSynGutterFoldDebug.PaintColorFoldLvl(Canvas: TCanvas; AClip: TRect;
   FirstLine, LastLine: integer);
 var
@@ -245,7 +300,7 @@ constructor TSynGutterFoldDebug.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   AutoSize := False;
-  Width := 200;//PreferedWidth;
+  Width := 500;//PreferedWidth;
 end;
 
 procedure TSynGutterFoldDebug.Paint(Canvas: TCanvas; AClip: TRect; FirstLine,
@@ -257,9 +312,8 @@ begin
   {if TCustomSynEdit(self.SynEdit).Highlighter is TSynColorFoldHighlighter then //higher checked first
     PaintColorFoldLvl(Canvas, AClip, FirstLine, LastLine)
   else}
-  if TCustomSynEdit(self.SynEdit).Highlighter is TSynPasSyn then //lower
-    PaintPasFoldLvl(Canvas, AClip, FirstLine, LastLine)
-  else
+  //if TCustomSynEdit(self.SynEdit).Highlighter is TSynPasSyn then //lower
+    //PaintPasFoldLvl(Canvas, AClip, FirstLine, LastLine)  else
     PaintFoldLvl(Canvas, AClip, FirstLine, LastLine);
 end;
 

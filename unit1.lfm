@@ -8,6 +8,8 @@ object Form1: TForm1
   ClientWidth = 630
   OnCreate = FormCreate
   LCLVersion = '1.7'
+  Visible = True
+  WindowState = wsMaximized
   object Panel1: TPanel
     Left = 0
     Height = 86

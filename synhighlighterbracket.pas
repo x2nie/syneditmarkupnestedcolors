@@ -174,7 +174,7 @@ end;
 procedure TSynHighlighterBracket.GetTokenEx(out TokenStart: PChar; out TokenLength: integer);
 begin
   TokenStart := @FLineText[FTokenPos];
-  TokenLength := FTokenEnd - (FTokenPos-1);
+  TokenLength := FTokenEnd - (FTokenPos-0);
 end;
 
 function TSynHighlighterBracket.GetTokenAttribute: TSynHighlighterAttributes;
@@ -198,7 +198,7 @@ end;
 
 function TSynHighlighterBracket.GetTokenPos: Integer;
 begin
-  Result := FTokenPos - 1;
+  Result := FTokenPos -1;
 end;
 
 function TSynHighlighterBracket.GetDefaultAttribute(Index: integer): TSynHighlighterAttributes;
