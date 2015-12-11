@@ -12,15 +12,15 @@ unit SynHighlighterBracket;
 
 *)
 {$mode objfpc}{$H+}
+{.$define colorfold}
 
 interface
 
 uses
   Classes, SysUtils, Graphics, SynEditTypes, SynEditHighlighter,
-  SynEditHighlighterFoldBase, SynColorFoldHighlighter
+  SynEditHighlighterFoldBase {$ifdef colorfold},SynColorFoldHighlighter{$endif}
   ;
 
-{.$define colorfold}
 type
 
   { TSynHighlighterBracket }

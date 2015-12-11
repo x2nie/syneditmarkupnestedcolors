@@ -29,11 +29,11 @@ type
 implementation
 uses
   SynEdit,SynEditHighlighter,SynTextDrawer,
-  SynHighlighterPas,
-  SynColorFoldHighlighter;
+  SynHighlighterPas;
+  //SynColorFoldHighlighter;
 
 type
-  TSynColorFoldHighlighterAccess = class(TSynColorFoldHighlighter);
+  //TSynColorFoldHighlighterAccess = class(TSynColorFoldHighlighter);
   TSynCustomFoldHighlighterAccess = class(TSynCustomFoldHighlighter);
   TSynPasSynAccess = class(TSynPasSyn);
 
@@ -54,7 +54,7 @@ var
   Nest : TLazSynEditNestedFoldsList;
   TmpNode: TSynFoldNodeInfo;
   NodeList: TLazSynFoldNodeInfoList;
-  x1st,x1,x2 : integer;
+  x1st,x1,x2 : string;
  begin
    //y := aRow-1;
    Nest := TLazSynEditNestedFoldsList.Create(@GetFoldHighLighter);
@@ -107,9 +107,9 @@ var
         y := iLine -1;
         Keywords := HL.FoldNodeInfo[y].Count;
         NodeList := HL.FoldNodeInfo[y];
-        x1st := -9;
-        x1   := -9;
-        x2   := -9;
+        x1st := '';
+        x1   := '';
+        x2   := '';
             NodeList.AddReference;
             if NodeList.Count > 0 then
             try
@@ -124,9 +124,9 @@ var
                   ];
               //NodeList.FoldFlags:= [sfbIncludeDisabled];
                 TmpNode := NodeList[0];
-                 x1st := TmpNode.LogVertGuideX;
-                  x1   := TmpNode.LogXStart;
-                  x2   := TmpNode.LogXEnd;
+                 x1st  := IntToStr( TmpNode.LogVertGuideX );
+                  x1   := IntToStr( TmpNode.LogXStart );
+                  x2   := IntToStr( TmpNode.LogXEnd );
                   y    := TmpNode.LineIndex;
             finally
               NodeList.ReleaseReference;
@@ -136,11 +136,11 @@ var
 
         NestCount:= Nest.Count;
         r := TSynCustomHighlighterRange(RngLst.Range[iLine-1]);
-        s:= format(' %2d  %2d     %2d %2d   %3d| %2d..%2d ,%2d',
+        s:= format(' %2d  %2d     %2d %2d   %3s| %2s..%2s ,%2s',
                    [//iLine, //r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
                     KeyWords, NestCount,
                     r.CodeFoldStackSize, r.MinimumCodeFoldBlockLevel //, r.LastLineCodeFoldLevelFix
-                    ,x1st,x1,x2,y
+                    ,x1st,x1,x2, IntToStr(y)
                    ]
                   );
       end

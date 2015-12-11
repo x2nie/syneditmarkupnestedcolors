@@ -1158,23 +1158,26 @@ procedure TSynCustomFoldHighlighter.CollectNodeInfo(FinishingABlock: Boolean;
   ABlockType: Pointer; LevelChanged: Boolean);
 var
   //DecreaseLevel,
-  BlockEnabled: Boolean;
+  BlockTypeEnabled: Boolean;
   act: TSynFoldActions;
   BlockType: Integer;
   nd: TSynFoldNodeInfo;
 begin
   if not IsCollectingNodeInfo then exit;
 
+  BlockTypeEnabled := False;
+  if (ABlockType <> nil) and (PtrUInt(ABlockType) < FoldConfigCount) then
+    BlockTypeEnabled := FFoldConfig[PtrUInt(ABlockType)].Enabled;
 
   //Start
   if FinishingABlock = False then
   begin
-    BlockEnabled := False;//FFoldConfig[PtrInt(ABlockType)].Enabled;
+    //BlockTypeEnabled := False;//FFoldConfig[PtrInt(ABlockType)].Enabled;
     //FoldBlock := True;
     act := [sfaOpen, sfaOpenFold]; //TODO: sfaOpenFold not for cfbtIfThen
     act := act + [sfaFold,  sfaFoldFold, sfaMarkup];//x2nie
-    if BlockEnabled then
-      act := act + FFoldConfig[longint(ABlockType)].FoldActions;
+    if BlockTypeEnabled then
+      act := act + FFoldConfig[PtrUInt(ABlockType)].FoldActions;
     //if not FAtLineStart then
       //act := act - [sfaFoldHide];
       //InitNode(nd, SignX,SignX2, +1, PtrInt(ABlockType), act, FoldBlock);
@@ -1184,11 +1187,11 @@ begin
   else
   //Finish
   begin
-    BlockEnabled := False;// FFoldConfig[PtrInt(BlockType)].Enabled;
+    //BlockTypeEnabled := False;// FFoldConfig[PtrInt(BlockType)].Enabled;
     act := [sfaClose, sfaCloseFold];
     act := act + [sfaFold, sfaFoldFold, sfaMarkup];//x2nie
-    if BlockEnabled then
-      act := act + FFoldConfig[PtrInt(BlockType)].FoldActions - [sfaFoldFold, sfaFoldHide]; // TODO: Why filter?
+    if BlockTypeEnabled then
+      act := act + FFoldConfig[PtrUInt(BlockType)].FoldActions - [sfaFoldFold, sfaFoldHide]; // it is closing tag
     if not LevelChanged then
       act := act - [sfaFold, sfaFoldFold, sfaFoldHide];
     //InitNode(nd, SignX,SignX2, -1, BlockType, act, DecreaseLevel);

@@ -7,7 +7,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, Unit1, SynEditMarkupFoldColors, SynColorFoldHighlighter,
+  Forms, Unit1, SynEditMarkupFoldColors, //SynColorFoldHighlighter,
 SynHighlighterBracket, SynGutterFoldDebug
   { you can add units after this };
 

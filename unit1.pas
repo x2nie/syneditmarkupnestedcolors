@@ -9,7 +9,7 @@ uses
   Graphics, Dialogs, ExtCtrls, ComCtrls, SynEditMarkupWordGroup,
   SynHighlighterLFM,
   SynHighlighterPython,
-  SynHighlighterHTML, SynHighlighterXML;
+  SynHighlighterHTML, SynHighlighterXML, SynHighlighterJScript;
 
 type
 
@@ -27,9 +27,11 @@ type
     SynEdit3: TSynEdit;
     SynEdit4: TSynEdit;
     SynEdit5: TSynEdit;
+    SynEdit6: TSynEdit;
     SynEditColorFold: TSynEdit;
     SynFreePascalSyn1: TSynFreePascalSyn;
     SynHTMLSyn1: TSynHTMLSyn;
+    SynJScriptSyn1: TSynJScriptSyn;
     SynLFMSyn1: TSynLFMSyn;
     SynPythonSyn1: TSynPythonSyn;
     SynXMLSyn1: TSynXMLSyn;
@@ -39,6 +41,7 @@ type
     TabSheet4: TTabSheet;
     TabSheet5: TTabSheet;
     TabSheet6: TTabSheet;
+    TabSheet7: TTabSheet;
     procedure FormCreate(Sender: TObject);
   private
     { private declarations }
@@ -56,8 +59,8 @@ implementation
 uses
   SynGutterFoldDebug,
   SynEditHighlighterFoldBase,
-  SynEditMarkupFoldColors, foldhl, SynHighlighterBracket,
-  SynHighlighterLFM2;
+  SynEditMarkupFoldColors, foldhl, SynHighlighterBracket
+  ;
 
 {$R *.lfm}
 
