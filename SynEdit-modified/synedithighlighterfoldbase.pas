@@ -302,8 +302,7 @@ type
     FIsCollectingNodeInfo: boolean;
     fRanges: TSynCustomHighlighterRanges;
     FRootCodeFoldBlock: TSynCustomCodeFoldBlock;
-    FFoldNodeInfoList: TLazSynFoldNodeInfoList;
-    FCollectingNodeInfoList: TLazSynFoldNodeInfoList; //x2nie not sure if it is needed as here will be 2 TLazSynFoldNodeInfoList
+    FCollectingNodeInfoList: TLazSynFoldNodeInfoList;
     procedure ClearFoldNodeList;
   protected
     // "Range"
@@ -762,7 +761,7 @@ begin
   inherited Create(AOwner);
   FCodeFoldRange:=GetRangeClass.Create(nil);
   FCodeFoldRange.FoldRoot := FRootCodeFoldBlock;
-  FFoldNodeInfoList := nil;;
+  FCollectingNodeInfoList := nil;;
 end;
 
 destructor TSynCustomFoldHighlighter.Destroy;
@@ -771,7 +770,7 @@ begin
   DestroyFoldConfig;
   FreeAndNil(FCodeFoldRange);
   FreeAndNil(FRootCodeFoldBlock);
-  ReleaseRefAndNil(FFoldNodeInfoList);
+  ReleaseRefAndNil(FCollectingNodeInfoList);
   fRanges.Release;
   FFoldConfig := nil;
 end;
@@ -1060,31 +1059,31 @@ end;
 
 procedure TSynCustomFoldHighlighter.ClearFoldNodeList;
 begin
-  if FFoldNodeInfoList <> nil then begin
-    if (FFoldNodeInfoList.RefCount > 1) then
-      ReleaseRefAndNil(FFoldNodeInfoList)
+  if FCollectingNodeInfoList <> nil then begin
+    if (FCollectingNodeInfoList.RefCount > 1) then
+      ReleaseRefAndNil(FCollectingNodeInfoList)
     else
-      FFoldNodeInfoList.Clear;
+      FCollectingNodeInfoList.Clear;
   end;
 end;
 
 function TSynCustomFoldHighlighter.GetFoldNodeInfo(Line: TLineIdx
   ): TLazSynFoldNodeInfoList;
 begin
-  if (FFoldNodeInfoList <> nil) and (FFoldNodeInfoList.RefCount > 1) then
-    ReleaseRefAndNil(FFoldNodeInfoList);
+  if (FCollectingNodeInfoList <> nil) and (FCollectingNodeInfoList.RefCount > 1) then
+    ReleaseRefAndNil(FCollectingNodeInfoList);
 
-  if FFoldNodeInfoList = nil then begin
-    FFoldNodeInfoList := CreateFoldNodeInfoList;
-    FFoldNodeInfoList.AddReference;
-    FFoldNodeInfoList.HighLighter := Self;
+  if FCollectingNodeInfoList = nil then begin
+    FCollectingNodeInfoList := CreateFoldNodeInfoList;
+    FCollectingNodeInfoList.AddReference;
+    FCollectingNodeInfoList.HighLighter := Self;
   end
   else
   if (CurrentRanges <> nil) and (CurrentRanges.NeedsReScanStartIndex >= 0) then
     ClearFoldNodeList;
 
 
-  Result := FFoldNodeInfoList;
+  Result := FCollectingNodeInfoList;
   Result.SetLineClean(Line);
 end;
 
