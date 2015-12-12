@@ -2,7 +2,8 @@ del *.pas
 del *.pp
 del *.lpk
 
-SET LAZ=C:\lazarus_trunk
+rem SET LAZ=C:\lazarus_trunk
+SET LAZ=E:\v\Githubs\LiteZarus
 
 SET SYNEDIT=%LAZ%\components\synedit
 copy %SYNEDIT%\SynEdit.LPK

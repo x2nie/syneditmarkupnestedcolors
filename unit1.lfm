@@ -7,7 +7,7 @@ object Form1: TForm1
   ClientHeight = 553
   ClientWidth = 630
   OnCreate = FormCreate
-  LCLVersion = '1.7'
+  LCLVersion = '1.5'
   Visible = True
   WindowState = wsMaximized
   object Panel1: TPanel
@@ -27,9 +27,9 @@ object Form1: TForm1
     Height = 467
     Top = 0
     Width = 630
-    ActivePage = TabSheet7
+    ActivePage = TabSheet5
     Align = alClient
-    TabIndex = 6
+    TabIndex = 5
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Pascal'

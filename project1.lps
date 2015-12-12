@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="9">
+      <Unit0>
+        <Filename Value="project1.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <UsageCount Value="22"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="unit1.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Unit1"/>
+        <UsageCount Value="22"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="syneditmarkupfoldcolors.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SynEditMarkupFoldColors"/>
+        <UsageCount Value="22"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="syncolorfoldhighlighter.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SynColorFoldHighlighter"/>
+        <UsageCount Value="22"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="synhighlighterbracket.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SynHighlighterBracket"/>
+        <UsageCount Value="22"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="syngutterfolddebug.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SynGutterFoldDebug"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="118"/>
+        <CursorPos X="45" Y="127"/>
+        <UsageCount Value="22"/>
+        <Loaded Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="..\LiteZarus\components\synedit\synedithighlighterfoldbase.pas"/>
+        <UnitName Value="SynEditHighlighterFoldBase"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="129"/>
+        <CursorPos X="5" Y="138"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\LiteZarus\components\synedit\synhighlighterpas.pp"/>
+        <UnitName Value="SynHighlighterPas"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="3799"/>
+        <CursorPos X="5" Y="3808"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="..\LiteZarus\ide\sourcesyneditor.pas"/>
+        <UnitName Value="SourceSynEditor"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="462"/>
+        <CursorPos X="28" Y="471"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit8>
+    </Units>
+    <JumpHistory Count="6" HistoryIndex="5">
+      <Position1>
+        <Filename Value="syngutterfolddebug.pas"/>
+      </Position1>
+      <Position2>
+        <Filename Value="syngutterfolddebug.pas"/>
+        <Caret Line="123" Column="13" TopLine="118"/>
+      </Position2>
+      <Position3>
+        <Filename Value="syngutterfolddebug.pas"/>
+        <Caret Line="127" Column="45" TopLine="118"/>
+      </Position3>
+      <Position4>
+        <Filename Value="..\LiteZarus\components\synedit\synhighlighterpas.pp"/>
+      </Position4>
+      <Position5>
+        <Filename Value="..\LiteZarus\components\synedit\synhighlighterpas.pp"/>
+        <Caret Line="3779" Column="5" TopLine="3770"/>
+      </Position5>
+      <Position6>
+        <Filename Value="..\LiteZarus\ide\sourcesyneditor.pas"/>
+      </Position6>
+    </JumpHistory>
+  </ProjectSession>
+</CONFIG>

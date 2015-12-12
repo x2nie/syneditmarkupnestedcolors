@@ -336,7 +336,7 @@ type
     function MinimumCodeFoldBlockLevel: integer; virtual;
     function CurrentCodeFoldBlockLevel: integer; virtual;
 
-    property IsCollectingNodeInfo : boolean read FIsCollectingNodeInfo write FIsCollectingNodeInfo;
+    property IsCollectingNodeInfo : boolean read FIsCollectingNodeInfo;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -1090,15 +1090,16 @@ end;
 
 procedure TSynCustomFoldHighlighter.InitFoldNodeInfo(AList: TLazSynFoldNodeInfoList; Line: TLineIdx);
 begin
-  //AList.Invalidate;
+  //AList.Invalidate; // <-- it will set FValid := False which will trigger error. delete?
 
   FIsCollectingNodeInfo := True;
-
-  FCollectingNodeInfoList := TLazSynFoldNodeInfoList(AList);
-  StartAtLineIndex(Line);
-  NextToEol;
-
-  FIsCollectingNodeInfo := False;
+  try
+    FCollectingNodeInfoList := TLazSynFoldNodeInfoList(AList);
+    StartAtLineIndex(Line);
+    NextToEol;
+  finally
+    FIsCollectingNodeInfo := False;
+  end;
 end;
 
 function TSynCustomFoldHighlighter.CreateFoldNodeInfoList: TLazSynFoldNodeInfoList;
