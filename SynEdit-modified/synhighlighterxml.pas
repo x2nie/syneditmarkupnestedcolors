@@ -958,10 +958,9 @@ end;
 
 procedure TSynXMLSyn.GetTokenBounds(out LogX1, LogX2: Integer);
 begin
-  //inherited GetTokenBounds(LogX1, LogX2, LogVertGuideX); exit; //debug
+  // TODO: LogX1 sould able make different between real tag and for drawing vertical indent purpose
   LogX1 := fTokenPos;
   LogX2 := Run;
-//  LogVertGuideX := LogX1 -1;
 end;
 
 function TSynXMLSyn.StartXmlCodeFoldBlock(ABlockType: TXmlCodeFoldBlockType): TSynCustomCodeFoldBlock;
