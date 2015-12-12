@@ -124,7 +124,7 @@ var
                   ];
               //NodeList.FoldFlags:= [sfbIncludeDisabled];
                 TmpNode := NodeList[0];
-                 x1st  := IntToStr( TmpNode.LogVertGuideX );
+                 //x1st  := IntToStr( TmpNode.LogVertGuideX );
                   x1   := IntToStr( TmpNode.LogXStart );
                   x2   := IntToStr( TmpNode.LogXEnd );
                   y    := TmpNode.LineIndex;
@@ -136,11 +136,11 @@ var
 
         NestCount:= Nest.Count;
         r := TSynCustomHighlighterRange(RngLst.Range[iLine-1]);
-        s:= format(' %2d  %2d     %2d %2d   %3s| %2s..%2s ,%2s',
+        s:= format(' %2d  %2d     %2d %2d   %2s..%2s ,%2s',
                    [//iLine, //r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
                     KeyWords, NestCount,
                     r.CodeFoldStackSize, r.MinimumCodeFoldBlockLevel //, r.LastLineCodeFoldLevelFix
-                    ,x1st,x1,x2, IntToStr(y)
+                    ,x1,x2, IntToStr(y)
                    ]
                   );
       end

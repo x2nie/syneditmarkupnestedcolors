@@ -263,15 +263,16 @@ procedure TSynEditMarkupFoldColors.DoMarkupParentFoldAtRow(aRow: Integer);
     SetLength(FHighlights, x+1);
     with FHighlights[x] do begin
       Border := ANode.LineIndex + 1 <> aRow;
+      X  := ANode.LogXStart + 1;
       Y  := aRow;//ANode.LineIndex + 1;
-      if ANode.LineIndex + 1 = aRow then //mean on open/close tag
+      {if ANode.LineIndex + 1 = aRow then //mean on open/close tag
       begin
         //X  := ANode.LogXStart + 1
         ColorIdx := -1;
         exit;
       end
       else
-        X  := ANode.LogVertGuideX + 1;
+        X  := ANode.LogVertGuideX + 1;}
 
       X2 := X+1; //ANode.LogXEnd + 1;
       if sfaOpen in ANode.FoldAction then begin

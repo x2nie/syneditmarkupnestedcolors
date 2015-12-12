@@ -153,7 +153,7 @@ type
   protected
     // folding
     procedure CreateRootCodeFoldBlock; override;
-    procedure GetTokenBounds(out LogX1,LogX2,LogVertGuideX : Integer); override;//special case : -1
+    procedure GetTokenBounds(out LogX1,LogX2: Integer); override;
 
 
     function StartXmlCodeFoldBlock(ABlockType: TXmlCodeFoldBlockType): TSynCustomCodeFoldBlock;
@@ -956,12 +956,12 @@ begin
   RootCodeFoldBlock.InitRootBlockType(Pointer(PtrInt(cfbtXmlNone)));
 end;
 
-procedure TSynXMLSyn.GetTokenBounds(out LogX1, LogX2, LogVertGuideX: Integer);
+procedure TSynXMLSyn.GetTokenBounds(out LogX1, LogX2: Integer);
 begin
   //inherited GetTokenBounds(LogX1, LogX2, LogVertGuideX); exit; //debug
   LogX1 := fTokenPos;
   LogX2 := Run;
-  LogVertGuideX := LogX1 -1;
+//  LogVertGuideX := LogX1 -1;
 end;
 
 function TSynXMLSyn.StartXmlCodeFoldBlock(ABlockType: TXmlCodeFoldBlockType): TSynCustomCodeFoldBlock;

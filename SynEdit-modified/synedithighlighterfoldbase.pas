@@ -132,7 +132,6 @@ type
     NodeIndex: Integer;          // Indicates the position within the list of info nodes (depends on search-Filter)
     AllNodeIndex: Integer;       // Indicates the position within the unfiltered list of info nodes
     LogXStart, LogXEnd: Integer; // -1 previous line ( 0-based)
-    LogVertGuideX : integer;     // similar to LogXStart, but XML based is different drawing vertical line (nested color markup)
     FoldLvlStart, FoldLvlEnd: Integer; // FoldLvl within each FoldGroup
     NestLvlStart, NestLvlEnd: Integer; // include disabled nodes, e.g markup (within each FoldGroup)
     FoldAction: TSynFoldActions;
@@ -314,7 +313,7 @@ type
       write FRootCodeFoldBlock;
 
     // Open/Close Folds
-    procedure GetTokenBounds(out LogX1,LogX2,LogVertGuideX : Integer); virtual;
+    procedure GetTokenBounds(out LogX1,LogX2: Integer); virtual;
     function StartCodeFoldBlock(ABlockType: Pointer;
               IncreaseLevel: Boolean = true): TSynCustomCodeFoldBlock; virtual;
     procedure EndCodeFoldBlock(DecreaseLevel: Boolean = True); virtual;
@@ -1127,14 +1126,12 @@ begin
   end;
 end;
 
-procedure TSynCustomFoldHighlighter.GetTokenBounds(out LogX1, LogX2,
-  LogVertGuideX: Integer); //Vert Guide Line, used by nested color markup
+procedure TSynCustomFoldHighlighter.GetTokenBounds(out LogX1, LogX2: Integer);
 var p : pchar; L : integer;
 begin
   GetTokenEx(p,L);
   LogX1 := GetTokenPos;
   LogX2 := LogX1 + L ;
-  LogVertGuideX := LogX1;
 end;
 
 function TSynCustomFoldHighlighter.StartCodeFoldBlock(ABlockType: Pointer;
@@ -1214,7 +1211,7 @@ var
   LogX1, LogX2: Integer;
 
 begin
-  GetTokenBounds(LogX1, LogX2, LogX1V);
+  GetTokenBounds(LogX1, LogX2);
 
   aActions := aActions + [sfaMultiLine];
   if FinishingABlock then
@@ -1224,7 +1221,6 @@ begin
   Node.LineIndex := LineIndex;
   Node.LogXStart := LogX1;
   Node.LogXEnd := LogX2;
-  Node.LogVertGuideX:=LogX1V;
   Node.FoldType := ABlockType;// Pointer(PtrInt(ABlockType));
   Node.FoldTypeCompatible := ABlockType;// Pointer(PtrInt(ABlockType));//Pointer(PtrInt(PascalFoldTypeCompatibility[ABlockType]));
   Node.FoldAction := aActions;
