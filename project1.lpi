@@ -34,7 +34,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="5">
       <Unit0>
         <Filename Value="project1.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -48,25 +48,20 @@
         <UnitName Value="Unit1"/>
       </Unit1>
       <Unit2>
-        <Filename Value="syneditmarkupfoldcolors.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="SynEditMarkupFoldColors"/>
-      </Unit2>
-      <Unit3>
         <Filename Value="syncolorfoldhighlighter.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SynColorFoldHighlighter"/>
-      </Unit3>
-      <Unit4>
+      </Unit2>
+      <Unit3>
         <Filename Value="synhighlighterbracket.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SynHighlighterBracket"/>
-      </Unit4>
-      <Unit5>
+      </Unit3>
+      <Unit4>
         <Filename Value="syngutterfolddebug.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SynGutterFoldDebug"/>
-      </Unit5>
+      </Unit4>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
