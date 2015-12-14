@@ -21,10 +21,10 @@ type
   TMarkupWordGroupAccess = class(TSynEditMarkupWordGroup)
   end;
 
-  { TForm1 }
+  { TForm2 }
 
 
-  TForm1 = class(TForm)
+  TForm2 = class(TForm)
     PageControl1: TPageControl;
     Panel1: TPanel;
     SynEditPas: TSynEdit;
@@ -59,7 +59,7 @@ type
   end;
 
 var
-  Form1: TForm1;
+  Form2: TForm2;
 
 implementation
 
@@ -95,14 +95,15 @@ begin
   end;
 end;
 
-{ TForm1 }
+{ TForm2 }
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TForm2.FormCreate(Sender: TObject);
 begin
-  if self <> Form1 then
+  if self <> Form2 then
     exit; // avoid infinite loop
 
-  LeaveOnly(SynEditDemoFold); //=========== INDIVIDUAL CHECK ===================
+  //============================== INDIVIDUAL CHECK ============================
+  //LeaveOnly(SynEditDemoFold);
 
   FillLfmToSynEdit2();
 
@@ -113,7 +114,7 @@ begin
   AddMarkupFoldColors();
 end;
 
-procedure TForm1.AddMarkupFoldColors;
+procedure TForm2.AddMarkupFoldColors;
 var
   M : TSynEditMarkupFoldColors;
   i : integer;
@@ -138,17 +139,17 @@ begin
   end;
 end;
 
-procedure TForm1.FillLfmToSynEdit2;
-var F : TForm1;
+procedure TForm2.FillLfmToSynEdit2;
+var F : TForm2;
 var
   i : integer;
   S : TSynEdit;
 begin
-  if self <> Form1 then
+  if self <> Form2 then
     exit; // avoid infinite loop
   if SynEditLFM = nil then
     exit;
-  F := TForm1.Create(nil);
+  F := TForm2.Create(nil);
   for i := 0 to Pred(F.ComponentCount) do
   begin
     if F.Components[i] is TSynEdit then
@@ -162,7 +163,7 @@ begin
   //SynEditLFM.Highlighter := SynHighlighterLFM2.TSynLFMSyn.Create(self);
 end;
 
-procedure TForm1.LeaveOnly(ASynEdit: TSynEdit);
+procedure TForm2.LeaveOnly(ASynEdit: TSynEdit);
 var
   i : integer;
   S : TSynEdit;
@@ -179,7 +180,7 @@ begin
   PageControl1.ActivePage := TTabSheet(ASynEdit.Parent);
 end;
 
-procedure TForm1.SetHighlighter(ASynEdit: TSynEdit;
+procedure TForm2.SetHighlighter(ASynEdit: TSynEdit;
   HLClass: TSynCustomHighlighterClass);
 begin
   if Assigned(ASynEdit) then

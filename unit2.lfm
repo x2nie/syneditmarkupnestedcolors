@@ -1,9 +1,9 @@
-object Form1: TForm1
+object Form2: TForm2
   Left = 298
   Height = 553
   Top = 135
   Width = 847
-  Caption = 'Form1'
+  Caption = 'Form2'
   ClientHeight = 553
   ClientWidth = 847
   OnCreate = FormCreate

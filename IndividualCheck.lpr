@@ -14,7 +14,7 @@ SynHighlighterBracket, SynGutterFoldDebug
 begin
   RequireDerivedFormResource:=True;
   Application.Initialize;
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm2, Form2);
   Application.Run;
 end.
 

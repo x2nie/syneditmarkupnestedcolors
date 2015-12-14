@@ -3168,10 +3168,9 @@ begin
 
     NFilter := [sfaOpenFold];
     if not(sfbIncludeDisabled in FFoldFlags) then Include(NFilter, sfaFold);
-    //FFoldNodeInfoList.Line := CurLine;
+    FFoldNodeInfoList.Line := CurLine;
     FFoldNodeInfoList.ActionFilter := NFilter;
     FFoldNodeInfoList.GroupFilter := FFoldGroup;
-    FFoldNodeInfoList.Line := CurLine;
     c := FFoldNodeInfoList.Count - 1;
     //debugln(['TLazSynEditNestedFoldsList.InitNestInfoForIndex CurLine=',CurLine, '  c=',c, '  EvalIdx=',EvalIdx]);
     assert(c >= 0, 'InitNestInfoForIndex: FFoldNodeInfoList.Count');
@@ -3293,7 +3292,7 @@ var
   nd: TSynFoldNodeInfo;
   OpenIdx: Array of Array of Integer; // List of open-node-index, for each FoldCroup
   OpenCnt: Array of Integer; // List of open-node-index, for each FoldCroup
-  Grp, c, i, j, GrpLow, GrpHigh: Integer;
+  Grp, c, i, j, GrpLow, GrpHigh, ListCnt: Integer;
   oc: LongInt;
 begin
   Assert((FOpeningLineEndIndex < 0) or (sfbIncludeDisabled in FoldFlags), 'OpeningLineEndIndex only implemented for sfbIncludeDisabled');
@@ -3324,16 +3323,19 @@ begin
       GrpLow := FFoldGroup;
       GrpHigh := FFoldGroup;
     end;
-    SetLength(OpenIdx, FGroupCount, FFoldNodeInfoList.Count);
     SetLength(OpenCnt, FGroupCount);
     for Grp := 0 to FGroupCount - 1 do
       OpenCnt[Grp] := 0;
+    ListCnt := FFoldNodeInfoList.Count;
+    if ListCnt < 0 then
+      exit;
+    SetLength(OpenIdx, FGroupCount, ListCnt);
 
     for Grp := GrpLow to GrpHigh do begin
       (* Filtering group in the loop instead of the list only works, if 0 is the only special group
          See use of NodeIndex below, if changing this *)
       //FFoldNodeInfoList.GroupFilter := Grp;
-      for i := 0 to FFoldNodeInfoList.Count - 1 do begin
+      for i := 0 to ListCnt - 1 do begin
         nd := FFoldNodeInfoList[i];
         if (sfaInvalid in nd.FoldAction) or (nd.FoldGroup <> Grp) then
           Continue;
@@ -3357,7 +3359,7 @@ begin
 
     //FFoldNodeInfoList.ActionFilter := [];
     //FFoldNodeInfoList.GroupFilter := 0;
-    c := FFoldNodeInfoList.Count - 1;
+    c := ListCnt - 1;
     if (FOpeningLineEndIndex >= 0) and (c > FOpeningLineEndIndex) then
       c := FOpeningLineEndIndex;
     j := FOpeningOnLineCount;
