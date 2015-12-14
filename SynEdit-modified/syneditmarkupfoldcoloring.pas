@@ -220,6 +220,7 @@ begin
     NodeList.ActionFilter := [
         {sfaMarkup,}
 //        sfaFold
+      sfaOutline
         //sfaFoldFold
         //sfaFoldHide
         //sfaSingleLine
@@ -328,12 +329,13 @@ begin
       TmpNode := Nest.HLNode[i];
 
       //find till valid
-      {while (sfaInvalid in TmpNode.FoldAction) and (i < Nest.Count) do
+      while (sfaInvalid in TmpNode.FoldAction ) and (i < Nest.Count) do
       begin
         inc(i);
         TmpNode := Nest.HLNode[i];
       end;
-      if not (sfaInvalid in TmpNode.FoldAction) then}
+      //if not (sfaInvalid in TmpNode.FoldAction) then}
+      if (sfaOutline in TmpNode.FoldAction ) then
           AddVerticalLine(TmpNode);
 
       inc(i);

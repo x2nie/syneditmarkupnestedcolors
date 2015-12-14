@@ -80,6 +80,7 @@ type
 
                      sfaDefaultCollapsed,
                      sfaMarkup,   // This node can be highlighted, by the matching Word-Pair Markup
+                     sfaOutline,  // This node will be higlighted by nested color replacing the token color
                      sfaInvalid,  // Wrong Index
 
                      // TODO: deprecate
@@ -197,7 +198,7 @@ type
     property Line: TLineIdx read FLine write SetLine;
   end;
 
-  TSynCustomFoldConfigMode = (fmFold, fmHide, fmMarkup);
+  TSynCustomFoldConfigMode = (fmFold, fmHide, fmMarkup, fmOutline);
   TSynCustomFoldConfigModes = set of TSynCustomFoldConfigMode;
 
   { TSynCustomFoldConfig }
@@ -1178,7 +1179,7 @@ begin
       act := act + FFoldConfig[PtrUInt(ABlockType)].FoldActions
     else
     if not BlockConfExists then
-      act := act + [sfaFold,sfaFoldFold{, sfaMarkup}];
+      act := act + [sfaFold,sfaFoldFold, sfaMarkup, sfaOutline];
     DoInitNode(nd, FinishingABlock, ABlockType, act, True);
   end
   else
@@ -1189,7 +1190,7 @@ begin
       act := act + FFoldConfig[PtrUInt(ABlockType)].FoldActions
     else
     if not BlockConfExists then
-      act := act + [sfaFold{, sfaMarkup}];
+      act := act + [sfaFold, sfaMarkup, sfaOutline];
     act := act - [sfaFoldFold, sfaFoldHide]; // it is closing tag
     DoInitNode(nd, FinishingABlock, ABlockType, act, LevelChanged);
   end;
@@ -1632,6 +1633,7 @@ begin
   if fmFold   in AValue then FFoldActions := FFoldActions + [sfaFold, sfaFoldFold];
   if fmHide   in AValue then FFoldActions := FFoldActions + [sfaFold, sfaFoldHide];
   if fmMarkup in AValue then FFoldActions := FFoldActions + [sfaMarkup];
+  if fmOutline in AValue then FFoldActions := FFoldActions + [sfaOutline];
   DoOnChange;
 end;
 

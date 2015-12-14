@@ -11,6 +11,7 @@ copy %SYNEDIT%\SynEditHighlighterFoldBase.pas
 copy %SYNEDIT%\SynEditFoldedView.pp
 copy %SYNEDIT%\SynHighlighterXML.pas
 copy %SYNEDIT%\SynHighlighterLFM.pas
+copy %SYNEDIT%\SynHighlighterPAS.pp
 copy %SYNEDIT%\SynEditMarkupFoldColoring.pas
 copy %SYNEDIT%\SynEditMarkupWordGroup.pp
 

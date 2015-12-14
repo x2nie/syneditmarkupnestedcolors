@@ -240,7 +240,7 @@ begin
   NodeList := HL.FoldNodeInfo[y];
   NodeList.AddReference;
   try
-    NodeList.ActionFilter := [];// [sfaMarkup];//x2nie
+    NodeList.ActionFilter := [sfaMarkup];
     TmpNode := NodeList[i];
     while not(sfaInvalid in TmpNode.FoldAction) and (TmpNode.LogXEnd < LogCaret.X-1) do
     begin
