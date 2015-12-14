@@ -219,7 +219,7 @@ begin
   try
     NodeList.ActionFilter := [
         {sfaMarkup,}
-        sfaFold
+//        sfaFold
         //sfaFoldFold
         //sfaFoldHide
         //sfaSingleLine

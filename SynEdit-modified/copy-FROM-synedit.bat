@@ -12,6 +12,7 @@ copy %SYNEDIT%\SynEditFoldedView.pp
 copy %SYNEDIT%\SynHighlighterXML.pas
 copy %SYNEDIT%\SynHighlighterLFM.pas
 copy %SYNEDIT%\SynEditMarkupFoldColoring.pas
+copy %SYNEDIT%\SynEditMarkupWordGroup.pp
 
 SET IDE=%LAZ%\idE
 copy %ide%\SourceSynEditor.pas

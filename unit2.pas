@@ -102,8 +102,9 @@ begin
   if self <> Form2 then
     exit; // avoid infinite loop
 
-  //============================== INDIVIDUAL CHECK ============================
+  //================= INDIVIDUAL CHECK, so debug can be focused ================
   //LeaveOnly(SynEditDemoFold);
+  //LeaveOnly(SynEditLFM);
 
   FillLfmToSynEdit2();
 
