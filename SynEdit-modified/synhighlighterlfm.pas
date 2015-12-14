@@ -484,9 +484,9 @@ begin
   inc(Run);
   fTokenID := tkSymbol;
 
-  if fLine[Run-1] = '<' then
+  if fLine[Run] = '<' then
     StartLfmCodeFoldBlock(cfbtLfmList);
-  if (fLine[Run-1] = '>') and (TopLfmCodeFoldBlockType = cfbtLfmList) then
+  if (fLine[Run] = '>') and (TopLfmCodeFoldBlockType = cfbtLfmList) then
     EndLfmCodeFoldBlock;
 end;
 

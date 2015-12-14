@@ -27,9 +27,9 @@ object Form2: TForm2
     Height = 467
     Top = 0
     Width = 847
-    ActivePage = TabSheet4
+    ActivePage = TabSheet6
     Align = alClient
-    TabIndex = 4
+    TabIndex = 3
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Pascal'
@@ -2376,8 +2376,8 @@ object Form2: TForm2
           'Those steps are the same as they would be for any other self wriiten componont.'
           ''
           '{'
-          '    Lorem ipsum dolor sit amet,'
-          '    consectetur adipisicing elit,'
+          '    Lorem ipsum dolor sit amet, {}'
+          '    consectetur adipisicing elit, { test - single line met }'
           '    sed -- do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
           '    '#9' Ut enim ad minim veniam,'
           '    quis nostrud exercitation  (Nested double +) ullamco laboris nisi ut aliquip ex ea commodo consequat.'
