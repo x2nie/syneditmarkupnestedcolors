@@ -152,6 +152,7 @@ const
     ];
   PascalNoOutlineRanges: TPascalCodeFoldBlockTypes =
     [cfbtProgram,cfbtUnit,cfbtUnitSection, cfbtRegion, cfbtProcedure,
+      cfbtVarType,
       cfbtIfDef, cfbtAnsiComment..cfbtSlashComment];
 
   // restrict cdecl etc to places where they can be.
@@ -3669,6 +3670,7 @@ begin
       inc(FSynPasRangeInfo.EndLevelIfDef);
     cfbtRegion:
       inc(FSynPasRangeInfo.EndLevelRegion);
+
   end;
 end;
 

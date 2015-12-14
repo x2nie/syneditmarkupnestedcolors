@@ -102,6 +102,7 @@ begin
   if self <> Form2 then
     exit; // avoid infinite loop
 
+  SynFreePascalSyn1.FoldConfig[ord(cfbtIfThen)].Modes:=[fmMarkup, fmOutline]; //.Enabled := True;
   //================= INDIVIDUAL CHECK, so debug can be focused ================
   //LeaveOnly(SynEditDemoFold);
   //LeaveOnly(SynEditLFM);

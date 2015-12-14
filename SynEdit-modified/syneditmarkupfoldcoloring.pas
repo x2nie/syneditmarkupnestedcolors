@@ -323,8 +323,8 @@ begin
   Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
   Nest.IncludeOpeningOnLine := False; //True; //
 
-  i := 0; while i <  Nest.Count do
-  //i := Nest.Count -1;  while i >= 0 do  //from right to left
+  //i := 0; while i <  Nest.Count do
+  i := Nest.Count -1;  while i >= 0 do  //from right to left
   begin
       TmpNode := Nest.HLNode[i];
 
@@ -340,6 +340,7 @@ begin
 
       inc(i);
       //dec(i);
+      break;
   end;
 end;
 
