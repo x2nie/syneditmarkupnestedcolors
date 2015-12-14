@@ -468,7 +468,7 @@ type
 implementation
 
 uses SourceMarks,
-  SynEditMarkupFoldColors//x2nie
+  SynEditMarkupFoldColoring//x2nie
   ;
 
 { TSourceSynSearchTermDict }
