@@ -27,6 +27,7 @@ type
   TForm2 = class(TForm)
     PageControl1: TPageControl;
     Panel1: TPanel;
+    SynEditMiniPas: TSynEdit;
     SynEditPas: TSynEdit;
     SynEditLFM: TSynEdit;
     SynEditDemoFold: TSynEdit;
@@ -47,6 +48,7 @@ type
     TabSheet5: TTabSheet;
     TabSheet6: TTabSheet;
     TabSheet7: TTabSheet;
+    TabSheet8: TTabSheet;
     procedure FormCreate(Sender: TObject);
   private
     { private declarations }
@@ -67,6 +69,7 @@ uses
   SynGutterFoldDebug,
   SynEditHighlighterFoldBase,
   SynEditMarkupFoldColoring,
+  SynHighlighterMiniPas2,
   foldhl, SynHighlighterBracket
   ;
 
@@ -106,6 +109,10 @@ begin
   //================= INDIVIDUAL CHECK, so debug can be focused ================
   //LeaveOnly(SynEditDemoFold);
   //LeaveOnly(SynEditLFM);
+
+  SynEditMiniPas.Lines.Assign( SynEditPas.Lines);
+  SynEditMiniPas.Highlighter := TSynMiniPasSyn.Create(self);
+  TSynMiniPasSyn(SynEditMiniPas.Highlighter).FoldConfig[ord(cfbtIfThen)].Modes:=[fmMarkup, fmOutline]; //.Enabled := True;
 
   FillLfmToSynEdit2();
 

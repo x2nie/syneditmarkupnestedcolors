@@ -341,7 +341,8 @@ type
     function MinimumCodeFoldBlockLevel: integer; virtual;
     function CurrentCodeFoldBlockLevel: integer; virtual;
 
-    property IsCollectingNodeInfo : boolean read FIsCollectingNodeInfo;
+    property IsCollectingNodeInfo : boolean read FIsCollectingNodeInfo write FIsCollectingNodeInfo;
+    property CollectingNodeInfoList : TLazSynFoldNodeInfoList read FCollectingNodeInfoList;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
