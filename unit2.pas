@@ -107,9 +107,6 @@ begin
     exit; // avoid infinite loop
 
   SynFreePascalSyn1.FoldConfig[ord(cfbtIfThen)].Modes:=[fmMarkup, fmOutline]; //.Enabled := True;
-  //================= INDIVIDUAL CHECK, so debug can be focused ================
-  //LeaveOnly(SynEditDemoFold);
-  //LeaveOnly(SynEditLFM);
 
   SynEditMiniPas.Lines.Assign( SynEditPas.Lines);
   SynEditMiniPas.Highlighter := SynHighlighterMiniPas2.TSynPasSyn.Create(self);
@@ -119,6 +116,11 @@ begin
     //FoldConfig[ord(cfbtIfThen)].Enabled := True;
     CommentAttri.Foreground:=clTeal;
   end;
+
+  //================= INDIVIDUAL CHECK, so debug can be focused ================
+  //LeaveOnly(SynEditDemoFold);
+  //LeaveOnly(SynEditLFM);
+  LeaveOnly(SynEditMiniPas);
 
   FillLfmToSynEdit2();
 

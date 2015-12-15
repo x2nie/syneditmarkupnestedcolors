@@ -27,9 +27,9 @@ object Form2: TForm2
     Height = 467
     Top = 0
     Width = 847
-    ActivePage = TabSheet8
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Pascal'

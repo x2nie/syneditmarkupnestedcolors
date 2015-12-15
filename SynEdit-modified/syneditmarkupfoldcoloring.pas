@@ -233,11 +233,11 @@ begin
       TmpNode := NodeList[i];
 
       //find till valid
-      {while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) do
+      while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) do
       begin
         inc(i);
         TmpNode := NodeList[i];
-      end;}
+      end;
       if not (sfaInvalid in TmpNode.FoldAction) then
           AddHighlight(TmpNode);
 
@@ -323,8 +323,8 @@ begin
   Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
   Nest.IncludeOpeningOnLine := False; //True; //
 
-  //i := 0; while i <  Nest.Count do
-  i := Nest.Count -1;  while i >= 0 do  //from right to left
+  i := 0; while i <  Nest.Count do
+  //i := Nest.Count -1;  while i >= 0 do  //from right to left
   begin
       TmpNode := Nest.HLNode[i];
 
@@ -340,7 +340,7 @@ begin
 
       inc(i);
       //dec(i);
-      break;
+      //break; //debug
   end;
 end;
 
