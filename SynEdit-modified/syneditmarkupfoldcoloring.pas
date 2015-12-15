@@ -95,7 +95,7 @@ begin
   Colors[0] := clRed;
   Colors[1] := $000098F7; //orange
   Colors[2] := $0022CC40; //green
-  Colors[3] := $00D1D54A; // $0098CC42; //teal
+  Colors[3] := $0098CC42; //$00D1D54A; // teal
   Colors[4] := $00FF682A; //blue
   Colors[5] := $00CF00C4; //purple
 end;

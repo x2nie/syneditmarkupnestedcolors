@@ -153,7 +153,7 @@ const
   PascalNoOutlineRanges: TPascalCodeFoldBlockTypes =
     [cfbtProgram,cfbtUnit,cfbtUnitSection, cfbtRegion, cfbtProcedure,
       cfbtVarType,
-      cfbtIfDef, cfbtAnsiComment..cfbtSlashComment];
+      cfbtIfDef, cfbtAnsiComment..cfbtSlashComment, cfbtNestedComment];
 
   // restrict cdecl etc to places where they can be.
   // this needs a better parser
@@ -945,6 +945,7 @@ end;
 function TSynPasSyn.Func23: TtkTokenKind;
 var
   tfb: TPascalCodeFoldBlockType;
+  sl : integer;
 begin
   if KeyComp('End') then begin
     if ((fToIdent<2) or (fLine[fToIdent-1]<>'@'))
@@ -955,7 +956,10 @@ begin
       // there may be more than on block ending here
       tfb := TopPascalCodeFoldBlockType;
       while (tfb in [cfbtIfThen]) do begin // no semicolon before end
+        sl := fStringLen;
+        fStringLen:=0;
         EndPascalCodeFoldBlock(True);
+        fStringLen := sl;
         tfb := TopPascalCodeFoldBlockType;
       end;
       if tfb = cfbtRecord then begin
@@ -1218,18 +1222,18 @@ var PriorIfThen : boolean;
 begin
   if KeyComp('Then') then begin
     Result := tkKey;
-{
+
     // in a "case", we need to distinguish a possible follwing "else"
     if (TopPascalCodeFoldBlockType = cfbtIfThen) then
       EndPascalCodeFoldBlock;
     //if TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen] then
       StartPascalCodeFoldBlock(cfbtIfThen, not (TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen]));
-}
-    PriorIfThen:=TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen];
+
+{    PriorIfThen:=TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen];
     if PriorIfThen then
       EndPascalCodeFoldBlock;
     //if TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen] then
-      StartPascalCodeFoldBlock(cfbtIfThen, not PriorIfThen);
+      StartPascalCodeFoldBlock(cfbtIfThen, not PriorIfThen);}
   end
   else
     Result := tkIdentifier;
@@ -2950,6 +2954,7 @@ begin
     EndPascalCodeFoldBlock(True);
 
   while (tfb = cfbtIfThen) do begin
+    fStringLen:=0;
     EndPascalCodeFoldBlock(True);
     tfb := TopPascalCodeFoldBlockType;
   end;
