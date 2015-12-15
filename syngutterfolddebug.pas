@@ -30,6 +30,7 @@ implementation
 uses
   SynEdit,SynEditHighlighter,SynTextDrawer,
   typinfo,
+  SynHighlighterMiniPas2,
   SynHighlighterPas;
   //SynColorFoldHighlighter;
 
@@ -139,7 +140,8 @@ var
                   x1   := IntToStr( TmpNode.LogXStart );
                   x2   := IntToStr( TmpNode.LogXEnd );
                   y    := TmpNode.LineIndex;
-                  if TSynCustomFoldHighlighter(HL) is TSynPasSyn then
+                  if TSynCustomFoldHighlighter(HL) is TSynPasSyn
+                  or TSynCustomFoldHighlighter(HL) is SynHighlighterMiniPas2.TSynPasSyn then
                     ty   := copy( GetEnumName(TypeInfo(TPascalCodeFoldBlockType), PtrUint(TmpNode.FoldType) ), 5,100) ;
             finally
               NodeList.ReleaseReference;

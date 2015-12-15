@@ -9,6 +9,7 @@ uses
   Graphics, Dialogs, ExtCtrls, ComCtrls,
   SynEditMarkupWordGroup,
   SynEditHighlighter,
+  SynHighlighterMiniPas2,//must before original
   SynHighlighterPas,
   SynHighlighterLFM,
   SynHighlighterPython,
@@ -69,7 +70,7 @@ uses
   SynGutterFoldDebug,
   SynEditHighlighterFoldBase,
   SynEditMarkupFoldColoring,
-  SynHighlighterMiniPas2,
+
   foldhl, SynHighlighterBracket
   ;
 
@@ -111,8 +112,13 @@ begin
   //LeaveOnly(SynEditLFM);
 
   SynEditMiniPas.Lines.Assign( SynEditPas.Lines);
-  SynEditMiniPas.Highlighter := TSynMiniPasSyn.Create(self);
-  TSynMiniPasSyn(SynEditMiniPas.Highlighter).FoldConfig[ord(cfbtIfThen)].Modes:=[fmMarkup, fmOutline]; //.Enabled := True;
+  SynEditMiniPas.Highlighter := SynHighlighterMiniPas2.TSynPasSyn.Create(self);
+  with SynHighlighterMiniPas2.TSynPasSyn(SynEditMiniPas.Highlighter) do begin
+    FoldConfig[ord(cfbtIfThen)].SupportedModes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
+    FoldConfig[ord(cfbtIfThen)].Modes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
+    //FoldConfig[ord(cfbtIfThen)].Enabled := True;
+    CommentAttri.Foreground:=clTeal;
+  end;
 
   FillLfmToSynEdit2();
 

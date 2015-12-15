@@ -298,9 +298,9 @@ type
   PIdentFuncTableFunc = ^TIdentFuncTableFunc;
   TIdentFuncTableFunc = function: TtkTokenKind of object;
 
-  { TSynMiniPasSyn }
+  { TSynPasSyn }
 
-  TSynMiniPasSyn = class(TSynCustomFoldHighlighter)
+  TSynPasSyn = class(TSynCustomFoldHighlighter)
   private
     fAsmStart: Boolean;
     FExtendedKeywordsMode: Boolean;
@@ -602,7 +602,7 @@ type
 
   { TSynFreePascalSyn }
 
-  TSynFreePascalSyn = class(TSynMiniPasSyn)
+  TSynFreePascalSyn = class(TSynPasSyn)
   public
     constructor Create(AOwner: TComponent); override;
     procedure ResetRange; override;
@@ -689,7 +689,7 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.InitIdent;
+procedure TSynPasSyn.InitIdent;
 var
   I: Integer;
   pF: PIdentFuncTableFunc;
@@ -791,7 +791,7 @@ begin
   fIdentFuncTable[191] := @Func191;
 end;
 
-function TSynMiniPasSyn.KeyHash: Integer;
+function TSynPasSyn.KeyHash: Integer;
 var
   Start, ToHash: PChar;
 begin
@@ -812,13 +812,13 @@ begin
     if IsUnderScoreOrNumberChar[ToHash^] then
       inc(ToHash);
     fStringLen := PtrUInt(ToHash) - PtrUInt(Start);
-    //if CompareText(copy(fLineStr,fToIdent+1,fStringLen),'varargs')=0 then debugln('TSynMiniPasSyn.KeyHash '+copy(fLineStr,fToIdent+1,fStringLen)+'='+dbgs(Result));
+    //if CompareText(copy(fLineStr,fToIdent+1,fStringLen),'varargs')=0 then debugln('TSynPasSyn.KeyHash '+copy(fLineStr,fToIdent+1,fStringLen)+'='+dbgs(Result));
   end else begin
     fStringLen := 0;
   end;
 end; { KeyHash }
 
-function TSynMiniPasSyn.KeyComp(const aKey: string): Boolean;
+function TSynPasSyn.KeyComp(const aKey: string): Boolean;
 var
   I: Integer;
   Temp: PChar;
@@ -839,7 +839,7 @@ begin
   end else Result := False;
 end; { KeyComp }
 
-function TSynMiniPasSyn.KeyCompEx(AText1, AText2: pchar; ALen: Integer): Boolean;
+function TSynPasSyn.KeyCompEx(AText1, AText2: pchar; ALen: Integer): Boolean;
 begin
   Result := False;
   while ALen > 0 do begin
@@ -852,7 +852,7 @@ begin
   Result := True;
 end;
 
-function TSynMiniPasSyn.TextComp(aText: PChar): Boolean;
+function TSynPasSyn.TextComp(aText: PChar): Boolean;
 var
   CurPos: PChar;
 begin
@@ -865,16 +865,16 @@ begin
   Result:=true;
 end;
 
-procedure TSynMiniPasSyn.SetCompilerMode(const AValue: TPascalCompilerMode);
+procedure TSynPasSyn.SetCompilerMode(const AValue: TPascalCompilerMode);
 begin
   if FCompilerMode=AValue then exit;
   FCompilerMode:=AValue;
   FNestedComments:=FCompilerMode in [pcmFPC,pcmObjFPC];
   PasCodeFoldRange.Mode:=FCompilerMode;
-  //DebugLn(['TSynMiniPasSyn.SetCompilerMode FCompilerMode=',ord(FCompilerMode),' FNestedComments=',FNestedComments]);
+  //DebugLn(['TSynPasSyn.SetCompilerMode FCompilerMode=',ord(FCompilerMode),' FNestedComments=',FNestedComments]);
 end;
 
-procedure TSynMiniPasSyn.SetExtendedKeywordsMode(const AValue: Boolean);
+procedure TSynPasSyn.SetExtendedKeywordsMode(const AValue: Boolean);
 begin
   if FExtendedKeywordsMode = AValue then exit;
   FExtendedKeywordsMode := AValue;
@@ -882,7 +882,7 @@ begin
   DefHighlightChange(self);
 end;
 
-procedure TSynMiniPasSyn.SetStringKeywordMode(const AValue: TSynPasStringMode);
+procedure TSynPasSyn.SetStringKeywordMode(const AValue: TSynPasStringMode);
 begin
   if FStringKeywordMode = AValue then exit;
   FStringKeywordMode := AValue;
@@ -890,12 +890,12 @@ begin
   DefHighlightChange(self);
 end;
 
-function TSynMiniPasSyn.GetPasCodeFoldRange: TSynPasSynRange;
+function TSynPasSyn.GetPasCodeFoldRange: TSynPasSynRange;
 begin
   Result := TSynPasSynRange(CodeFoldRange);
 end;
 
-function TSynMiniPasSyn.Func15: TtkTokenKind;
+function TSynPasSyn.Func15: TtkTokenKind;
 begin
   if KeyComp('If') then begin
     StartPascalCodeFoldBlock(cfbtIfThen, True);
@@ -907,18 +907,18 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func19: TtkTokenKind;
+function TSynPasSyn.Func19: TtkTokenKind;
 begin
   if KeyComp('Do') then Result := tkKey else
     if KeyComp('And') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func20: TtkTokenKind;
+function TSynPasSyn.Func20: TtkTokenKind;
 begin
   if KeyComp('As') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func21: TtkTokenKind;
+function TSynPasSyn.Func21: TtkTokenKind;
 begin
   if KeyComp('Of') then begin
     Result := tkKey;
@@ -936,7 +936,7 @@ begin
   else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func23: TtkTokenKind;
+function TSynPasSyn.Func23: TtkTokenKind;
 var
   tfb: TPascalCodeFoldBlockType;
 begin
@@ -1004,12 +1004,12 @@ begin
     if KeyComp('In') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func25: TtkTokenKind;
+function TSynPasSyn.Func25: TtkTokenKind;
 begin
   if KeyComp('Far') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func27: TtkTokenKind;
+function TSynPasSyn.Func27: TtkTokenKind;
 begin
   if KeyComp('Cdecl') and (TopPascalCodeFoldBlockType in ProcModifierAllowed) then
     Result := tkKey
@@ -1017,7 +1017,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func28: TtkTokenKind;
+function TSynPasSyn.Func28: TtkTokenKind;
 begin
   if KeyComp('Is') then
     Result := tkKey
@@ -1038,12 +1038,12 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func29: TtkTokenKind;
+function TSynPasSyn.Func29: TtkTokenKind;
 begin
   if KeyComp('On') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func32: TtkTokenKind;
+function TSynPasSyn.Func32: TtkTokenKind;
 begin
   if KeyComp('Label') then begin
     if (TopPascalCodeFoldBlockType in  [cfbtVarType, cfbtLocalVarType, cfbtNone,
@@ -1065,7 +1065,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func33: TtkTokenKind;
+function TSynPasSyn.Func33: TtkTokenKind;
 begin
   if KeyComp('Or') then Result := tkKey
   else
@@ -1081,14 +1081,14 @@ begin
   else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func35: TtkTokenKind;
+function TSynPasSyn.Func35: TtkTokenKind;
 begin
   if KeyComp('Nil') then Result := tkKey else
     if KeyComp('To') then Result := tkKey else
       if KeyComp('Div') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func37: TtkTokenKind;
+function TSynPasSyn.Func37: TtkTokenKind;
 begin
   if KeyComp('Begin') then begin
     // if we are in an include file, we may not know the state
@@ -1098,10 +1098,10 @@ begin
     if TopPascalCodeFoldBlockType in [cfbtVarType, cfbtLocalVarType] then
       EndPascalCodeFoldBlockLastLine;
     Result := tkKey;
-    if TopPascalCodeFoldBlockType in [cfbtProcedure, cfbtIfThen]
+    if TopPascalCodeFoldBlockType in [cfbtProcedure{, cfbtIfThen}]
     then StartPascalCodeFoldBlock(cfbtTopBeginEnd)
     else StartPascalCodeFoldBlock(cfbtBeginEnd);
-    //debugln('TSynMiniPasSyn.Func37 BEGIN ',dbgs(ord(TopPascalCodeFoldBlockType)),' LineNumber=',dbgs(fLineNumber),' ',dbgs(MinimumCodeFoldBlockLevel),' ',dbgs(CurrentCodeFoldBlockLevel));
+    //debugln('TSynPasSyn.Func37 BEGIN ',dbgs(ord(TopPascalCodeFoldBlockType)),' LineNumber=',dbgs(fLineNumber),' ',dbgs(MinimumCodeFoldBlockLevel),' ',dbgs(CurrentCodeFoldBlockLevel));
   end else
   if FExtendedKeywordsMode and KeyComp('Break') then
     Result := tkKey
@@ -1109,18 +1109,18 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func38: TtkTokenKind;
+function TSynPasSyn.Func38: TtkTokenKind;
 begin
   if KeyComp('Near') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func39: TtkTokenKind;
+function TSynPasSyn.Func39: TtkTokenKind;
 begin
   if KeyComp('For') then Result := tkKey else
     if KeyComp('Shl') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func40: TtkTokenKind;
+function TSynPasSyn.Func40: TtkTokenKind;
 begin
   if KeyComp('Packed') then begin
     Result := tkKey;
@@ -1133,7 +1133,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func41: TtkTokenKind;
+function TSynPasSyn.Func41: TtkTokenKind;
 begin
   if KeyComp('Else') then begin
     Result := tkKey;
@@ -1161,7 +1161,7 @@ begin
   else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func42: TtkTokenKind;
+function TSynPasSyn.Func42: TtkTokenKind;
 begin
   if KeyComp('Alias') then
     Result := tkKey
@@ -1176,7 +1176,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func44: TtkTokenKind;
+function TSynPasSyn.Func44: TtkTokenKind;
 begin
   if KeyComp('Set') then
     Result := tkKey
@@ -1189,12 +1189,12 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func45: TtkTokenKind;
+function TSynPasSyn.Func45: TtkTokenKind;
 begin
   if KeyComp('Shr') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func46: TtkTokenKind;
+function TSynPasSyn.Func46: TtkTokenKind;
 begin
   if (rsAfterClass in fRange) and KeyComp('Sealed') and
      (PasCodeFoldRange.BracketNestLevel = 0) and
@@ -1207,7 +1207,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func47: TtkTokenKind;
+function TSynPasSyn.Func47: TtkTokenKind;
 var PriorIfThen : boolean;
 begin
   if KeyComp('Then') then begin
@@ -1229,12 +1229,12 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func49: TtkTokenKind;
+function TSynPasSyn.Func49: TtkTokenKind;
 begin
   if KeyComp('Not') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func52: TtkTokenKind;
+function TSynPasSyn.Func52: TtkTokenKind;
 begin
   if KeyComp('Pascal') and (TopPascalCodeFoldBlockType in ProcModifierAllowed) then
     Result := tkKey
@@ -1245,7 +1245,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func54: TtkTokenKind;
+function TSynPasSyn.Func54: TtkTokenKind;
 begin
   if KeyComp('Class') then begin
     Result := tkKey;
@@ -1259,7 +1259,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func55: TtkTokenKind;
+function TSynPasSyn.Func55: TtkTokenKind;
 begin
   if KeyComp('Object') then begin
     Result := tkKey;
@@ -1272,7 +1272,7 @@ begin
   else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func56: TtkTokenKind;
+function TSynPasSyn.Func56: TtkTokenKind;
 begin
   if KeyComp('Index') then
   begin
@@ -1285,14 +1285,14 @@ begin
     if KeyComp('Out') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func57: TtkTokenKind;
+function TSynPasSyn.Func57: TtkTokenKind;
 begin
   if KeyComp('Goto') then Result := tkKey else
     if KeyComp('While') then Result := tkKey else
       if KeyComp('Xor') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func58: TtkTokenKind;
+function TSynPasSyn.Func58: TtkTokenKind;
 begin
   if FExtendedKeywordsMode and KeyComp('Exit') then
     Result := tkKey
@@ -1300,7 +1300,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func59: TtkTokenKind;
+function TSynPasSyn.Func59: TtkTokenKind;
 begin
   if KeyComp('Safecall') and (TopPascalCodeFoldBlockType in ProcModifierAllowed) then
     Result := tkKey
@@ -1308,12 +1308,12 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func60: TtkTokenKind;
+function TSynPasSyn.Func60: TtkTokenKind;
 begin
   if KeyComp('With') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func61: TtkTokenKind;
+function TSynPasSyn.Func61: TtkTokenKind;
 begin
   if KeyComp('Dispid') or KeyComp('Generic') then
     Result := tkKey
@@ -1321,7 +1321,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func63: TtkTokenKind;
+function TSynPasSyn.Func63: TtkTokenKind;
 begin
   if KeyComp('Public') then begin
     Result := tkKey;
@@ -1349,7 +1349,7 @@ begin
   else if KeyComp('Inline') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func64: TtkTokenKind;
+function TSynPasSyn.Func64: TtkTokenKind;
 begin
   if KeyComp('Unit') then begin
     if TopPascalCodeFoldBlockType=cfbtNone then StartPascalCodeFoldBlock(cfbtUnit);
@@ -1372,7 +1372,7 @@ begin
   else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func65: TtkTokenKind;
+function TSynPasSyn.Func65: TtkTokenKind;
 begin
   if KeyComp('Repeat') then begin
     Result := tkKey;
@@ -1381,7 +1381,7 @@ begin
    else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func66: TtkTokenKind;
+function TSynPasSyn.Func66: TtkTokenKind;
 begin
   if KeyComp('Type') then begin
     if (PasCodeFoldRange.BracketNestLevel = 0)
@@ -1401,7 +1401,7 @@ begin
   else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func69: TtkTokenKind;
+function TSynPasSyn.Func69: TtkTokenKind;
 begin
   if KeyComp('Default') then begin
     if (TopPascalCodeFoldBlockType in [cfbtClass, cfbtClassSection, cfbtRecord]) then
@@ -1422,7 +1422,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func71: TtkTokenKind;
+function TSynPasSyn.Func71: TtkTokenKind;
 begin
   if KeyComp('Stdcall') and (TopPascalCodeFoldBlockType in ProcModifierAllowed) then
     Result := tkKey
@@ -1445,7 +1445,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func72: TtkTokenKind;
+function TSynPasSyn.Func72: TtkTokenKind;
 begin
   if KeyComp('Static') and (TopPascalCodeFoldBlockType in [cfbtClass, cfbtClassSection]) and
      (fRange * [rsAfterEqualOrColon, rsInProcHeader, rsProperty] = []) and
@@ -1457,7 +1457,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func73: TtkTokenKind;
+function TSynPasSyn.Func73: TtkTokenKind;
 begin
   if KeyComp('Except') then begin
     Result := tkKey;
@@ -1470,7 +1470,7 @@ begin
    else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func75: TtkTokenKind;
+function TSynPasSyn.Func75: TtkTokenKind;
 begin
   if (fRange * [rsProperty, rsAtPropertyOrReadWrite, rsAfterEqualOrColon] =  [rsProperty]) and
       (PasCodeFoldRange.BracketNestLevel = 0) and
@@ -1483,7 +1483,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func76: TtkTokenKind;
+function TSynPasSyn.Func76: TtkTokenKind;
 begin
   if KeyComp('Until') then begin
     Result := tkKey;
@@ -1495,7 +1495,7 @@ begin
   else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func79: TtkTokenKind;
+function TSynPasSyn.Func79: TtkTokenKind;
 begin
   if KeyComp('Finally') then begin
     Result := tkKey;
@@ -1508,7 +1508,7 @@ begin
   else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func81: TtkTokenKind;
+function TSynPasSyn.Func81: TtkTokenKind;
 var
   tbf: TPascalCodeFoldBlockType;
 begin
@@ -1554,7 +1554,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func84: TtkTokenKind;
+function TSynPasSyn.Func84: TtkTokenKind;
 begin
   if KeyComp('Abstract') and (TopPascalCodeFoldBlockType in [cfbtClass, cfbtClassSection])
   then begin
@@ -1577,7 +1577,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func85: TtkTokenKind;
+function TSynPasSyn.Func85: TtkTokenKind;
 begin
   if KeyComp('Forward') then begin
     Result := tkKey;
@@ -1596,12 +1596,12 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func86: TtkTokenKind;
+function TSynPasSyn.Func86: TtkTokenKind;
 begin
   if KeyComp('VarArgs') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func87: TtkTokenKind;
+function TSynPasSyn.Func87: TtkTokenKind;
 begin
   if (FStringKeywordMode in [spsmDefault, spsmStringOnly]) and KeyComp('String') then
     Result := tkKey
@@ -1609,7 +1609,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func88: TtkTokenKind;
+function TSynPasSyn.Func88: TtkTokenKind;
 begin
   if KeyComp('Program') then begin
     fRange := fRange - [rsInterface] + [rsImplementation];
@@ -1623,7 +1623,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func89: TtkTokenKind;
+function TSynPasSyn.Func89: TtkTokenKind;
   function ScanForClassSection: Boolean;
   var
     Txt: String;
@@ -1719,7 +1719,7 @@ begin
   end;
 end;
 
-function TSynMiniPasSyn.Func91: TtkTokenKind;
+function TSynPasSyn.Func91: TtkTokenKind;
 begin
   if KeyComp('Downto') then
     Result := tkKey
@@ -1736,13 +1736,13 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func92: TtkTokenKind;
+function TSynPasSyn.Func92: TtkTokenKind;
 begin
   if D4syntax and KeyComp('overload') then Result := tkKey else
     if KeyComp('Inherited') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func94: TtkTokenKind;
+function TSynPasSyn.Func94: TtkTokenKind;
 begin
   if KeyComp('Assembler') then Result := tkKey else
     if KeyComp('Readonly') then
@@ -1751,7 +1751,7 @@ begin
     end else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func95: TtkTokenKind;
+function TSynPasSyn.Func95: TtkTokenKind;
 begin
   if KeyComp('Absolute') then
     Result := tkKey
@@ -1762,7 +1762,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func96: TtkTokenKind;
+function TSynPasSyn.Func96: TtkTokenKind;
 begin
   if KeyComp('Published') then begin
     Result := tkKey;
@@ -1779,12 +1779,12 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func97: TtkTokenKind;
+function TSynPasSyn.Func97: TtkTokenKind;
 begin
   if KeyComp('Threadvar') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func98: TtkTokenKind;
+function TSynPasSyn.Func98: TtkTokenKind;
 begin
   if KeyComp('Export') then Result := tkKey else
     if KeyComp('Nodefault') then
@@ -1793,7 +1793,7 @@ begin
     end else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func99: TtkTokenKind;
+function TSynPasSyn.Func99: TtkTokenKind;
 begin
   if KeyComp('External') then begin
     Result := tkKey;
@@ -1803,7 +1803,7 @@ begin
   end else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func100: TtkTokenKind;
+function TSynPasSyn.Func100: TtkTokenKind;
 begin
   if KeyComp('Automated') then
     Result := tkKey
@@ -1816,7 +1816,7 @@ begin
     Result := tkIdentifier
 end;
 
-function TSynMiniPasSyn.Func101: TtkTokenKind;
+function TSynPasSyn.Func101: TtkTokenKind;
 var
   tbf: TPascalCodeFoldBlockType;
 begin
@@ -1843,7 +1843,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func102: TtkTokenKind;
+function TSynPasSyn.Func102: TtkTokenKind;
 var
   InClass: Boolean;
 begin
@@ -1868,12 +1868,12 @@ begin
   else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func103: TtkTokenKind;
+function TSynPasSyn.Func103: TtkTokenKind;
 begin
   if KeyComp('Virtual') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func105: TtkTokenKind;
+function TSynPasSyn.Func105: TtkTokenKind;
 var
   InClass: Boolean;
 begin
@@ -1901,7 +1901,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func106: TtkTokenKind;
+function TSynPasSyn.Func106: TtkTokenKind;
 begin
   if KeyComp('Protected') then begin
     Result := tkKey;
@@ -1915,7 +1915,7 @@ begin
   else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func108: TtkTokenKind;
+function TSynPasSyn.Func108: TtkTokenKind;
 begin
   if KeyComp('Operator') then
   begin
@@ -1935,7 +1935,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func112: TtkTokenKind;
+function TSynPasSyn.Func112: TtkTokenKind;
 begin
   if KeyComp('Requires') and (TopPascalCodeFoldBlockType=cfbtPackage) then
     Result := tkKey
@@ -1943,12 +1943,12 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func117: TtkTokenKind;
+function TSynPasSyn.Func117: TtkTokenKind;
 begin
   if KeyComp('Exports') then Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func122: TtkTokenKind;
+function TSynPasSyn.Func122: TtkTokenKind;
 begin
   if KeyComp('Otherwise') then begin
     Result := tkKey;
@@ -1963,7 +1963,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func124: TtkTokenKind;
+function TSynPasSyn.Func124: TtkTokenKind;
 begin
   if KeyComp('ObjcCategory') then
   begin
@@ -1978,7 +1978,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func125: TtkTokenKind;
+function TSynPasSyn.Func125: TtkTokenKind;
 begin
   if KeyComp('NoReturn') and (TopPascalCodeFoldBlockType in ProcModifierAllowed) then
     Result := tkKey
@@ -1986,7 +1986,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func126: TtkTokenKind;
+function TSynPasSyn.Func126: TtkTokenKind;
 begin
   if D4syntax and KeyComp('Implements') then
   begin
@@ -1997,7 +1997,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func128: TtkTokenKind;
+function TSynPasSyn.Func128: TtkTokenKind;
 begin
   if (FStringKeywordMode in [spsmDefault]) and KeyComp('Widestring') then
     Result := tkKey
@@ -2005,7 +2005,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func129: TtkTokenKind;
+function TSynPasSyn.Func129: TtkTokenKind;
 begin
   if KeyComp('Dispinterface') then
   begin
@@ -2020,7 +2020,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func130: TtkTokenKind;
+function TSynPasSyn.Func130: TtkTokenKind;
 begin
   if (FStringKeywordMode in [spsmDefault]) and KeyComp('Ansistring') then
     Result := tkKey
@@ -2031,13 +2031,13 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func132: TtkTokenKind;
+function TSynPasSyn.Func132: TtkTokenKind;
 begin
   if D4syntax and KeyComp('Reintroduce') then Result := tkKey else
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func133: TtkTokenKind;
+function TSynPasSyn.Func133: TtkTokenKind;
 begin
   if KeyComp('Property') then begin
     Result := tkKey;
@@ -2049,7 +2049,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func136: TtkTokenKind;
+function TSynPasSyn.Func136: TtkTokenKind;
 begin
   if KeyComp('Finalization') then begin
     PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
@@ -2064,7 +2064,7 @@ begin
   else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func139: TtkTokenKind;
+function TSynPasSyn.Func139: TtkTokenKind;
 begin
   if KeyComp('WeakExternal') then
   begin
@@ -2076,7 +2076,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func141: TtkTokenKind;
+function TSynPasSyn.Func141: TtkTokenKind;
 begin
   if KeyComp('Writeonly') then
   begin
@@ -2084,7 +2084,7 @@ begin
   end else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func142: TtkTokenKind;
+function TSynPasSyn.Func142: TtkTokenKind;
 var
   tbf: TPascalCodeFoldBlockType;
 begin
@@ -2106,7 +2106,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func143: TtkTokenKind;
+function TSynPasSyn.Func143: TtkTokenKind;
 var
   InClass: Boolean;
 begin
@@ -2136,7 +2136,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func144: TtkTokenKind;
+function TSynPasSyn.Func144: TtkTokenKind;
 begin
   if KeyComp('ObjcProtocol') then
   begin
@@ -2151,7 +2151,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func151: TtkTokenKind;
+function TSynPasSyn.Func151: TtkTokenKind;
 var
   tbf: TPascalCodeFoldBlockType;
 begin
@@ -2173,7 +2173,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func158: TtkTokenKind;
+function TSynPasSyn.Func158: TtkTokenKind;
 begin
   if (FStringKeywordMode in [spsmDefault]) and KeyComp('UnicodeString') then
     Result := tkKey
@@ -2181,7 +2181,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func166: TtkTokenKind;
+function TSynPasSyn.Func166: TtkTokenKind;
 var
   InClass: Boolean;
 begin
@@ -2217,7 +2217,7 @@ begin
       Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func167: TtkTokenKind;
+function TSynPasSyn.Func167: TtkTokenKind;
 begin
   if (FStringKeywordMode in [spsmDefault]) and KeyComp('Shortstring') then
     Result := tkKey
@@ -2225,7 +2225,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func168: TtkTokenKind;
+function TSynPasSyn.Func168: TtkTokenKind;
 begin
   if KeyComp('Initialization') then begin
     PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
@@ -2240,7 +2240,7 @@ begin
   else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func170: TtkTokenKind;
+function TSynPasSyn.Func170: TtkTokenKind;
 begin
   if (FStringKeywordMode in [spsmDefault]) and KeyComp('UTF8String') then
     Result := tkKey
@@ -2248,7 +2248,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func181: TtkTokenKind;
+function TSynPasSyn.Func181: TtkTokenKind;
 begin
   if (FStringKeywordMode in [spsmDefault]) and KeyComp('RawByteString') then
     Result := tkKey
@@ -2256,7 +2256,7 @@ begin
     Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.Func191: TtkTokenKind;
+function TSynPasSyn.Func191: TtkTokenKind;
 begin
   if KeyComp('Resourcestring') then begin
     Result := tkKey;
@@ -2268,12 +2268,12 @@ begin
     Result := tkKey else Result := tkIdentifier;
 end;
 
-function TSynMiniPasSyn.AltFunc: TtkTokenKind;
+function TSynPasSyn.AltFunc: TtkTokenKind;
 begin
   Result := tkIdentifier
 end;
 
-function TSynMiniPasSyn.IdentKind(p: integer): TtkTokenKind;
+function TSynPasSyn.IdentKind(p: integer): TtkTokenKind;
 var
   HashKey: Integer;
 begin
@@ -2285,7 +2285,7 @@ begin
     Result := tkIdentifier;
 end;
 
-procedure TSynMiniPasSyn.MakeMethodTables;
+procedure TSynPasSyn.MakeMethodTables;
 var
   I: Char;
 begin
@@ -2330,7 +2330,7 @@ begin
     end;
 end;
 
-constructor TSynMiniPasSyn.Create(AOwner: TComponent);
+constructor TSynPasSyn.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FStringKeywordMode := spsmDefault;
@@ -2377,7 +2377,7 @@ begin
   fDefaultFilter := SYNS_FilterPascal;
 end; { Create }
 
-destructor TSynMiniPasSyn.Destroy;
+destructor TSynPasSyn.Destroy;
 begin
   DestroyDividerDrawConfig;
   FreeAndNil(FCurCaseLabelAttri);
@@ -2385,9 +2385,9 @@ begin
   inherited Destroy;
 end;
 
-procedure TSynMiniPasSyn.SetLine(const NewValue: string; LineNumber:Integer);
+procedure TSynPasSyn.SetLine(const NewValue: string; LineNumber:Integer);
 begin
-  //DebugLn(['TSynMiniPasSyn.SetLine START LineNumber=',LineNumber,' Line="',NewValue,'"']);
+  //DebugLn(['TSynPasSyn.SetLine START LineNumber=',LineNumber,' Line="',NewValue,'"']);
   fLineStr := NewValue;
   fLineLen:=length(fLineStr);
   fLine:=PChar(Pointer(fLineStr));
@@ -2406,14 +2406,14 @@ begin
     Next;
 end; { SetLine }
 
-procedure TSynMiniPasSyn.AddressOpProc;
+procedure TSynPasSyn.AddressOpProc;
 begin
   fTokenID := tkSymbol;
   inc(Run);
   if fLine[Run] = '@' then inc(Run);
 end;
 
-procedure TSynMiniPasSyn.AsciiCharProc;
+procedure TSynPasSyn.AsciiCharProc;
 begin
   fTokenID := tkString;
   inc(Run);
@@ -2448,7 +2448,7 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.BorProc;
+procedure TSynPasSyn.BorProc;
 var
   p: LongInt;
 begin
@@ -2485,7 +2485,7 @@ begin
   Run:=p;
 end;
 
-procedure TSynMiniPasSyn.DirectiveProc;
+procedure TSynPasSyn.DirectiveProc;
 begin
   fTokenID := tkDirective;
   if TextComp('mode') then begin
@@ -2525,10 +2525,10 @@ begin
     end;
     Inc(Run);
   until (Run>=fLineLen);
-  //DebugLn(['TSynMiniPasSyn.DirectiveProc Run=',Run,' fTokenPos=',fTokenPos,' fLineStr=',fLineStr,' Token=',GetToken]);
+  //DebugLn(['TSynPasSyn.DirectiveProc Run=',Run,' fTokenPos=',fTokenPos,' fLineStr=',fLineStr,' Token=',GetToken]);
 end;
 
-procedure TSynMiniPasSyn.BraceOpenProc;
+procedure TSynPasSyn.BraceOpenProc;
   function ScanRegion: Boolean;
   var
     Txt: String;
@@ -2670,7 +2670,7 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.ColonProc;
+procedure TSynPasSyn.ColonProc;
 begin
   fTokenID := tkSymbol;
   inc(Run);
@@ -2685,7 +2685,7 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.GreaterProc;
+procedure TSynPasSyn.GreaterProc;
 begin
   fTokenID := tkSymbol;
   inc(Run);
@@ -2693,21 +2693,21 @@ begin
     inc(Run)
 end;
 
-procedure TSynMiniPasSyn.CRProc;
+procedure TSynPasSyn.CRProc;
 begin
   fTokenID := tkSpace;
   inc(Run);
   if fLine[Run] = #10 then inc(Run);
 end;
 
-procedure TSynMiniPasSyn.IdentProc;
+procedure TSynPasSyn.IdentProc;
 begin
   fTokenID := IdentKind(Run);
   inc(Run, fStringLen);
   while Identifiers[fLine[Run]] do inc(Run);
 end;
 
-procedure TSynMiniPasSyn.HexProc;
+procedure TSynPasSyn.HexProc;
 begin
   inc(Run);
   if (IsIntegerChar[FLine[Run]]) then begin
@@ -2718,7 +2718,7 @@ begin
     fTokenID := tkSymbol;
 end;
 
-procedure TSynMiniPasSyn.BinaryProc;
+procedure TSynPasSyn.BinaryProc;
 begin
   inc(Run);
   if FLine[Run] in ['0'..'1'] then begin
@@ -2729,7 +2729,7 @@ begin
     fTokenID := tkSymbol;
 end;
 
-procedure TSynMiniPasSyn.OctalProc;
+procedure TSynPasSyn.OctalProc;
 begin
   inc(Run);
   if FLine[Run] in ['0'..'7'] then begin
@@ -2746,20 +2746,20 @@ begin
 end;
 
 
-procedure TSynMiniPasSyn.LFProc;
+procedure TSynPasSyn.LFProc;
 begin
   fTokenID := tkSpace;
   inc(Run);
 end;
 
-procedure TSynMiniPasSyn.LowerProc;
+procedure TSynPasSyn.LowerProc;
 begin
   fTokenID := tkSymbol;
   inc(Run);
   if fLine[Run] in ['=', '>'] then inc(Run);
 end;
 
-procedure TSynMiniPasSyn.CaretProc;
+procedure TSynPasSyn.CaretProc;
 var
   t: TPascalCodeFoldBlockType;
 begin
@@ -2789,7 +2789,7 @@ begin
     fRange := fRange + [rsAfterIdentifierOrValueAdd];
 end;
 
-procedure TSynMiniPasSyn.NullProc;
+procedure TSynPasSyn.NullProc;
 begin
   if (Run = 0) and (rsSlash in fRange) then begin
     fRange := fRange - [rsSlash];
@@ -2800,7 +2800,7 @@ begin
   if Run<fLineLen then inc(Run);
 end;
 
-procedure TSynMiniPasSyn.NumberProc;
+procedure TSynPasSyn.NumberProc;
 begin
   inc(Run);
   fTokenID := tkNumber;
@@ -2818,14 +2818,14 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.PointProc;
+procedure TSynPasSyn.PointProc;
 begin
   fTokenID := tkSymbol;
   inc(Run);
   if fLine[Run] in ['.', ')'] then inc(Run);
 end;
 
-procedure TSynMiniPasSyn.AnsiProc;
+procedure TSynPasSyn.AnsiProc;
 begin
   fTokenID := tkComment;
   repeat
@@ -2854,7 +2854,7 @@ begin
   until (Run>=fLineLen) or (fLine[Run] in [#0, #10, #13]);
 end;
 
-procedure TSynMiniPasSyn.RoundOpenProc;
+procedure TSynPasSyn.RoundOpenProc;
 begin
   Inc(Run);
   if Run>=fLineLen then begin
@@ -2890,7 +2890,7 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.RoundCloseProc;
+procedure TSynPasSyn.RoundCloseProc;
 begin
   inc(Run);
   fTokenID := tkSymbol;
@@ -2903,14 +2903,14 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.SquareOpenProc;
+procedure TSynPasSyn.SquareOpenProc;
 begin
   inc(Run);
   fTokenID := tkSymbol;
   PasCodeFoldRange.IncBracketNestLevel;
 end;
 
-procedure TSynMiniPasSyn.SquareCloseProc;
+procedure TSynPasSyn.SquareCloseProc;
 begin
   inc(Run);
   fTokenID := tkSymbol;
@@ -2918,7 +2918,7 @@ begin
   PasCodeFoldRange.DecBracketNestLevel;
 end;
 
-procedure TSynMiniPasSyn.EqualSignProc;
+procedure TSynPasSyn.EqualSignProc;
 begin
   inc(Run);
   fTokenID := tkSymbol;
@@ -2929,7 +2929,7 @@ begin
     fRange := fRange + [rsVarTypeInSpecification];
 end;
 
-procedure TSynMiniPasSyn.SemicolonProc;
+procedure TSynPasSyn.SemicolonProc;
 var
   tfb: TPascalCodeFoldBlockType;
 begin
@@ -2963,7 +2963,7 @@ begin
   fRange := fRange - [rsVarTypeInSpecification, rsAfterEqual];
 end;
 
-procedure TSynMiniPasSyn.SlashProc;
+procedure TSynPasSyn.SlashProc;
 begin
   if fLine[Run+1] = '/' then begin
     fTokenID := tkComment;
@@ -2982,7 +2982,7 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.SlashContinueProc;
+procedure TSynPasSyn.SlashContinueProc;
 begin
   if (fLine[Run] = '/') and (fLine[Run + 1] = '/') then begin
     // Continue fold block
@@ -3009,14 +3009,14 @@ begin
     Next;
 end;
 
-procedure TSynMiniPasSyn.SpaceProc;
+procedure TSynPasSyn.SpaceProc;
 begin
   inc(Run);
   fTokenID := tkSpace;
   while IsSpaceChar[FLine[Run]] do inc(Run);
 end;
 
-procedure TSynMiniPasSyn.StringProc;
+procedure TSynPasSyn.StringProc;
 begin
   fTokenID := tkString;
   Inc(Run);
@@ -3030,13 +3030,13 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.SymbolProc;
+procedure TSynPasSyn.SymbolProc;
 begin
   inc(Run);
   fTokenID := tkSymbol;
 end;
 
-procedure TSynMiniPasSyn.UnknownProc;
+procedure TSynPasSyn.UnknownProc;
 begin
   inc(Run);
   while (fLine[Run] in [#128..#191]) OR // continued utf8 subcode
@@ -3044,7 +3044,7 @@ begin
   fTokenID := tkUnknown;
 end;
 
-procedure TSynMiniPasSyn.Next;
+procedure TSynPasSyn.Next;
 var
   IsAtCaseLabel: Boolean;
 begin
@@ -3113,10 +3113,10 @@ begin
   end;
   if FAtLineStart and not(FTokenID in [tkSpace, tkComment, tkIDEDirective]) then
     FAtLineStart := False;
-  //DebugLn(['TSynMiniPasSyn.Next Run=',Run,' fTokenPos=',fTokenPos,' fLineStr=',fLineStr,' Token=',GetToken]);
+  //DebugLn(['TSynPasSyn.Next Run=',Run,' fTokenPos=',fTokenPos,' fLineStr=',fLineStr,' Token=',GetToken]);
 end;
 
-function TSynMiniPasSyn.GetDefaultAttribute(Index: integer):
+function TSynPasSyn.GetDefaultAttribute(Index: integer):
   TSynHighlighterAttributes;
 begin
   case Index of
@@ -3133,12 +3133,12 @@ begin
   end;
 end;
 
-function TSynMiniPasSyn.GetEol: Boolean;
+function TSynPasSyn.GetEol: Boolean;
 begin
   Result := (fTokenID = tkNull) and (Run >= fLineLen);
 end;
 
-function TSynMiniPasSyn.GetToken: string;
+function TSynPasSyn.GetToken: string;
 var
   Len: LongInt;
 begin
@@ -3148,7 +3148,7 @@ begin
     System.Move(fLine[fTokenPos],Result[1],Len);
 end;
 
-procedure TSynMiniPasSyn.GetTokenEx(out TokenStart: PChar; out TokenLength: integer);
+procedure TSynPasSyn.GetTokenEx(out TokenStart: PChar; out TokenLength: integer);
 begin
   TokenLength:=Run-fTokenPos;
   if TokenLength>0 then begin
@@ -3158,7 +3158,7 @@ begin
   end;
 end;
 
-function TSynMiniPasSyn.GetTokenID: TtkTokenKind;
+function TSynPasSyn.GetTokenID: TtkTokenKind;
 begin
   if not fAsmStart and (fRange * [rsAnsi, rsBor, rsIDEDirective, rsDirective, rsAsm] = [rsAsm])
     and not (fTokenId in [tkNull, tkComment, tkIDEDirective, tkSpace, tkDirective])
@@ -3168,7 +3168,7 @@ begin
     Result := fTokenId;
 end;
 
-function TSynMiniPasSyn.GetTokenAttribute: TSynHighlighterAttributes;
+function TSynPasSyn.GetTokenAttribute: TSynHighlighterAttributes;
 begin
   case GetTokenID of
     tkAsm: Result := fAsmAttri;
@@ -3198,17 +3198,17 @@ begin
   end;
 end;
 
-function TSynMiniPasSyn.GetTokenKind: integer;
+function TSynPasSyn.GetTokenKind: integer;
 begin
   Result := Ord(GetTokenID);
 end;
 
-function TSynMiniPasSyn.GetTokenPos: Integer;
+function TSynPasSyn.GetTokenPos: Integer;
 begin
   Result := fTokenPos;
 end;
 
-function TSynMiniPasSyn.GetRange: Pointer;
+function TSynPasSyn.GetRange: Pointer;
 begin
   // For speed reasons, we work with fRange instead of CodeFoldRange.RangeType
   // -> update now
@@ -3217,21 +3217,21 @@ begin
   Result := inherited GetRange;
 end;
 
-procedure TSynMiniPasSyn.SetRange(Value: Pointer);
+procedure TSynPasSyn.SetRange(Value: Pointer);
 begin
-  //DebugLn(['TSynMiniPasSyn.SetRange START']);
+  //DebugLn(['TSynPasSyn.SetRange START']);
   inherited SetRange(Value);
   CompilerMode := PasCodeFoldRange.Mode;
   fRange := TRangeStates(Integer(PtrUInt(CodeFoldRange.RangeType)));
   FSynPasRangeInfo := TSynHighlighterPasRangeList(CurrentRanges).PasRangeInfo[LineIndex-1];
 end;
 
-procedure TSynMiniPasSyn.StartAtLineIndex(LineNumber: Integer);
+procedure TSynPasSyn.StartAtLineIndex(LineNumber: Integer);
 begin
   inherited StartAtLineIndex(LineNumber);
 end;
 
-function TSynMiniPasSyn.GetEndOfLineAttribute: TSynHighlighterAttributes;
+function TSynPasSyn.GetEndOfLineAttribute: TSynHighlighterAttributes;
 begin
   if fRange * [rsAnsi, rsBor] <> [] then
     Result := fCommentAttri
@@ -3239,7 +3239,7 @@ begin
     Result := inherited GetEndOfLineAttribute;
 end;
 
-procedure TSynMiniPasSyn.ResetRange;
+procedure TSynPasSyn.ResetRange;
 begin
   fRange := [];
   FStartCodeFoldBlockLevel:=0;
@@ -3254,7 +3254,7 @@ begin
   CompilerMode:=pcmDelphi;
 end;
 
-procedure TSynMiniPasSyn.EnumUserSettings(settings: TStrings);
+procedure TSynPasSyn.EnumUserSettings(settings: TStrings);
 begin
   { returns the user settings that exist in the registry }
   with TRegistry.Create do
@@ -3278,7 +3278,7 @@ begin
   end;
 end;
 
-function TSynMiniPasSyn.IsLineStartingInDirective(ALineIndex: TLineIdx): Boolean;
+function TSynPasSyn.IsLineStartingInDirective(ALineIndex: TLineIdx): Boolean;
 var
   r: Pointer;
 begin
@@ -3289,7 +3289,7 @@ begin
     Result := rsDirective in TRangeStates(Integer(PtrUInt(TSynPasSynRange(r).RangeType)));
 end;
 
-function TSynMiniPasSyn.FoldBlockEndLevel(ALineIndex: TLineIdx;
+function TSynPasSyn.FoldBlockEndLevel(ALineIndex: TLineIdx;
   const AFilter: TSynFoldBlockFilter): integer;
 var
   inf: TSynPasRangeInfo;
@@ -3339,7 +3339,7 @@ begin
   end;
 end;
 
-function TSynMiniPasSyn.FoldBlockMinLevel(ALineIndex: TLineIdx;
+function TSynPasSyn.FoldBlockMinLevel(ALineIndex: TLineIdx;
   const AFilter: TSynFoldBlockFilter): integer;
 var
   inf: TSynPasRangeInfo;
@@ -3389,7 +3389,7 @@ begin
   end;
 end;
 
-function TSynMiniPasSyn.FoldBlockNestedTypes(ALineIndex: TLineIdx; ANestIndex: Integer; out
+function TSynPasSyn.FoldBlockNestedTypes(ALineIndex: TLineIdx; ANestIndex: Integer; out
   AType: Pointer; const AFilter: TSynFoldBlockFilter): boolean;
 var
   r, r2: Pointer;
@@ -3461,7 +3461,7 @@ begin
   end;
 end;
 
-function TSynMiniPasSyn.TopPascalCodeFoldBlockType(DownIndex: Integer = 0): TPascalCodeFoldBlockType;
+function TSynPasSyn.TopPascalCodeFoldBlockType(DownIndex: Integer = 0): TPascalCodeFoldBlockType;
 var
   p: Pointer;
 begin
@@ -3471,12 +3471,12 @@ begin
   Result := TPascalCodeFoldBlockType(PtrUInt(p));
 end;
 
-function TSynMiniPasSyn.FoldTypeCount: integer;
+function TSynPasSyn.FoldTypeCount: integer;
 begin
   Result := 3;
 end;
 
-function TSynMiniPasSyn.FoldTypeAtNodeIndex(ALineIndex, FoldIndex: Integer;
+function TSynPasSyn.FoldTypeAtNodeIndex(ALineIndex, FoldIndex: Integer;
   UseCloseNodes: boolean): integer;
 var
   act: TSynFoldActions;
@@ -3493,7 +3493,7 @@ begin
   end;
 end;
 
-function TSynMiniPasSyn.FoldLineLength(ALineIndex, FoldIndex: Integer): integer;
+function TSynPasSyn.FoldLineLength(ALineIndex, FoldIndex: Integer): integer;
 var
   atype : Integer;
   node: TSynFoldNodeInfo;
@@ -3518,7 +3518,7 @@ begin
   Result := Result - ALineIndex;
 end;
 
-function TSynMiniPasSyn.FoldEndLine(ALineIndex, FoldIndex: Integer): integer;
+function TSynPasSyn.FoldEndLine(ALineIndex, FoldIndex: Integer): integer;
 var
   lvl, cnt, atype : Integer;
   node: TSynFoldNodeInfo;
@@ -3547,7 +3547,7 @@ begin
     dec(Result);
 end;
 
-function TSynMiniPasSyn.LastLinePasFoldLevelFix(Index: Integer; AType: Integer;
+function TSynPasSyn.LastLinePasFoldLevelFix(Index: Integer; AType: Integer;
   AIncludeDisabled: Boolean): integer;
 var
   r: TSynPasSynRange;
@@ -3573,7 +3573,7 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.InitNode(out Node: TSynFoldNodeInfo; EndOffs: Integer;
+procedure TSynPasSyn.InitNode(out Node: TSynFoldNodeInfo; EndOffs: Integer;
   ABlockType: TPascalCodeFoldBlockType; aActions: TSynFoldActions; AIsFold: Boolean);
 var
   OneLine: Boolean;
@@ -3584,8 +3584,8 @@ begin
   Node.LineIndex := LineIndex;
   Node.LogXStart := Run;
   Node.LogXEnd := Run + fStringLen;
-  Node.FoldType := Pointer(PtrInt(ABlockType));
-  Node.FoldTypeCompatible := Pointer(PtrInt(PascalFoldTypeCompatibility[ABlockType]));
+  Node.FoldType := Pointer(PtrUInt(ABlockType));
+  Node.FoldTypeCompatible := Pointer(PtrUInt(PascalFoldTypeCompatibility[ABlockType]));
   Node.FoldAction := aActions;
   case ABlockType of
     cfbtRegion:
@@ -3656,7 +3656,7 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.StartCustomCodeFoldBlock(ABlockType: TPascalCodeFoldBlockType);
+procedure TSynPasSyn.StartCustomCodeFoldBlock(ABlockType: TPascalCodeFoldBlockType);
 var
   act: TSynFoldActions;
   nd: TSynFoldNodeInfo;
@@ -3671,7 +3671,7 @@ begin
       act := act + FFoldConfig[ord(ABlockType)].FoldActions;
     if not FAtLineStart then
       act := act - [sfaFoldHide];
-    InitNode(nd, +1, ABlockType, act, FoldBlock);
+    DoInitNode(nd, False, Pointer(PtrUInt(ABlockType)), act, FoldBlock);
     CollectingNodeInfoList.Add(nd);
   end;
   //if not FoldBlock then
@@ -3685,7 +3685,7 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.EndCustomCodeFoldBlock(ABlockType: TPascalCodeFoldBlockType);
+procedure TSynPasSyn.EndCustomCodeFoldBlock(ABlockType: TPascalCodeFoldBlockType);
 var
   act: TSynFoldActions;
   nd: TSynFoldNodeInfo;
@@ -3700,7 +3700,7 @@ begin
       act := act + FFoldConfig[PtrUInt(ABlockType)].FoldActions;
     if not FoldBlock then
       act := act - [sfaFold, sfaFoldFold, sfaFoldHide];
-    InitNode(nd, -1, ABlockType, act, FoldBlock); // + FFoldConfig[ord(ABlockType)].FoldActions);
+    DoInitNode(nd, True, Pointer(PtrUInt(ABlockType)), act, FoldBlock); // + FFoldConfig[ord(ABlockType)].FoldActions);
     CollectingNodeInfoList.Add(nd);
   end;
   //if not FoldBlock then
@@ -3723,12 +3723,12 @@ begin
   end;
 end;
 
-function TSynMiniPasSyn.CreateFoldNodeInfoList: TLazSynFoldNodeInfoList;
+function TSynPasSyn.CreateFoldNodeInfoList: TLazSynFoldNodeInfoList;
 begin
   Result := TLazSynFoldNodeInfoList.Create;
 end;
 
-procedure TSynMiniPasSyn.InitFoldNodeInfo(AList: TLazSynFoldNodeInfoList; Line: TLineIdx);
+procedure TSynPasSyn.InitFoldNodeInfo(AList: TLazSynFoldNodeInfoList; Line: TLineIdx);
 var
   nd: PSynFoldNodeInfo;
   i: Integer;
@@ -3775,7 +3775,7 @@ begin
   end;
 end;
 
-function TSynMiniPasSyn.StartPascalCodeFoldBlock(ABlockType: TPascalCodeFoldBlockType;
+function TSynPasSyn.StartPascalCodeFoldBlock(ABlockType: TPascalCodeFoldBlockType;
   OnlyEnabled: Boolean): TSynCustomCodeFoldBlock;
 var
   p: PtrInt;
@@ -3788,21 +3788,21 @@ begin
     exit(nil);
   FoldBlock := BlockEnabled and (FFoldConfig[ord(ABlockType)].Modes * [fmFold, fmHide] <> []);
   p := 0;
-  if IsCollectingNodeInfo then begin // exclude subblocks, because they do not increase the foldlevel yet
+  {if IsCollectingNodeInfo then begin // exclude subblocks, because they do not increase the foldlevel yet
     act := [sfaOpen, sfaOpenFold]; //TODO: sfaOpenFold not for cfbtIfThen
     if BlockEnabled then
       act := act + FFoldConfig[ord(ABlockType)].FoldActions;
     if not FAtLineStart then
       act := act - [sfaFoldHide];
-    InitNode(nd, +1, ABlockType, act, FoldBlock);
+    DoInitNode(nd, False, Pointer(PtrInt(ABlockType)), act, FoldBlock);
     CollectingNodeInfoList.Add(nd);
-  end;
+  end;}
   if not FoldBlock then
     p := PtrInt(CountPascalCodeFoldBlockOffset);
   Result:=TSynCustomCodeFoldBlock(StartCodeFoldBlock(p+Pointer(PtrInt(ABlockType)), FoldBlock));
 end;
 
-procedure TSynMiniPasSyn.EndPascalCodeFoldBlock(NoMarkup: Boolean = False);
+procedure TSynPasSyn.EndPascalCodeFoldBlock(NoMarkup: Boolean = False);
 var
   DecreaseLevel, BlockEnabled: Boolean;
   act: TSynFoldActions;
@@ -3814,7 +3814,7 @@ begin
     fRange := fRange - [rsInTypeBlock];
   fRange := fRange - [rsAfterEqual];
   DecreaseLevel := TopCodeFoldBlockType < CountPascalCodeFoldBlockOffset;
-  if IsCollectingNodeInfo then begin // exclude subblocks, because they do not increase the foldlevel yet
+  {if IsCollectingNodeInfo then begin // exclude subblocks, because they do not increase the foldlevel yet
     BlockEnabled := FFoldConfig[ord(BlockType)].Enabled;
     act := [sfaClose, sfaCloseFold];
     if BlockEnabled then
@@ -3823,13 +3823,13 @@ begin
       act := act - [sfaFold, sfaFoldFold, sfaFoldHide];
     if NoMarkup then
       exclude(act, sfaMarkup);
-    InitNode(nd, -1, BlockType, act, DecreaseLevel);
+    DoInitNode(nd, True, Pointer(PtrInt(ABlockType)), act, DecreaseLevel);
     CollectingNodeInfoList.Add(nd);
-  end;
+  end;}
   EndCodeFoldBlock(DecreaseLevel);
 end;
 
-procedure TSynMiniPasSyn.CloseBeginEndBlocksBeforeProc;
+procedure TSynPasSyn.CloseBeginEndBlocksBeforeProc;
 begin
   if not(TopPascalCodeFoldBlockType in PascalStatementBlocks + [cfbtAsm]) then
     exit;
@@ -3839,7 +3839,7 @@ begin
     EndPascalCodeFoldBlockLastLine; // This procedure did have a begin/end block, so it must end too
 end;
 
-procedure TSynMiniPasSyn.SmartCloseBeginEndBlocks(SearchFor: TPascalCodeFoldBlockType);
+procedure TSynPasSyn.SmartCloseBeginEndBlocks(SearchFor: TPascalCodeFoldBlockType);
 var
   i: Integer;
   t: TPascalCodeFoldBlockType;
@@ -3866,7 +3866,7 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.EndPascalCodeFoldBlockLastLine;
+procedure TSynPasSyn.EndPascalCodeFoldBlockLastLine;
 var
   i: Integer;
   nd: PSynFoldNodeInfo;
@@ -3898,7 +3898,7 @@ begin
   end;
 end;
 
-function TSynMiniPasSyn.GetDrawDivider(Index: integer): TSynDividerDrawConfigSetting;
+function TSynPasSyn.GetDrawDivider(Index: integer): TSynDividerDrawConfigSetting;
   function CheckFoldNestLevel(MaxDepth, StartLvl: Integer;
     CountTypes, SkipTypes: TPascalCodeFoldBlockTypes;
     out ResultLvl: Integer): Boolean;
@@ -4028,7 +4028,7 @@ begin
   Result := inherited;
 end;
 
-procedure TSynMiniPasSyn.CreateDividerDrawConfig;
+procedure TSynPasSyn.CreateDividerDrawConfig;
 var
   i: TSynPasDividerDrawLocation;
 begin
@@ -4040,7 +4040,7 @@ begin
   end;
 end;
 
-procedure TSynMiniPasSyn.DestroyDividerDrawConfig;
+procedure TSynPasSyn.DestroyDividerDrawConfig;
 var
   i: TSynPasDividerDrawLocation;
 begin
@@ -4048,7 +4048,7 @@ begin
     FreeAndNil(FDividerDrawConfig[i]);
 end;
 
-function TSynMiniPasSyn.GetFoldConfigInstance(Index: Integer): TSynCustomFoldConfig;
+function TSynPasSyn.GetFoldConfigInstance(Index: Integer): TSynCustomFoldConfig;
 var
   m: TSynCustomFoldConfigModes;
 begin
@@ -4084,12 +4084,12 @@ begin
 
 end;
 
-function TSynMiniPasSyn.CreateRangeList(ALines: TSynEditStringsBase): TSynHighlighterRangeList;
+function TSynPasSyn.CreateRangeList(ALines: TSynEditStringsBase): TSynHighlighterRangeList;
 begin
   Result := TSynHighlighterPasRangeList.Create;
 end;
 
-function TSynMiniPasSyn.UpdateRangeInfoAtLine(Index: Integer): Boolean;
+function TSynPasSyn.UpdateRangeInfoAtLine(Index: Integer): Boolean;
 var
   r: TSynPasRangeInfo;
 begin
@@ -4103,7 +4103,7 @@ begin
   TSynHighlighterPasRangeList(CurrentRanges).PasRangeInfo[Index] := FSynPasRangeInfo;
 end;
 
-function TSynMiniPasSyn.GetFoldConfigCount: Integer;
+function TSynPasSyn.GetFoldConfigCount: Integer;
 begin
   // excluded cfbtNone;
   Result := ord(high(TPascalCodeFoldBlockType)) -
@@ -4111,7 +4111,7 @@ begin
             - 1;
 end;
 
-function TSynMiniPasSyn.GetFoldConfigInternalCount: Integer;
+function TSynPasSyn.GetFoldConfigInternalCount: Integer;
 begin
   // include cfbtNone;
   Result := ord(high(TPascalCodeFoldBlockType)) -
@@ -4119,28 +4119,28 @@ begin
             + 1;
 end;
 
-procedure TSynMiniPasSyn.DoFoldConfigChanged(Sender: TObject);
+procedure TSynPasSyn.DoFoldConfigChanged(Sender: TObject);
 begin
   inherited DoFoldConfigChanged(Sender);
 end;
 
-function TSynMiniPasSyn.GetDividerDrawConfig(Index: Integer): TSynDividerDrawConfig;
+function TSynPasSyn.GetDividerDrawConfig(Index: Integer): TSynDividerDrawConfig;
 begin
   Result := FDividerDrawConfig[TSynPasDividerDrawLocation(Index)];
 end;
 
-function TSynMiniPasSyn.GetDividerDrawConfigCount: Integer;
+function TSynPasSyn.GetDividerDrawConfigCount: Integer;
 begin
   Result := ord(high(TSynPasDividerDrawLocation))
           - ord(low(TSynPasDividerDrawLocation)) + 1;
 end;
 
-function TSynMiniPasSyn.GetRangeClass: TSynCustomHighlighterRangeClass;
+function TSynPasSyn.GetRangeClass: TSynCustomHighlighterRangeClass;
 begin
   Result:=TSynPasSynRange;
 end;
 
-function TSynMiniPasSyn.UseUserSettings(settingIndex: integer): boolean;
+function TSynPasSyn.UseUserSettings(settingIndex: integer): boolean;
 // Possible parameter values:
 //   index into TStrings returned by EnumUserSettings
 // Possible return values:
@@ -4252,36 +4252,36 @@ function TSynMiniPasSyn.UseUserSettings(settingIndex: integer): boolean;
 
 begin
   Result := ReadDelphiSettings(settingIndex);
-end; { TSynMiniPasSyn.UseUserSettings }
+end; { TSynPasSyn.UseUserSettings }
 
-function TSynMiniPasSyn.GetIdentChars: TSynIdentChars;
+function TSynPasSyn.GetIdentChars: TSynIdentChars;
 begin
   Result := ['&', '_', '0'..'9', 'a'..'z', 'A'..'Z'];
 end;
 
-class function TSynMiniPasSyn.GetLanguageName: string;
+class function TSynPasSyn.GetLanguageName: string;
 begin
   Result := SYNS_LangPascal;
 end;
 
-class function TSynMiniPasSyn.GetCapabilities: TSynHighlighterCapabilities;
+class function TSynPasSyn.GetCapabilities: TSynHighlighterCapabilities;
 begin
   Result := inherited GetCapabilities + [hcUserSettings];
 end;
 
 {begin}                                                                         //mh 2000-10-08
-function TSynMiniPasSyn.IsFilterStored: boolean;
+function TSynPasSyn.IsFilterStored: boolean;
 begin
   Result := fDefaultFilter <> SYNS_FilterPascal;
 end;
 
-procedure TSynMiniPasSyn.CreateRootCodeFoldBlock;
+procedure TSynPasSyn.CreateRootCodeFoldBlock;
 begin
   inherited;
   RootCodeFoldBlock.InitRootBlockType(Pointer(PtrInt(cfbtNone)));
 end;
 
-function TSynMiniPasSyn.IsKeyword(const AKeyword: string): boolean;
+function TSynPasSyn.IsKeyword(const AKeyword: string): boolean;
 // returns true for some common keywords
 // Note: this words are not always keywords (e.g. end), and some keywords are
 // not listed here at all (e.g. static)
@@ -4311,7 +4311,7 @@ end;
 
 {end}                                                                           //mh 2000-10-08
 
-procedure TSynMiniPasSyn.SetD4syntax(const Value: boolean);
+procedure TSynPasSyn.SetD4syntax(const Value: boolean);
 begin
   FD4syntax := Value;
 end;
@@ -4446,7 +4446,7 @@ end;
 
 initialization
   MakeIdentTable;
-  RegisterPlaceableHighlighter(TSynMiniPasSyn);
+  RegisterPlaceableHighlighter(TSynPasSyn);
 
 finalization
   FreeAndNil(KeywordsList);

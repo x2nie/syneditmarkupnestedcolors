@@ -1206,7 +1206,6 @@ var
   OneLine: Boolean;
   EndOffs, i: Integer;
   nd: PSynFoldNodeInfo;
-  LogX1V: integer; //used for vertical line in nested color markup
   LogX1, LogX2: Integer;
 
 begin
