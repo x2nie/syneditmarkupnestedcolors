@@ -308,10 +308,31 @@ procedure TSynEditMarkupFoldColors.DoMarkupParentFoldAtRow(aRow: Integer);
 
     end;
   end;
+
+{.$define sfaOutlineforward}
 var
   i,y: Integer;
   Nest : TLazSynEditNestedFoldsList;
   TmpNode: TSynFoldNodeInfo;
+{$ifdef sfaOutlineforward}
+  procedure Later(var J:integer);
+  begin
+    inc(J);
+  end;
+  function Allowed(J: integer):boolean;
+  begin
+    result := J < Nest.Count
+  end;
+{$else}
+  procedure Later(var J:integer);
+  begin
+    dec(J);
+  end;
+  function Allowed(J: integer):boolean;
+  begin
+    result := J >= 0
+  end;
+{$endif}
 
 begin
   y := aRow-1;
@@ -323,22 +344,26 @@ begin
   Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
   Nest.IncludeOpeningOnLine := False; //True; //
 
-  i := 0; while i <  Nest.Count do
-  //i := Nest.Count -1;  while i >= 0 do  //from right to left
+  {$ifdef sfaOutlineforward}
+  i := 0; //while i <  Nest.Count do
+  {$else}
+  i := Nest.Count -1;  //while i >= 0 do  //from right to left
+  {$endif}
+  while Allowed(i) do
   begin
       TmpNode := Nest.HLNode[i];
 
       //find till valid
-      while (sfaInvalid in TmpNode.FoldAction ) and (i < Nest.Count) do
+      while (sfaInvalid in TmpNode.FoldAction ) and Allowed(i) do //(i < Nest.Count) do
       begin
-        inc(i);
+        Later(i);
         TmpNode := Nest.HLNode[i];
       end;
       //if not (sfaInvalid in TmpNode.FoldAction) then}
       if (sfaOutline in TmpNode.FoldAction ) then
           AddVerticalLine(TmpNode);
 
-      inc(i);
+      Later(i);
       //dec(i);
       //break; //debug
   end;
