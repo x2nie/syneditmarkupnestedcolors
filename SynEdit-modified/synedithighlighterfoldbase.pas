@@ -1191,7 +1191,7 @@ begin
       act := act + FFoldConfig[PtrUInt(ABlockType)].FoldActions
     else
     if not BlockConfExists then
-      act := act + [sfaFold, sfaMarkup, sfaOutline];
+      act := act + [sfaFold, sfaFoldFold, sfaMarkup, sfaOutline];
     act := act - [sfaFoldFold, sfaFoldHide]; // it is closing tag
     DoInitNode(nd, FinishingABlock, ABlockType, act, LevelChanged);
   end;
@@ -1206,6 +1206,7 @@ var
   OneLine: Boolean;
   EndOffs, i: Integer;
   nd: PSynFoldNodeInfo;
+  //LogX1V: integer; //used for vertical line in nested color markup
   LogX1, LogX2: Integer;
 
 begin

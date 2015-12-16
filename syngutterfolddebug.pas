@@ -57,6 +57,7 @@ var
   TmpNode: TSynFoldNodeInfo;
   NodeList: TLazSynFoldNodeInfoList;
   x1st,x1,x2,ty : string;
+  p : Pointer;
  begin
    //y := aRow-1;
    Nest := TLazSynEditNestedFoldsList.Create(@GetFoldHighLighter);
@@ -142,7 +143,13 @@ var
                   y    := TmpNode.LineIndex;
                   if TSynCustomFoldHighlighter(HL) is TSynPasSyn
                   or TSynCustomFoldHighlighter(HL) is SynHighlighterMiniPas2.TSynPasSyn then
-                    ty   := copy( GetEnumName(TypeInfo(TPascalCodeFoldBlockType), PtrUint(TmpNode.FoldType) ), 5,100) ;
+                  begin
+                    p := TmpNode.FoldType;
+                    if p >= CountPascalCodeFoldBlockOffset then
+                    p := p - PtrUInt(CountPascalCodeFoldBlockOffset);
+                    ty   := copy( GetEnumName(TypeInfo(TPascalCodeFoldBlockType), PtrUint(p) ), 5,100) ;
+
+                  end;
             finally
               NodeList.ReleaseReference;
             end;

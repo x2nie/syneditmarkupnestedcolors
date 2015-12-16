@@ -282,7 +282,6 @@ type
     property BracketNestLevel: integer read FBracketNestLevel write FBracketNestLevel;
     property LastLineCodeFoldLevelFix: integer
       read FLastLineCodeFoldLevelFix write FLastLineCodeFoldLevelFix;
-
     property PasFoldEndLevel: Smallint read FPasFoldEndLevel write FPasFoldEndLevel;
     property PasFoldFixLevel: Smallint read FPasFoldFixLevel write FPasFoldFixLevel;
     property PasFoldMinLevel: Smallint read FPasFoldMinLevel write FPasFoldMinLevel;
@@ -339,8 +338,6 @@ type
     fDirectiveAttri: TSynHighlighterAttributes;
     FCompilerMode: TPascalCompilerMode;
     fD4syntax: boolean;
-    //IsCollectingNodeInfo: Boolean;
-    //CollectingNodeInfoList: TLazSynFoldNodeInfoList;
     // Divider
     FDividerDrawConfig: Array [TSynPasDividerDrawLocation] of TSynDividerDrawConfig;
 
@@ -905,8 +902,6 @@ function TSynPasSyn.Func15: TtkTokenKind;
 begin
   if KeyComp('If') then begin
     StartPascalCodeFoldBlock(cfbtIfThen, True);
-    //StartPascalCodeFoldBlock(cfbtIfThen, not( TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen]));
-
     Result := tkKey
   end
   else
@@ -1108,7 +1103,7 @@ begin
     if TopPascalCodeFoldBlockType in [cfbtVarType, cfbtLocalVarType] then
       EndPascalCodeFoldBlockLastLine;
     Result := tkKey;
-    if TopPascalCodeFoldBlockType in [cfbtProcedure{, cfbtIfThen}]
+    if TopPascalCodeFoldBlockType in [cfbtProcedure]
     then StartPascalCodeFoldBlock(cfbtTopBeginEnd)
     else StartPascalCodeFoldBlock(cfbtBeginEnd);
     //debugln('TSynPasSyn.Func37 BEGIN ',dbgs(ord(TopPascalCodeFoldBlockType)),' LineNumber=',dbgs(fLineNumber),' ',dbgs(MinimumCodeFoldBlockLevel),' ',dbgs(CurrentCodeFoldBlockLevel));
@@ -1218,22 +1213,14 @@ begin
 end;
 
 function TSynPasSyn.Func47: TtkTokenKind;
-var PriorIfThen : boolean;
 begin
   if KeyComp('Then') then begin
     Result := tkKey;
-
     // in a "case", we need to distinguish a possible follwing "else"
     if (TopPascalCodeFoldBlockType = cfbtIfThen) then
       EndPascalCodeFoldBlock;
     //if TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen] then
       StartPascalCodeFoldBlock(cfbtIfThen, not (TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen]));
-
-{    PriorIfThen:=TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen];
-    if PriorIfThen then
-      EndPascalCodeFoldBlock;
-    //if TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen] then
-      StartPascalCodeFoldBlock(cfbtIfThen, not PriorIfThen);}
   end
   else
     Result := tkIdentifier;
@@ -3695,8 +3682,8 @@ begin
   Node.LineIndex := LineIndex;
   Node.LogXStart := Run;
   Node.LogXEnd := Run + fStringLen;
-  Node.FoldType := Pointer(PtrUInt(ABlockType));
-  Node.FoldTypeCompatible := Pointer(PtrUInt(PascalFoldTypeCompatibility[ABlockType]));
+  Node.FoldType := Pointer(PtrInt(ABlockType));
+  Node.FoldTypeCompatible := Pointer(PtrInt(PascalFoldTypeCompatibility[ABlockType]));
   Node.FoldAction := aActions;
   case ABlockType of
     cfbtRegion:
@@ -3792,7 +3779,6 @@ begin
       inc(FSynPasRangeInfo.EndLevelIfDef);
     cfbtRegion:
       inc(FSynPasRangeInfo.EndLevelRegion);
-
   end;
 end;
 
@@ -3844,12 +3830,6 @@ var
   nd: PSynFoldNodeInfo;
   i: Integer;
 begin
-  {IsCollectingNodeInfo := True;
-  CollectingNodeInfoList := TLazSynFoldNodeInfoList(AList);
-
-  StartAtLineIndex(Line);
-  fStringLen := 0;
-  NextToEol;}
   fStringLen := 0;
   inherited InitFoldNodeInfo(AList, Line);
 
@@ -3885,7 +3865,6 @@ begin
     IsCollectingNodeInfo := False;
   end;
 end;
-
 
 function TSynPasSyn.StartPascalCodeFoldBlock(ABlockType: TPascalCodeFoldBlockType;
   OnlyEnabled: Boolean): TSynCustomCodeFoldBlock;
@@ -4564,5 +4543,6 @@ finalization
   FreeAndNil(KeywordsList);
 
 end.
+
 
 
