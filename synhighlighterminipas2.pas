@@ -152,8 +152,8 @@ const
     ];
   PascalNoOutlineRanges: TPascalCodeFoldBlockTypes =
     [cfbtProgram,cfbtUnit,cfbtUnitSection, cfbtRegion, cfbtProcedure,
-      cfbtVarType,
-      cfbtIfDef, cfbtAnsiComment..cfbtSlashComment, cfbtNestedComment];
+      cfbtVarType, cfbtCaseElse,
+      cfbtIfDef, cfbtAnsiComment,cfbtBorCommand,cfbtSlashComment, cfbtNestedComment];
 
   // restrict cdecl etc to places where they can be.
   // this needs a better parser
@@ -286,7 +286,7 @@ type
     property PasFoldEndLevel: Smallint read FPasFoldEndLevel write FPasFoldEndLevel;
     property PasFoldFixLevel: Smallint read FPasFoldFixLevel write FPasFoldFixLevel;
     property PasFoldMinLevel: Smallint read FPasFoldMinLevel write FPasFoldMinLevel;
-    // * foldable nodes              <> All nodes (pascas , not ifdef/region) *
+    // * foldable nodes              <> All nodes (pascal , not ifdef/region) *
     //   PasFoldEndLevel             <> CodeFoldStackSize
     //   PasFoldMinLevel             <> MinimumCodeFoldBlockLevel
     //   LastLineCodeFoldLevelFix    <> PasFoldFixLevel
@@ -1151,8 +1151,8 @@ begin
       EndPascalCodeFoldBlock
     else
     if TopPascalCodeFoldBlockType = cfbtCase then begin
-      StartPascalCodeFoldBlock(cfbtCaseElse);
       FTokenIsCaseLabel := True;
+      StartPascalCodeFoldBlock(cfbtCaseElse, True);
     end;
   end
   else if KeyComp('Var') then begin

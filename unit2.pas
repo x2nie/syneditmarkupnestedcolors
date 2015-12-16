@@ -113,6 +113,9 @@ begin
   with SynHighlighterMiniPas2.TSynPasSyn(SynEditMiniPas.Highlighter) do begin
     FoldConfig[ord(cfbtIfThen)].SupportedModes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
     FoldConfig[ord(cfbtIfThen)].Modes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
+//    FoldConfig[ord(cfbtCaseElse)].Enabled := True;
+    FoldConfig[ord(cfbtCaseElse)].Enabled := True;
+  //  CaseLabelAttri.Background:= clLime;
     //FoldConfig[ord(cfbtIfThen)].Enabled := True;
     CommentAttri.Foreground:=clTeal;
   end;

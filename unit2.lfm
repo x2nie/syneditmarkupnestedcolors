@@ -1,5 +1,5 @@
 object Form2: TForm2
-  Left = 298
+  Left = 398
   Height = 553
   Top = 135
   Width = 847
@@ -538,6 +538,26 @@ object Form2: TForm2
           'uses'
           '  Forms {debug},'
           '  SynEdit,SynEditTypes, SynEditFoldedView, SynEditMiscProcs;'
+          ''
+          'procedure TForm1.FormCreate(Sender: TObject);'
+          'var r  : char;'
+          '  c : byte;'
+          'begin'
+          '  c := 9;'
+          '  case c of'
+          '    1: r := #32;'
+          '    2: if c = Ord(r) then'
+          '          if Ord(r) > 9 then'
+          '            r := ''A'''
+          '          else // NOT highlighted as case-label'
+          '            r:=#2'
+          '        else  // NOT highlighted as case-label'
+          '          r:=#3'
+          '    else  // highlighted as case-label'
+          '      r:=#32;'
+          '  end'
+          ''
+          'end;'
           ''
           '  function CompareFI(Item1, Item2: Pointer): Integer;'
           '  begin'

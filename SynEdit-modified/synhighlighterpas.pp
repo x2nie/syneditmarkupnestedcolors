@@ -897,9 +897,7 @@ end;
 function TSynPasSyn.Func15: TtkTokenKind;
 begin
   if KeyComp('If') then begin
-    //StartPascalCodeFoldBlock(cfbtIfThen, True);
-    StartPascalCodeFoldBlock(cfbtIfThen, not( TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen]));
-
+    StartPascalCodeFoldBlock(cfbtIfThen, True);
     Result := tkKey
   end
   else
@@ -1207,22 +1205,14 @@ begin
 end;
 
 function TSynPasSyn.Func47: TtkTokenKind;
-var PriorIfThen : boolean;
 begin
   if KeyComp('Then') then begin
     Result := tkKey;
-{
     // in a "case", we need to distinguish a possible follwing "else"
     if (TopPascalCodeFoldBlockType = cfbtIfThen) then
       EndPascalCodeFoldBlock;
     //if TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen] then
       StartPascalCodeFoldBlock(cfbtIfThen, not (TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen]));
-}
-    PriorIfThen:=TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen];
-    if PriorIfThen then
-      EndPascalCodeFoldBlock;
-    //if TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen] then
-      StartPascalCodeFoldBlock(cfbtIfThen, not PriorIfThen);
   end
   else
     Result := tkIdentifier;
@@ -3680,7 +3670,6 @@ begin
       inc(FSynPasRangeInfo.EndLevelIfDef);
     cfbtRegion:
       inc(FSynPasRangeInfo.EndLevelRegion);
-
   end;
 end;
 
@@ -4443,5 +4432,6 @@ finalization
   FreeAndNil(KeywordsList);
 
 end.
+
 
 
