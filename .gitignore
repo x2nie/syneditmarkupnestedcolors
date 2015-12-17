@@ -1,0 +1,16 @@
+#################
+## Lazarus
+#################
+
+.compiled
+backup/
+*.lps
+*.exe
+bin/
+tmp/
+lib/
+units/
+*.tmp
+*.bak
+*.ppu
+*.o
