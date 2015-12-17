@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, SynEdit, Forms, Controls,
-  Graphics, Dialogs, ExtCtrls, ComCtrls,
+  Graphics, Dialogs, ExtCtrls, ComCtrls, StdCtrls,
   SynEditMarkupWordGroup,
   SynEditHighlighter,
   SynHighlighterMiniPas2,//must before original
@@ -26,8 +26,10 @@ type
 
 
   TForm2 = class(TForm)
+    btnConfig: TButton;
     PageControl1: TPageControl;
     Panel1: TPanel;
+    Panel2: TPanel;
     SynEditMiniPas: TSynEdit;
     SynEditPas: TSynEdit;
     SynEditLFM: TSynEdit;
@@ -50,6 +52,7 @@ type
     TabSheet6: TTabSheet;
     TabSheet7: TTabSheet;
     TabSheet8: TTabSheet;
+    procedure btnConfigClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
     { private declarations }
@@ -70,8 +73,8 @@ uses
   SynGutterFoldDebug,
   SynEditHighlighterFoldBase,
   SynEditMarkupFoldColoring,
-
-  foldhl, SynHighlighterBracket
+  foldhl, SynHighlighterBracket,
+  uConfig
   ;
 
 {$R *.lfm}
@@ -132,6 +135,11 @@ begin
   SetHighlighter(SynEditDemoFold, TSynDemoHlFold);
 
   AddMarkupFoldColors();
+end;
+
+procedure TForm2.btnConfigClick(Sender: TObject);
+begin
+  frmConfig.ShowModal;
 end;
 
 procedure TForm2.AddMarkupFoldColors;

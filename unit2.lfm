@@ -1,7 +1,7 @@
 object Form2: TForm2
-  Left = 398
+  Left = 346
   Height = 553
-  Top = 135
+  Top = 137
   Width = 847
   Caption = 'Form2'
   ClientHeight = 553
@@ -24,8 +24,8 @@ object Form2: TForm2
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 467
-    Top = 0
+    Height = 435
+    Top = 32
     Width = 847
     ActivePage = TabSheet8
     Align = alClient
@@ -1184,11 +1184,11 @@ object Form2: TForm2
     end
     object TabSheet8: TTabSheet
       Caption = 'Mini Pascal'
-      ClientHeight = 441
+      ClientHeight = 409
       ClientWidth = 839
       inline SynEditMiniPas: TSynEdit
         Left = 0
-        Height = 441
+        Height = 409
         Top = 0
         Width = 839
         Align = alClient
@@ -5023,6 +5023,26 @@ object Form2: TForm2
           end
         end
       end
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 32
+    Top = 0
+    Width = 847
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 847
+    TabOrder = 2
+    object btnConfig: TButton
+      Left = 35
+      Height = 25
+      Top = 4
+      Width = 75
+      Caption = '&Config'
+      OnClick = btnConfigClick
+      TabOrder = 0
     end
   end
   object SynFreePascalSyn1: TSynFreePascalSyn
