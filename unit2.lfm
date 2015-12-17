@@ -5080,7 +5080,10 @@ object Form2: TForm2
   end
   object SynJScriptSyn1: TSynJScriptSyn
     Enabled = False
-    left = 176
-    top = 136
+    CommentAttri.Foreground = clTeal
+    EventAttri.Foreground = clBlue
+    StringAttri.Foreground = clBlue
+    left = 568
+    top = 168
   end
 end

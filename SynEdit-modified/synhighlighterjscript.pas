@@ -69,6 +69,9 @@ type
   TIdentFuncTableFunc = function: TtkTokenKind of object;
 
 type
+
+  { TSynJScriptSyn }
+
   TSynJScriptSyn = class(TSynCustomFoldHighlighter{TSynCustomHighLighter})
   private
     fRange: TRangeState;
@@ -247,6 +250,7 @@ type
     procedure StringProc;
     procedure SymbolProc;
     procedure UnknownProc;
+    procedure BracketProc;
     function AltFunc: TtkTokenKind;
     procedure InitIdent;
     function IdentKind(MayBe: PChar): TtkTokenKind;
@@ -1484,7 +1488,8 @@ begin
       #1..#9, #11, #12, #14..#32: fProcTable[I] := @SpaceProc;
       '*': fProcTable[I] := @StarProc;
       '"', #39: fProcTable[I] := @StringProc;
-      '~', '{', '}', ',', '(', ')', '[', ']', '<', '>', ':', '?', ';', '!', '=':
+      '{', '}': fProcTable[I] := @BracketProc;
+      '~', ',', '(', ')', '[', ']', '<', '>', ':', '?', ';', '!', '=':
         fProcTable[I] := @SymbolProc;
     else
       fProcTable[I] := @UnknownProc;
@@ -1703,16 +1708,6 @@ procedure TSynJScriptSyn.SymbolProc;
 begin
   inc(Run);
   fTokenId := tkSymbol;
-  //TODO: move it to bracketProc
-  if FLine[Run-1] = '{' then
-  begin
-    StartCodeFoldBlock(nil);
-  end
-  else
-  if FLine[Run-1] = '}' then
-  begin
-    EndCodeFoldBlock;
-  end
 end;
 
 procedure TSynJScriptSyn.UnknownProc;
@@ -1726,6 +1721,22 @@ begin
   while (fLine[Run] in [#128..#191]) OR // continued utf8 subcode
    ((fLine[Run]<>#0) and (fProcTable[fLine[Run]] = @UnknownProc)) do inc(Run);
   fTokenID := tkUnknown;
+end;
+
+procedure TSynJScriptSyn.BracketProc;
+begin
+  inc(Run);
+  fTokenId := tkSymbol;
+  //TODO: move it to bracketProc
+  if FLine[Run-1] = '{' then
+  begin
+    StartCodeFoldBlock(nil);
+  end
+  else
+  if FLine[Run-1] = '}' then
+  begin
+    EndCodeFoldBlock;
+  end
 end;
 
 procedure TSynJScriptSyn.Next;
