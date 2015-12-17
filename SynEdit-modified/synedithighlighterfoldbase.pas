@@ -321,9 +321,11 @@ type
 
     // Open/Close Folds
     procedure GetTokenBounds(out LogX1,LogX2: Integer); virtual;
-    function StartCodeFoldBlock(ABlockType: Pointer;
-              IncreaseLevel: Boolean = true): TSynCustomCodeFoldBlock; virtual;
-    procedure EndCodeFoldBlock(DecreaseLevel: Boolean = True); virtual;
+    function  StartCodeFoldBlock(ABlockType: Pointer = nil;
+                      IncreaseLevel: Boolean = true): TSynCustomCodeFoldBlock; virtual;
+    procedure EndCodeFoldBlock(
+                      DecreaseLevel: Boolean = True;
+                      ABlockType: Pointer = nil); virtual;
     procedure CollectNodeInfo(FinishingABlock : Boolean; ABlockType: Pointer;
               LevelChanged: Boolean); virtual;
     procedure DoInitNode(var Node: TSynFoldNodeInfo;
@@ -1149,10 +1151,13 @@ begin
   Result:=CodeFoldRange.Add(ABlockType, IncreaseLevel);
 end;
 
-procedure TSynCustomFoldHighlighter.EndCodeFoldBlock(DecreaseLevel: Boolean = True);
+procedure TSynCustomFoldHighlighter.EndCodeFoldBlock(
+  DecreaseLevel: Boolean = True;
+  ABlockType: Pointer = nil);
 begin
+  //ABlockType required for detect wheter singleline /multiline paired
   if FIsCollectingNodeInfo then
-    CollectNodeInfo(True, nil, DecreaseLevel);
+    CollectNodeInfo(True, ABlockType, DecreaseLevel);
 
   CodeFoldRange.Pop(DecreaseLevel);
 end;

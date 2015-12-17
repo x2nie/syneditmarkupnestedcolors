@@ -1739,16 +1739,13 @@ procedure TSynJScriptSyn.BracketProc;
 begin
   inc(Run);
   fTokenId := tkSymbol;
-  //TODO: move it to bracketProc
   if FLine[Run-1] = '{' then
   begin
-    //StartCodeFoldBlock(nil);
     StartJScriptCodeFoldBlock(jsbBracket);
   end
   else
   if FLine[Run-1] = '}' then
   begin
-    //EndCodeFoldBlock;
     FinishJScriptCodeFoldBlock();
     if CurrentJScriptCodeFoldBlockType = jsbFunction then
       FinishJScriptCodeFoldBlock();
@@ -1790,7 +1787,6 @@ begin
   // Store the range first
   CodeFoldRange.RangeType := Pointer(PtrInt(FRange));
   Result := inherited GetRange;
-
 end;
 
 function TSynJScriptSyn.GetToken: String;
@@ -1896,7 +1892,7 @@ end;
 
 procedure TSynJScriptSyn.FinishJScriptCodeFoldBlock;
 begin
-  EndCodeFoldBlock;
+  EndCodeFoldBlock(true, TopCodeFoldBlockType );
 end;
 
 function TSynJScriptSyn.CurrentJScriptCodeFoldBlockType: TJScriptFoldBlockType;
