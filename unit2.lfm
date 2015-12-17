@@ -27,9 +27,9 @@ object Form2: TForm2
     Height = 435
     Top = 32
     Width = 847
-    ActivePage = TabSheet8
+    ActivePage = TabSheet7
     Align = alClient
-    TabIndex = 1
+    TabIndex = 7
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Pascal'
@@ -4459,11 +4459,11 @@ object Form2: TForm2
     end
     object TabSheet7: TTabSheet
       Caption = 'JS'
-      ClientHeight = 441
+      ClientHeight = 409
       ClientWidth = 839
       inline SynEditJS: TSynEdit
         Left = 0
-        Height = 441
+        Height = 409
         Top = 0
         Width = 839
         Align = alClient
@@ -4911,62 +4911,61 @@ object Form2: TForm2
           ' * All sites'
           ' */'
           '$(function() {'
-          #9'// copyable auto-select-all'
-          #9'$( ".copyable" ).on( "click", function() {'
-          #9#9'if ( typeof this.select === "function" ) {'
-          #9#9#9'this.select();'
-          #9#9'}'
-          #9'});'
+          '    // copyable auto-select-all'
+          '    $( ".copyable" ).on( "click", function() {'
+          '        if ( typeof this.select === "function" ) {'
+          '            this.select();'
+          '        }'
+          '    });'
           ''
-          #9'/*'
-          #9' * Change navigation elements for smaller screens'
-          #9' */'
-          #9'(function() {'
+          '    /*'
+          '     * Change navigation elements for smaller screens'
+          '     */'
+          '    (function() {'
           ''
-          #9#9'// Move the global nav to the footer and collapse to a select menu'
-          #9#9'var globalLinks = $( "#global-nav .links" ).tinyNav({ header: "Browse..." }),'
-          #9#9#9'nav = globalLinks.next(),'
-          #9#9#9'container = $( "<div class=''tinynav-container''></div>" ),'
-          #9#9#9'header = $( "<h3><span>More jQuery Sites</span></h3>" );'
+          '        // Move the global nav to the footer and collapse to a select menu'
+          '        var globalLinks = $( "#global-nav .links" ).tinyNav({ header: "Browse..." }),'
+          '            nav = globalLinks.next(),'
+          '            container = $( "<div class=''tinynav-container''></div>" ),'
+          '            header = $( "<h3><span>More jQuery Sites</span></h3>" );'
           ''
-          #9#9'container.append( header, nav ).insertBefore( "ul.footer-icon-links" );'
+          '        container.append( header, nav ).insertBefore( "ul.footer-icon-links" );'
           ''
-          #9#9'// Collapse the site navigation to a select menu'
-          #9#9'$( "#menu-top" ).tinyNav({ header: "Navigate..." });'
-          #9'})();'
+          '        // Collapse the site navigation to a select menu'
+          '        $( "#menu-top" ).tinyNav({ header: "Navigate..." });'
+          '    })();'
           ''
-          #9'// Banner ads'
-          #9'(function() {'
+          '    // Banner ads'
+          '    (function() {'
           ''
-          #9#9'// Default site id'
-          #9#9'var siteId = 53829,'
+          '        // Default site id'
+          '        var siteId = 53829,'
           ''
-          #9#9#9'// Sites can contain two properties: all and homepage'
-          #9#9#9'site = ({'
-          #9#9#9#9'"jquery.com": {'
-          #9#9#9#9#9'homepage: 32018'
-          #9#9#9#9'}'
-          #9#9#9'})[ $( "head" ).attr( "data-live-domain" ) ];'
+          '            // Sites can contain two properties: all and homepage'
+          '            site = ({'
+          '                "jquery.com": {'
+          '                    homepage: 32018'
+          '                }'
+          '            })[ $( "head" ).attr( "data-live-domain" ) ];'
           ''
-          #9#9'if ( site ) {'
-          #9#9#9'if ( location.pathname === "/" && site.homepage ) {'
-          #9#9#9#9'siteId = site.homepage;'
-          #9#9#9'} else if ( site.all ) {'
-          #9#9#9#9'siteId = site.all;'
-          #9#9#9'}'
-          #9#9'}'
+          '        if ( site ) {'
+          '            if ( location.pathname === "/" && site.homepage ) {'
+          '                siteId = site.homepage;'
+          '            } else if ( site.all ) {'
+          '                siteId = site.all;'
+          '            }'
+          '        }'
           ''
-          #9#9'window.ados = {'
-          #9#9#9'run: [function() {'
-          #9#9#9#9'ados_add_placement( 5449, siteId, "broadcast", 1314 );'
-          #9#9#9#9'ados_load();'
-          #9#9#9'}]'
-          #9#9'};'
+          '        window.ados = {'
+          '            run: [function() {'
+          '                ados_add_placement( 5449, siteId, "broadcast", 1314 );'
+          '                ados_load();'
+          '            }]'
+          '        };'
           ''
-          #9#9'$.getScript( "//engine.adzerk.net/ados.js" );'
-          #9'})();'
+          '        $.getScript( "//engine.adzerk.net/ados.js" );'
+          '    })();'
           '});'
-          '                             '
         )
         VisibleSpecialChars = [vscSpace, vscTabAtLast]
         SelectedColor.BackPriority = 50
