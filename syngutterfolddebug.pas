@@ -30,6 +30,7 @@ implementation
 uses
   SynEdit,SynEditHighlighter,SynTextDrawer,
   typinfo,
+  SynHighlighterJScript,
   SynHighlighterMiniPas2,
   SynHighlighterPas;
   //SynColorFoldHighlighter;
@@ -148,8 +149,15 @@ var
                     if p >= CountPascalCodeFoldBlockOffset then
                     p := p - PtrUInt(CountPascalCodeFoldBlockOffset);
                     ty   := copy( GetEnumName(TypeInfo(TPascalCodeFoldBlockType), PtrUint(p) ), 5,100) ;
+                  end
+                  else
+                  if TSynCustomFoldHighlighter(HL) is TSynJScriptSyn then
+                  begin
+                    p := TmpNode.FoldType;
+                    ty   := copy( GetEnumName(TypeInfo(TJScriptFoldBlockType), PtrUint(p) ), 4,100) ;
+                  end
 
-                  end;
+
             finally
               NodeList.ReleaseReference;
             end;
