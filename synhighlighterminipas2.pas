@@ -151,7 +151,7 @@ const
      cfbtIfThen
     ];
   PascalNoOutlineRanges: TPascalCodeFoldBlockTypes =
-    [cfbtProgram,cfbtUnit,cfbtUnitSection, cfbtRegion, cfbtProcedure,
+    [cfbtProgram,cfbtUnit,cfbtUnitSection, cfbtRegion, //cfbtProcedure,//=need by nested proc?
       cfbtVarType, cfbtCaseElse,
       cfbtIfDef, cfbtAnsiComment,cfbtBorCommand,cfbtSlashComment, cfbtNestedComment];
 
@@ -3596,6 +3596,19 @@ begin
     EndOffs := +1;
   //inherited DoInitNode(Node, FinishingABlock, ABlockType, aActions, AIsFold);
   aActions := aActions + [sfaMultiLine];
+  if (not FinishingABlock) and  (ABlockType <> nil) then begin
+    if (PasBlockType in [cfbtIfThen,cfbtProcedure]) then
+      Include( aActions, sfaOutlineKeepColor);
+
+    if (PasBlockType in [cfbtProcedure]) then
+      aActions := aActions + [sfaOutlineKeepColor,sfaOutlineHidden];
+
+
+    if (TopPascalCodeFoldBlockType = cfbtProcedure) and (PasBlockType in [cfbtProcedure]) then //nested
+      aActions := aActions + [sfaOutlineForceIndent];
+  end;
+
+
   Node.LineIndex := LineIndex;
   Node.LogXStart := Run;
   Node.LogXEnd := Run + fStringLen;

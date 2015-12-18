@@ -34,6 +34,8 @@ type
 
     procedure DoMarkupFoldAtRow(aRow: Integer);
     procedure DoMarkupParentFoldAtRow(aRow: Integer);
+    procedure DoMarkupParentCloseFoldAtRow(aRow: Integer);
+
     procedure DoMarkupRangeFoldAtRow(aRow: Integer);
     function GetFoldHighLighter: TSynCustomFoldHighlighter;
   protected
@@ -270,7 +272,7 @@ var
     x  := ANode.LogXStart + 1;
     for j := 0 to Pred(length(FHighlights)) do
       if FHighlights[j].X = x then
-       ;// exit;
+       ;//exit; //
 
     x := Length(FHighlights);
     SetLength(FHighlights, x+1);
@@ -289,7 +291,10 @@ var
 
       X2 := X+1; //ANode.LogXEnd + 1;
 
-      ColorIdx := lvl mod (length(Colors));
+      if not (sfaOutlineHidden in ANode.FoldAction) then
+        ColorIdx := lvl mod (length(Colors))
+      else
+        ColorIdx := -1;
 
       {if sfaOpen in ANode.FoldAction then begin
         lvl := ANode.FoldLvlStart;
@@ -379,6 +384,8 @@ begin
       //if not (sfaInvalid in TmpNode.FoldAction) then}
       if (sfaOutline in TmpNode.FoldAction ) then
       begin
+        if ( sfaOutlineForceIndent in TmpNode.FoldAction) then
+          inc(lvl);
         AddVerticalLine(TmpNode);
 
         if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
@@ -391,6 +398,101 @@ begin
   end;
 end;
 
+procedure TSynEditMarkupFoldColors.DoMarkupParentCloseFoldAtRow(aRow: Integer);
+var
+  lvl : integer;
+
+  procedure AddHighlight( ANode: TSynFoldNodeInfo );
+  var x : integer;
+  begin
+    //exit; //debug
+    x := Length(FHighlights);
+    SetLength(FHighlights, x+1);
+    with FHighlights[x] do begin
+      Border := False;
+      Y  := ANode.LineIndex + 1;
+      X  := ANode.LogXStart + 1;
+      X2 := ANode.LogXEnd + 1;
+      ColorIdx := lvl;
+      {if sfaOpen in ANode.FoldAction then begin
+        lvl := ANode.FoldLvlStart;
+        //lvl := ANode.NestLvlStart; //http://forum.lazarus.freepascal.org/index.php/topic,30122.msg194841.html#msg194841
+        ColorIdx := lvl mod (length(Colors));
+      end
+      else
+        if sfaClose in ANode.FoldAction then begin
+          lvl := ANode.FoldLvlEnd;
+          ColorIdx := lvl mod (length(Colors));
+        end
+      else
+        ColorIdx := -1;
+      }
+
+      {if sfaOpen in ANode.FoldAction then
+        lvl := ANode.NestLvlStart
+      else
+        lvl := ANode.NestLvlEnd;
+      ColorIdx := lvl mod (length(Colors));
+      }
+
+    end;
+  end;
+
+var
+  y,i : integer;
+  HL: TSynCustomFoldHighlighter;
+  NodeList: TLazSynFoldNodeInfoList;
+  TmpNode: TSynFoldNodeInfo;
+
+begin
+  y := aRow -1;
+
+  HL := TCustomSynEdit(self.SynEdit).Highlighter as TSynCustomFoldHighlighter;
+  HL.CurrentLines := Lines;
+  HL.FoldNodeInfo[y].ClearFilter; // only needed once, in case the line was already used
+
+  NodeList := HL.FoldNodeInfo[y];
+  NodeList.AddReference;
+  try
+    NodeList.ActionFilter := [
+        {sfaMarkup,}
+//        sfaFold
+      sfaOutline
+      ,sfaClose
+        //sfaFoldFold
+        //sfaFoldHide
+        //sfaSingleLine
+        //sfaMultiLine
+        //sfaOpen
+        ];
+    //NodeList.FoldFlags:= [sfbIncludeDisabled];
+    lvl := 0;
+    i := 0;
+    repeat
+      TmpNode := NodeList[i];
+
+      //find till valid
+      while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) do
+      begin
+        inc(i);
+        TmpNode := NodeList[i];
+      end;
+      if not (sfaInvalid in TmpNode.FoldAction) then
+      begin
+        AddHighlight(TmpNode);
+        if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
+          inc(lvl);
+      end;
+
+
+      inc(i);
+    until i >= NodeList.Count;
+
+  finally
+    NodeList.ReleaseReference;
+  end;
+end;
+
 procedure TSynEditMarkupFoldColors.PrepareMarkupForRow(aRow: Integer);
 begin
   CurrentY := aRow;
@@ -399,8 +501,9 @@ begin
   if not (TCustomSynEdit(self.SynEdit).Highlighter is TSynCustomFoldHighlighter) then
     exit;
 
-  DoMarkupFoldAtRow(aRow);
+  //DoMarkupFoldAtRow(aRow);
   DoMarkupParentFoldAtRow(aRow);
+  //DoMarkupParentCloseFoldAtRow(aRow);
   //DoMarkupRangeFoldAtRow(aRow);
 
   FHighlights := SortLeftMostFI(FHighlights);
