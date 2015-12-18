@@ -333,6 +333,7 @@ type
                        FinishingABlock: Boolean;
                        ABlockType: Pointer; aActions: TSynFoldActions;
                        AIsFold: Boolean); virtual;
+    procedure RepairSingleLineNode(var Node: TSynFoldNodeInfo); virtual;
 
     // Info about Folds
     function CreateFoldNodeInfoList: TLazSynFoldNodeInfoList; virtual;
@@ -1209,11 +1210,8 @@ procedure TSynCustomFoldHighlighter.DoInitNode(var Node: TSynFoldNodeInfo;
   aActions: TSynFoldActions; AIsFold: Boolean);
 var
   OneLine: Boolean;
-  EndOffs, i: Integer;
-  nd: PSynFoldNodeInfo;
-  //LogX1V: integer; //used for vertical line in nested color markup
+  EndOffs: Integer;
   LogX1, LogX2: Integer;
-
 begin
   GetTokenBounds(LogX1, LogX2);
 
@@ -1231,12 +1229,20 @@ begin
   node.FoldGroup := 1;//FOLDGROUP_PASCAL;
   Node.FoldLvlStart := CodeFoldRange.CodeFoldStackSize; // If "not AIsFold" then the node has no foldlevel of its own
   Node.NestLvlStart := CodeFoldRange.NestFoldStackSize;
-  OneLine := (EndOffs < 0) and (Node.FoldLvlStart > CodeFoldRange.MinimumCodeFoldBlockLevel);
+  OneLine := FinishingABlock and (Node.FoldLvlStart > CodeFoldRange.MinimumCodeFoldBlockLevel);
   Node.NestLvlEnd := Node.NestLvlStart + EndOffs;
   if not (sfaFold in aActions) then
     EndOffs := 0;
   Node.FoldLvlEnd := Node.FoldLvlStart + EndOffs;
-  if OneLine then begin // find opening node
+  if OneLine then  // find opening node
+    RepairSingleLineNode(Node);
+end;
+
+procedure TSynCustomFoldHighlighter.RepairSingleLineNode(var Node: TSynFoldNodeInfo);
+var
+  nd: PSynFoldNodeInfo;
+  i : integer;
+begin
     i := FCollectingNodeInfoList.CountAll - 1;
     nd := FCollectingNodeInfoList.ItemPointer[i];
     while (i >= 0) and
@@ -1263,8 +1269,6 @@ begin
         Node.FoldAction := Node.FoldAction - [sfaCloseFold, sfaFold, sfaFoldFold];
       end;
     end;
-  end;
-
 end;
 
 procedure TSynCustomFoldHighlighter.CreateRootCodeFoldBlock;

@@ -3641,8 +3641,9 @@ begin
   if not (sfaFold in aActions) then
     EndOffs := 0;
   Node.FoldLvlEnd := Node.FoldLvlStart + EndOffs;
-  if OneLine then begin // find opening node
-    i := CollectingNodeInfoList.CountAll - 1;
+  if OneLine then  // find opening node
+    RepairSingleLineNode(Node);
+    {i := CollectingNodeInfoList.CountAll - 1;
     nd := CollectingNodeInfoList.ItemPointer[i];
     while (i >= 0) and
           ( (nd^.FoldType <> node.FoldType) or
@@ -3668,7 +3669,7 @@ begin
         Node.FoldAction := Node.FoldAction - [sfaCloseFold, sfaFold, sfaFoldFold];
       end;
     end;
-  end;
+  end;}
 end;
 
 procedure TSynPasSyn.InitNode(out Node: TSynFoldNodeInfo; EndOffs: Integer;
