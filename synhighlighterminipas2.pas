@@ -3603,9 +3603,12 @@ begin
     if (PasBlockType in [cfbtProcedure]) then
       aActions := aActions + [sfaOutlineKeepColor,sfaOutlineHidden];
 
-
     if (TopPascalCodeFoldBlockType = cfbtProcedure) and (PasBlockType in [cfbtProcedure]) then //nested
       aActions := aActions + [sfaOutlineForceIndent];
+
+    if (PasBlockType in [cfbtExcept]) then
+      Include( aActions, sfaOutlineMergeParent);
+
   end;
 
 

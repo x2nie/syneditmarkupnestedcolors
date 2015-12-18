@@ -386,6 +386,9 @@ begin
       begin
         if ( sfaOutlineForceIndent in TmpNode.FoldAction) then
           inc(lvl);
+        if ( sfaOutlineMergeParent in TmpNode.FoldAction) then
+          dec(lvl);
+
         AddVerticalLine(TmpNode);
 
         if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
