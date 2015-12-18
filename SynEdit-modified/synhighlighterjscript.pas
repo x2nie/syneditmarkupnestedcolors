@@ -1109,12 +1109,16 @@ begin
 end;
 
 function TSynJScriptSyn.Func102: TtkTokenKind;
+var LRun : integer;
 begin
   if KeyComp('getMonth') then Result := tkNonReservedKey else
     if KeyComp('Function') then Result := tkNonReservedKey else
       if KeyComp('function') then begin
         Result := tkKey;
+        LRun := Run;
+        Inc(Run, fStringLen);
         StartJScriptCodeFoldBlock(jsbFunction);
+        Run := LRun;
       end else
         if KeyComp('parseInt') then Result := tkNonReservedKey else Result := tkIdentifier;
 end;
@@ -1846,7 +1850,7 @@ begin
   //fRange := TRangeState(ptruint(Value));
   // must call the SetRange in TSynCustomFoldHighlighter
   inherited SetRange(Value);
-  FRange := TRangeState(PtrInt(CodeFoldRange.RangeType));
+  FRange := TRangeState(PtrUInt(CodeFoldRange.RangeType));
 end;
 
 function TSynJScriptSyn.GetIdentChars: TSynIdentChars;

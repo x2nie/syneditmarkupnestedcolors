@@ -1155,7 +1155,7 @@ procedure TSynCustomFoldHighlighter.EndCodeFoldBlock(
   DecreaseLevel: Boolean = True;
   ABlockType: Pointer = nil);
 begin
-  //ABlockType required for detect wheter singleline /multiline paired
+  //ABlockType required for detect whether singleline /multiline is being paired
   if FIsCollectingNodeInfo then
     CollectNodeInfo(True, ABlockType, DecreaseLevel);
 
