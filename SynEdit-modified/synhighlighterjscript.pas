@@ -267,6 +267,11 @@ type
              (ABlockType: TJScriptFoldBlockType;
               OnlyEnabled: Boolean = False): TSynCustomCodeFoldBlock;
     procedure FinishJScriptCodeFoldBlock();
+    procedure DoInitNode(var Node: TSynFoldNodeInfo;
+                   FinishingABlock: Boolean;
+                   ABlockType: Pointer; aActions: TSynFoldActions;
+                   AIsFold: Boolean); override;
+
     function  CurrentJScriptCodeFoldBlockType: TJScriptFoldBlockType;
   public
     class function GetLanguageName: string; override;
@@ -1897,6 +1902,15 @@ end;
 procedure TSynJScriptSyn.FinishJScriptCodeFoldBlock;
 begin
   EndCodeFoldBlock(true, TopCodeFoldBlockType );
+end;
+
+procedure TSynJScriptSyn.DoInitNode(var Node: TSynFoldNodeInfo;
+  FinishingABlock: Boolean; ABlockType: Pointer; aActions: TSynFoldActions;
+  AIsFold: Boolean);
+begin
+  inherited DoInitNode(Node, FinishingABlock, ABlockType, aActions, AIsFold);
+  if (ABlockType <> nil) and (TJScriptFoldBlockType(PtrUInt(ABlockType)) = jsbFunction) then
+    Include( Node.FoldAction, sfaOutlineKeepColor);
 end;
 
 function TSynJScriptSyn.CurrentJScriptCodeFoldBlockType: TJScriptFoldBlockType;

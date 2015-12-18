@@ -81,6 +81,7 @@ type
                      sfaDefaultCollapsed,
                      sfaMarkup,   // This node can be highlighted, by the matching Word-Pair Markup
                      sfaOutline,  // This node will be higlighted by nested color replacing the token color
+                     sfaOutlineKeepColor, // Direct children should not increase color dept. (But grandchild can.)
                      sfaInvalid,  // Wrong Index
 
                      // TODO: deprecate
@@ -329,7 +330,6 @@ type
     procedure CollectNodeInfo(FinishingABlock : Boolean; ABlockType: Pointer;
               LevelChanged: Boolean); virtual;
     procedure DoInitNode(var Node: TSynFoldNodeInfo;
-                       //EndOffs: Integer;
                        FinishingABlock: Boolean;
                        ABlockType: Pointer; aActions: TSynFoldActions;
                        AIsFold: Boolean); virtual;
