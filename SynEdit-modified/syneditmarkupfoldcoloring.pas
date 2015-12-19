@@ -368,6 +368,7 @@ begin
   Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
   Nest.IncludeOpeningOnLine := False; //True; //
 
+  try
   lvl := 0;
   {$ifdef sfaOutlineforward}
   i := 0; //while i <  Nest.Count do
@@ -409,6 +410,10 @@ begin
       Later(i);
       //dec(i);
       //break; //debug
+  end;
+
+  finally
+    Nest.Free;
   end;
 end;
 
