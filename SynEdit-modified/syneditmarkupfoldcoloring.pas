@@ -64,6 +64,9 @@ uses
   function CompareFI(Item1, Item2: Pointer): Integer;
   begin
     result := PMarkupFoldColorInfo(Item1)^.X - PMarkupFoldColorInfo(Item2)^.X;
+    if result = 0 then
+        result := PMarkupFoldColorInfo(Item1)^.X2 - PMarkupFoldColorInfo(Item2)^.X2;
+
   end;
 
   function SortLeftMostFI(a: TMarkupFoldColorInfos): TMarkupFoldColorInfos;
@@ -293,7 +296,7 @@ begin
   Nest.Line := y;
   Nest.FoldGroup := FDefaultGroup;//1;//FOLDGROUP_PASCAL;
   Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
-  Nest.IncludeOpeningOnLine := True; //False; //
+  Nest.IncludeOpeningOnLine := True; // False; //
   NestCount := Nest.Count;
 
   try
@@ -356,8 +359,11 @@ var
         //don't replace; don't add when already found
     x  := ANode.LogXStart + 1;
     for j := 0 to Pred(length(FHighlights)) do
-      if FHighlights[j].X = x then
-       ;//exit; //
+      if (FHighlights[j].X = x) and (FHighlights[j].Border) then begin
+       FHighlights[j].X2 := ANode.LogXEnd+1 ;//exit; //
+       FHighlights[j].Border := False
+
+      end;
 
     //exit; //debug
     z := Length(FHighlights);

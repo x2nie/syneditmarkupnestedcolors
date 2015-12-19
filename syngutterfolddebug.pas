@@ -359,8 +359,8 @@ begin
   {if TCustomSynEdit(self.SynEdit).Highlighter is TSynColorFoldHighlighter then //higher checked first
     PaintColorFoldLvl(Canvas, AClip, FirstLine, LastLine)
   else}
-  if TCustomSynEdit(self.SynEdit).Highlighter is TSynPasSyn then //lower
-    PaintPasFoldLvl(Canvas, AClip, FirstLine, LastLine)  else
+  //if TCustomSynEdit(self.SynEdit).Highlighter is TSynPasSyn then //lower
+    //PaintPasFoldLvl(Canvas, AClip, FirstLine, LastLine)  else
     PaintFoldLvl(Canvas, AClip, FirstLine, LastLine);
 end;
 

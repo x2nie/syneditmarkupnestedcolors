@@ -127,7 +127,7 @@ begin
   //================= INDIVIDUAL CHECK, so debug can be focused ================
   //LeaveOnly(SynEditDemoFold);
   //LeaveOnly(SynEditLFM);
-  LeaveOnly(SynEditMiniPas);
+  //LeaveOnly(SynEditMiniPas);
 
   FillLfmToSynEdit2();
 
