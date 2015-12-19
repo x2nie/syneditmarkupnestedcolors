@@ -3934,7 +3934,7 @@ begin
     DoInitNode(nd, True, Pointer(PtrInt(ABlockType)), act, DecreaseLevel);
     CollectingNodeInfoList.Add(nd);
   end;}
-  EndCodeFoldBlock(DecreaseLevel);
+  EndCodeFoldBlock(DecreaseLevel, TopCodeFoldBlockType);
 end;
 
 procedure TSynPasSyn.CloseBeginEndBlocksBeforeProc;
