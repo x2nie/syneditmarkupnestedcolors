@@ -59,7 +59,7 @@ uses
 
 type
   TtkTokenKind = (tkComment, tkIdentifier, tkKey, tkNull, tkNumber, tkSpace,
-    tkString, tkSymbol, tkUnknown, tkNonReservedKey, tkEvent);
+    tkString, tkSymbol, tkBracket, tkUnknown, tkNonReservedKey, tkEvent);
 
   TRangeState = (rsUnknown, rsANSI);
   TJScriptFoldBlockType = (jsbUnknown, jsbFunction, jsbComment, jsbBracket);
@@ -75,6 +75,7 @@ type
 
   TSynJScriptSyn = class(TSynCustomFoldHighlighter{TSynCustomHighLighter})
   private
+    FBracketAttri: TSynHighlighterAttributes;
     fRange: TRangeState;
     fLine: PChar;
     fLineNumber: Integer;
@@ -292,6 +293,8 @@ type
     procedure SetRange(Value: Pointer); override;
     procedure ResetRange; override;
   published
+    property BracketAttri: TSynHighlighterAttributes read FBracketAttri
+                  write FBracketAttri;
     property CommentAttri: TSynHighlighterAttributes read fCommentAttri
       write fCommentAttri;
     property IdentifierAttri: TSynHighlighterAttributes read fIdentifierAttri
@@ -1520,6 +1523,10 @@ end;
 constructor TSynJScriptSyn.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  FBracketAttri := TSynHighlighterAttributes.Create(@SYNS_AttrBrackets, SYNS_XML_AttrBrackets);
+  FBracketAttri.Style := [fsBold];
+  AddAttribute(FBracketAttri);
+
   fCommentAttri := TSynHighlighterAttributes.Create(@SYNS_AttrComment, SYNS_XML_AttrComment);
   fCommentAttri.Style := [fsItalic];
   AddAttribute(fCommentAttri);
@@ -1747,7 +1754,7 @@ end;
 procedure TSynJScriptSyn.BracketProc;
 begin
   inc(Run);
-  fTokenId := tkSymbol;
+  fTokenId := tkBracket;
   if FLine[Run-1] = '{' then
   begin
     StartJScriptCodeFoldBlock(jsbBracket);
@@ -1829,6 +1836,7 @@ begin
     tkSpace: Result := fSpaceAttri;
     tkString: Result := fStringAttri;
     tkSymbol: Result := fSymbolAttri;
+    tkBracket: Result := FBracketAttri;
     tkUnknown: Result := fIdentifierAttri;
     else Result := nil;
   end;
