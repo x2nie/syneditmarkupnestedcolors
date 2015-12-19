@@ -38,7 +38,6 @@ type
     procedure DoMarkupParentFoldAtRow(aRow: Integer);
     procedure DoMarkupParentCloseFoldAtRow(aRow: Integer);
 
-    procedure DoMarkupRangeFoldAtRow(aRow: Integer);
     function GetFoldHighLighter: TSynCustomFoldHighlighter;
   protected
     // Notifications about Changes to the text
@@ -60,7 +59,6 @@ type
 
 implementation
 uses
-  Forms {debug},
   SynEdit,SynEditTypes, SynEditFoldedView, SynEditMiscProcs;
 
   function CompareFI(Item1, Item2: Pointer): Integer;
@@ -184,27 +182,6 @@ var
       X  := ANode.LogXStart + 1;
       X2 := ANode.LogXEnd + 1;
       ColorIdx := lvl;
-      {if sfaOpen in ANode.FoldAction then begin
-        lvl := ANode.FoldLvlStart;
-        //lvl := ANode.NestLvlStart; //http://forum.lazarus.freepascal.org/index.php/topic,30122.msg194841.html#msg194841
-        ColorIdx := lvl mod (length(Colors));
-      end
-      else
-        if sfaClose in ANode.FoldAction then begin
-          lvl := ANode.FoldLvlEnd;
-          ColorIdx := lvl mod (length(Colors));
-        end
-      else
-        ColorIdx := -1;
-      }
-
-      {if sfaOpen in ANode.FoldAction then
-        lvl := ANode.NestLvlStart
-      else
-        lvl := ANode.NestLvlEnd;
-      ColorIdx := lvl mod (length(Colors));
-      }
-
     end;
   end;
 
@@ -270,6 +247,7 @@ var
   procedure AddVerticalLine( ANode: TSynFoldNodeInfo );
   var x,j : integer;
   begin
+
     //don't replace; don't add when already found
     x  := ANode.LogXStart + 1;
     for j := 0 to Pred(length(FHighlights)) do
@@ -283,14 +261,6 @@ var
       Border := ANode.LineIndex + 1 <> aRow;
       X  := ANode.LogXStart + 1;
       Y  := aRow;//ANode.LineIndex + 1;
-      {if ANode.LineIndex + 1 = aRow then //mean on open/close tag
-      begin
-        //X  := ANode.LogXStart + 1
-        ColorIdx := -1;
-        exit;
-      end
-      else
-        X  := ANode.LogVertGuideX + 1;}
 
       X2 := X+1; //ANode.LogXEnd + 1;
 
@@ -298,65 +268,22 @@ var
         ColorIdx := lvl mod (length(Colors))
       else
         ColorIdx := -1;
-
-      {if sfaOpen in ANode.FoldAction then begin
-        lvl := ANode.FoldLvlStart;
-        ColorIdx := lvl mod (length(Colors));
-      end
-      else
-        if sfaClose in ANode.FoldAction then begin
-          lvl := ANode.FoldLvlEnd;
-          ColorIdx := lvl mod (length(Colors));
-        end
-      else
-      begin
-        ColorIdx := -1;
-        lvl := ANode.NestLvlStart;
-        ColorIdx := lvl mod (length(Colors));
-      end;
-      }
-
-      {
-      if sfaOpen in ANode.FoldAction then
-        lvl := ANode.NestLvlStart
-      else
-        lvl := ANode.NestLvlEnd;
-
-      //ColorIdx := ANode.NodeIndex mod (length(Colors));
-
-      lvl := ANode.NestLvlEnd;
-      //lvl := Longint(ANode.FoldTypeCompatible);
-      ColorIdx := lvl mod (length(Colors));
-      }
-
-
     end;
   end;
 
-{$define sfaOutlineforward}
 var
   y, lvlB,lvlA: Integer;
   Nest : TLazSynEditNestedFoldsList;
   TmpNode: TSynFoldNodeInfo;
-{$ifdef sfaOutlineforward}
+  NestCount : integer;
   procedure Later(var J:integer);
   begin
     inc(J);
   end;
   function Allowed(J: integer):boolean;
   begin
-    result := J < Nest.Count
+    result := J < NestCount;
   end;
-{$else}
-  procedure Later(var J:integer);
-  begin
-    dec(J);
-  end;
-  function Allowed(J: integer):boolean;
-  begin
-    result := J >= 0
-  end;
-{$endif}
 
 begin
   y := aRow-1;
@@ -366,27 +293,29 @@ begin
   Nest.Line := y;
   Nest.FoldGroup := FDefaultGroup;//1;//FOLDGROUP_PASCAL;
   Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
-  Nest.IncludeOpeningOnLine := False; //True; //
+  Nest.IncludeOpeningOnLine := True; //False; //
+  NestCount := Nest.Count;
 
   try
   lvl := 0;
-  {$ifdef sfaOutlineforward}
-  i := 0; //while i <  Nest.Count do
-  {$else}
-  i := Nest.Count -1;  //while i >= 0 do  //from right to left
-  {$endif}
+  i := 0;
   while Allowed(i) do
   begin
-      TmpNode := Nest.HLNode[i];
 
+    TmpNode := Nest.HLNode[i];
       //find till valid
-      while (sfaInvalid in TmpNode.FoldAction ) and Allowed(i) do //(i < Nest.Count) do
+      while (sfaInvalid in TmpNode.FoldAction ) and Allowed(i+1) do //(i < Nest.Count) do
       begin
         Later(i);
         TmpNode := Nest.HLNode[i];
       end;
       //if not (sfaInvalid in TmpNode.FoldAction) then}
+
       if (sfaOutline in TmpNode.FoldAction ) then
+      //avoid bug of IncludeOpeningOnLine := False;
+      if (sfaOpen in TmpNode.FoldAction)  and (TmpNode.LineIndex + 1 = aRow) then
+      begin {do nothing here} end
+      else
       begin
         lvlB := lvl;
 
@@ -444,28 +373,6 @@ var
          ColorIdx := lvl mod (length(Colors))
       else
          ColorIdx := -1;
-
-      {if sfaOpen in ANode.FoldAction then begin
-        lvl := ANode.FoldLvlStart;
-        //lvl := ANode.NestLvlStart; //http://forum.lazarus.freepascal.org/index.php/topic,30122.msg194841.html#msg194841
-        ColorIdx := lvl mod (length(Colors));
-      end
-      else
-        if sfaClose in ANode.FoldAction then begin
-          lvl := ANode.FoldLvlEnd;
-          ColorIdx := lvl mod (length(Colors));
-        end
-      else
-        ColorIdx := -1;
-      }
-
-      {if sfaOpen in ANode.FoldAction then
-        lvl := ANode.NestLvlStart
-      else
-        lvl := ANode.NestLvlEnd;
-      ColorIdx := lvl mod (length(Colors));
-      }
-
     end;
   end;
 
@@ -506,7 +413,7 @@ begin
       TmpNode := NodeList[i];
 
       //find till valid
-      while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) do
+      while (sfaInvalid in TmpNode.FoldAction) and (i + 1 < NodeList.Count) do
       begin
         inc(i);
         TmpNode := NodeList[i];
@@ -544,14 +451,12 @@ begin
             if  (FoldType = TmpNode.FoldType) and
               (FoldGroup = TmpNode.FoldGroup) and
               (sfaOpen in FoldAction) and
-             // (FoldLvlEnd = TmpNode.FoldLvlStart)
+              // (FoldLvlEnd = TmpNode.FoldLvlStart)
               (NestLvlEnd = TmpNode.NestLvlStart)
 
               then begin
                 lvl := FHighlights[j].ColorIdx;
                 lvlB := FHighlights[j].LevelBefore;
-                //AddHighlight(TmpNode);
-                //lvl := lvlB;
                 Found := True;
                 break;
               end;
@@ -592,104 +497,6 @@ begin
 
   FHighlights := SortLeftMostFI(FHighlights);
 end;
-
-
-procedure TSynEditMarkupFoldColors.DoMarkupRangeFoldAtRow(aRow: Integer);
-var
-  HL: TSynCustomFoldHighlighter;
-  p1,p2 : TPoint;
-  //Fg : TSynFoldSign;
-  C : integer;
-
-  procedure AddHighlight(ABorder : Boolean; AX,AX2, Lev : integer );
-  var x,lvl : integer;
-
-  begin
-    //exit; //debug
-    //lvl := HL.CurrentCodeFoldBlockLevel;
-    //lvl := HL.FoldSignLevel(aRow-1);
-    //if lvl <= 0 then exit;
-
-    //Fg := HL.CurrentFoldSigns[True];
-    //Fg := HL.FoldSignAtLine(aRow-1, True);
-    //if Fg.Y < 0 then exit;
-
-    x := Length(FHighlights);
-    SetLength(FHighlights, x+1);
-    with FHighlights[x] do begin
-      Border := ABorder;
-      Y  := aRow;//P1.y + 1;
-      X  := AX;// Fg.X1st ;
-      X2 := AX2+1;//Fg.X2 +3 ;
-      ColorIdx := (Lev-1) mod (length(Colors));
-      //lvl := ANode.NestLvlEnd;
-      //
-      //ColorIdx := (lvl-1) mod (length(Colors));
-
-      {if sfaOpen in ANode.FoldAction then begin
-        lvl := ANode.FoldLvlStart;
-        //lvl := ANode.NestLvlStart; //http://forum.lazarus.freepascal.org/index.php/topic,30122.msg194841.html#msg194841
-        ColorIdx := lvl mod (length(Colors));}
-
-
-    end;
-  end;
-
-var
-  y,i,lvl,lvl2 : integer;
-  NodeList: TLazSynFoldNodeInfoList;
-  TmpNode: TSynFoldNodeInfo;
-  p : pointer;
-  HC : TSynCustomHighlighterRange;
-  R : TRect;
-  //Prev,Fg : TSynFoldSign;
-
-begin
-(*  y := aRow -1;
-
-  HL := TCustomSynEdit(self.SynEdit).Highlighter as TSynCustomFoldHighlighter;
-  HL.CurrentLines := Lines;
-  //R := HL.CurrentFoldSigns[Y];
-
-  lvl := HL.FoldSignLevel(y);
-  if lvl <= 0 then exit;
-
-  //1. check if it 'begin' or 'end',  elsewise draw nested
-  Fg := HL.FoldSignAtLine(y, True);
-  if Fg.Y < 0 then exit;
-  if Fg.Y = y then //open tag
-    AddHighlight(False, Fg.X, Fg.X2, lvl)
-  else
-  begin
-    if y > 0 then
-    begin
-      Prev := HL.FoldSignAtLine(y-1, False); //previous range
-      if Prev.Y = y then // current line is the closing tag
-      begin
-        lvl2 := HL.FoldSignLevel(y-1);
-        AddHighlight(False, Prev.X, Prev.X2, lvl2);
-      end
-      else //not closing nor opening. draw parent
-      begin
-        AddHighlight(True, Fg.X1st, Fg.X2, lvl)
-      end;
-    end;
-  end;
-
-
-
-  begin
-    //HC := TSynCustomHighlighterRange(p);
-    P1 := R.TopLeft;
-    P2 := R.BottomRight;
-    C := 0;
-     //HC.FoldRoot;
-     //AddHighlight();
-
-  end;
-*)
-end;
-
 
 function TSynEditMarkupFoldColors.GetFoldHighLighter: TSynCustomFoldHighlighter;
 begin
@@ -851,10 +658,6 @@ begin
 
   FCaretY := Y;
   FPrevCaretText := Caret.LineText;
-  {$ifdef debug_FC_line_changed}
-  with GetParentForm(self.SynEdit) do
-    Caption:= Caret.LineText;
-  {$endif}
 end;
 
 

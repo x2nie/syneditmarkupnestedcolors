@@ -1,13 +1,13 @@
 object Form2: TForm2
-  Left = 228
+  Left = 346
   Height = 553
-  Top = 125
+  Top = 137
   Width = 847
   Caption = 'Form2'
   ClientHeight = 553
   ClientWidth = 847
   OnCreate = FormCreate
-  LCLVersion = '1.7'
+  LCLVersion = '1.5'
   Visible = True
   WindowState = wsMaximized
   object Panel1: TPanel
@@ -17,39 +17,27 @@ object Form2: TForm2
     Width = 847
     Align = alBottom
     Caption = 'Panel1'
-    ClientHeight = 86
-    ClientWidth = 847
     Color = 9830346
     ParentColor = False
     TabOrder = 0
     Visible = False
-    object Panel3: TPanel
-      Left = 56
-      Height = 50
-      Top = 24
-      Width = 170
-      Caption = 'Panel3'
-      Color = 14013696
-      ParentColor = False
-      TabOrder = 0
-    end
   end
   object PageControl1: TPageControl
     Left = 0
     Height = 435
     Top = 32
     Width = 847
-    ActivePage = TabSheet7
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 7
+    TabIndex = 0
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Pascal'
-      ClientHeight = 441
+      ClientHeight = 409
       ClientWidth = 839
       inline SynEditPas: TSynEdit
         Left = 0
-        Height = 441
+        Height = 409
         Top = 0
         Width = 839
         Align = alClient
@@ -490,6 +478,9 @@ object Form2: TForm2
         MouseTextActions = <>
         MouseSelActions = <>
         Lines.Strings = (
+          '{'
+          ''
+          '}'
           'unit SynEditMarkupFoldColoring;'
           ''
           '{$mode objfpc}{$H+}'
