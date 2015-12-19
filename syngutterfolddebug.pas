@@ -46,7 +46,7 @@ procedure TSynGutterFoldDebug.PaintFoldLvl(Canvas: TCanvas; AClip: TRect;
   FirstLine, LastLine: integer);
 var
   TextDrawer: TheTextDrawer;
-  c, i, iLine, LineHeight: Integer;
+  c, i,j, iLine, LineHeight: Integer;
   rcLine: TRect;
   dc: HDC;
   s: String;
@@ -57,7 +57,7 @@ var
   Nest : TLazSynEditNestedFoldsList;
   TmpNode: TSynFoldNodeInfo;
   NodeList: TLazSynFoldNodeInfoList;
-  x1st,x1,x2,ty : string;
+  x1st,x1,x2,ty,oc : string;
   p : Pointer;
  begin
    //y := aRow-1;
@@ -117,6 +117,7 @@ var
         s := 'Kwd Nst   Min End  NMi Nst '
       else
       if iLine > 0 then begin
+        s := '';
         y := iLine -1;
         Keywords := HL.FoldNodeInfo[y].Count;
         NodeList := HL.FoldNodeInfo[y];
@@ -136,12 +137,19 @@ var
                   //sfaMultiLine
                   //sfaOpen
                   ];
+              for j := 0 to min(2, NodeList.Count-1) do
+              begin
               //NodeList.FoldFlags:= [sfbIncludeDisabled];
-                TmpNode := NodeList[0];
+                TmpNode := NodeList[j];
                  //x1st  := IntToStr( TmpNode.LogVertGuideX );
                   x1   := IntToStr( TmpNode.LogXStart );
                   x2   := IntToStr( TmpNode.LogXEnd );
                   y    := TmpNode.LineIndex;
+                  if sfaOpen in TmpNode.FoldAction then
+                    oc := '<-'
+                  else if sfaClose in TmpNode.FoldAction then
+                    oc := '->'
+                  else oc := '?~';
                   if TSynCustomFoldHighlighter(HL) is TSynPasSyn
                   or TSynCustomFoldHighlighter(HL) is SynHighlighterMiniPas2.TSynPasSyn then
                   begin
@@ -155,8 +163,9 @@ var
                   begin
                     p := TmpNode.FoldType;
                     ty   := copy( GetEnumName(TypeInfo(TJScriptFoldBlockType), PtrUint(p) ), 4,100) ;
-                  end
-
+                  end;
+                s := s + Format('%10s %2s..%2s ,%2s', [oc+ ty, x1,x2, IntToStr(y)])
+              end;
 
             finally
               NodeList.ReleaseReference;
@@ -166,13 +175,12 @@ var
 
         NestCount:= Nest.Count;
         r := TSynCustomHighlighterRange(RngLst.Range[iLine-1]);
-        s:= format(' %2d  %2d  %3d %3d  %3d %3d   %10s %2s..%2s ,%2s',
+        s:= format(' %2d  %2d  %3d %3d  %3d %3d   %s',
                    [//iLine, //r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
                     KeyWords, NestCount,
                     r.MinimumCodeFoldBlockLevel, r.CodeFoldStackSize, //, r.LastLineCodeFoldLevelFix
                     r.MinimumNestFoldBlockLevel, r.NestFoldStackSize,
-                    ty,
-                    x1,x2, IntToStr(y)
+                    s
                    ]
                   );
       end
@@ -339,7 +347,7 @@ constructor TSynGutterFoldDebug.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   AutoSize := False;
-  Width := 500;//PreferedWidth;
+  Width := 600;//PreferedWidth;
 end;
 
 procedure TSynGutterFoldDebug.Paint(Canvas: TCanvas; AClip: TRect; FirstLine,

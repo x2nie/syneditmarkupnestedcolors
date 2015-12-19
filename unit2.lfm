@@ -1,7 +1,7 @@
 object Form2: TForm2
-  Left = 346
+  Left = 228
   Height = 553
-  Top = 137
+  Top = 125
   Width = 847
   Caption = 'Form2'
   ClientHeight = 553
@@ -17,10 +17,22 @@ object Form2: TForm2
     Width = 847
     Align = alBottom
     Caption = 'Panel1'
+    ClientHeight = 86
+    ClientWidth = 847
     Color = 9830346
     ParentColor = False
     TabOrder = 0
     Visible = False
+    object Panel3: TPanel
+      Left = 56
+      Height = 50
+      Top = 24
+      Width = 170
+      Caption = 'Panel3'
+      Color = 14013696
+      ParentColor = False
+      TabOrder = 0
+    end
   end
   object PageControl1: TPageControl
     Left = 0

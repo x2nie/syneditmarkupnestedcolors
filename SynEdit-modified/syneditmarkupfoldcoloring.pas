@@ -15,6 +15,8 @@ type
     Y, X, X2: Integer;
     ColorIdx: Integer;
     Border  : Boolean;
+    SrcNode : TSynFoldNodeInfo;
+    LevelBefore, LevelAfter : integer;//needed by non nest nodes
   end;
 
   TMarkupFoldColorInfos = array of TMarkupFoldColorInfo;
@@ -97,7 +99,7 @@ begin
   Colors[0] := clRed;
   Colors[1] := $000098F7; //orange
   Colors[2] := $0022CC40; //green
-  Colors[3] := $0098CC42; //$00D1D54A; // teal
+  Colors[3] := $00D5D500;//$0098CC42; //$00D1D54A; // teal
   Colors[4] := $00FF682A; //blue
   Colors[5] := $00CF00C4; //purple
 end;
@@ -263,7 +265,7 @@ end;
 
 procedure TSynEditMarkupFoldColors.DoMarkupParentFoldAtRow(aRow: Integer);
 var
-  i,lvl : integer; //iterate parents fold
+  i,lvl,z : integer; //iterate parents fold
 
   procedure AddVerticalLine( ANode: TSynFoldNodeInfo );
   var x,j : integer;
@@ -274,9 +276,10 @@ var
       if FHighlights[j].X = x then
        ;//exit; //
 
-    x := Length(FHighlights);
-    SetLength(FHighlights, x+1);
-    with FHighlights[x] do begin
+    z := Length(FHighlights);
+    SetLength(FHighlights, z+1);
+    with FHighlights[z] do begin
+      SrcNode:= ANode; //needed by close node
       Border := ANode.LineIndex + 1 <> aRow;
       X  := ANode.LogXStart + 1;
       Y  := aRow;//ANode.LineIndex + 1;
@@ -332,7 +335,7 @@ var
 
 {$define sfaOutlineforward}
 var
-  y: Integer;
+  y, lvlB,lvlA: Integer;
   Nest : TLazSynEditNestedFoldsList;
   TmpNode: TSynFoldNodeInfo;
 {$ifdef sfaOutlineforward}
@@ -363,7 +366,7 @@ begin
   Nest.Line := y;
   Nest.FoldGroup := FDefaultGroup;//1;//FOLDGROUP_PASCAL;
   Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
-  Nest.IncludeOpeningOnLine := True; //False; //
+  Nest.IncludeOpeningOnLine := False; //True; //
 
   lvl := 0;
   {$ifdef sfaOutlineforward}
@@ -389,10 +392,16 @@ begin
         if ( sfaOutlineMergeParent in TmpNode.FoldAction) then
           dec(lvl);
 
+        lvlB := lvl;
         AddVerticalLine(TmpNode);
-
         if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
           inc(lvl);
+        lvlA := lvl;
+
+        with FHighlights[z] do begin
+          LevelBefore := lvlB;
+          LevelAfter  := lvlA;
+        end;
       end;
 
       Later(i);
@@ -403,20 +412,28 @@ end;
 
 procedure TSynEditMarkupFoldColors.DoMarkupParentCloseFoldAtRow(aRow: Integer);
 var
-  lvl : integer;
+  lvl,z : integer;
 
   procedure AddHighlight( ANode: TSynFoldNodeInfo );
-  var x : integer;
+  var x,j : integer;
   begin
+        //don't replace; don't add when already found
+    x  := ANode.LogXStart + 1;
+    for j := 0 to Pred(length(FHighlights)) do
+      if FHighlights[j].X = x then
+       ;//exit; //
+
     //exit; //debug
-    x := Length(FHighlights);
-    SetLength(FHighlights, x+1);
-    with FHighlights[x] do begin
+    z := Length(FHighlights);
+    SetLength(FHighlights, z+1);
+    with FHighlights[z] do begin
       Border := False;
+      SrcNode:= ANode; //needed by close node
       Y  := ANode.LineIndex + 1;
       X  := ANode.LogXStart + 1;
       X2 := ANode.LogXEnd + 1;
       ColorIdx := lvl;
+
       {if sfaOpen in ANode.FoldAction then begin
         lvl := ANode.FoldLvlStart;
         //lvl := ANode.NestLvlStart; //http://forum.lazarus.freepascal.org/index.php/topic,30122.msg194841.html#msg194841
@@ -442,7 +459,7 @@ var
   end;
 
 var
-  y,i : integer;
+  y,i,j,lvlB,lvlA : integer;
   HL: TSynCustomFoldHighlighter;
   NodeList: TLazSynFoldNodeInfoList;
   TmpNode: TSynFoldNodeInfo;
@@ -461,7 +478,7 @@ begin
         {sfaMarkup,}
 //        sfaFold
       sfaOutline
-      ,sfaClose
+//      ,sfaClose
         //sfaFoldFold
         //sfaFoldHide
         //sfaSingleLine
@@ -470,6 +487,9 @@ begin
         ];
     //NodeList.FoldFlags:= [sfbIncludeDisabled];
     lvl := 0;
+    J := Length(FHighlights)-1;
+    if J >=0 then
+      lvl := max(0,FHighlights[J].LevelAfter);
     i := 0;
     repeat
       TmpNode := NodeList[i];
@@ -480,11 +500,52 @@ begin
         inc(i);
         TmpNode := NodeList[i];
       end;
-      if not (sfaInvalid in TmpNode.FoldAction) then
+      if not (sfaInvalid in TmpNode.FoldAction) and (sfaOutline in TmpNode.FoldAction) then begin
+      if sfaOpen in TmpNode.FoldAction then
       begin
+
+        if ( sfaOutlineForceIndent in TmpNode.FoldAction) then
+          inc(lvl);
+        if ( sfaOutlineMergeParent in TmpNode.FoldAction) then
+          dec(lvl);
+
+
+
+        lvlB := lvl;
         AddHighlight(TmpNode);
         if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
           inc(lvl);
+        lvlA := lvl;
+
+        with FHighlights[z] do begin
+          LevelBefore := lvlB;
+          LevelAfter  := lvlA;
+        end;
+
+
+      end
+      else
+      if sfaClose in TmpNode.FoldAction then
+      begin
+        for j := Length(FHighlights)-1 downto 0 do begin
+          with FHighlights[j].SrcNode do begin
+            if  (FoldType = TmpNode.FoldType) and
+              (FoldGroup = TmpNode.FoldGroup) and
+              //(sfaOpen in FoldAction) and
+             // (FoldLvlEnd = TmpNode.FoldLvlStart)
+              (NestLvlEnd = TmpNode.NestLvlStart)
+
+              then begin
+                lvl := FHighlights[j].ColorIdx;
+                break;
+              end;
+          end;
+        end;
+        AddHighlight(TmpNode);
+        //if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
+          //inc(lvl);
+      end;
+
       end;
 
 
@@ -506,7 +567,7 @@ begin
 
   //DoMarkupFoldAtRow(aRow);
   DoMarkupParentFoldAtRow(aRow);
-  //DoMarkupParentCloseFoldAtRow(aRow);
+  DoMarkupParentCloseFoldAtRow(aRow);
   //DoMarkupRangeFoldAtRow(aRow);
 
   FHighlights := SortLeftMostFI(FHighlights);

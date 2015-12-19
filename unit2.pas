@@ -30,6 +30,7 @@ type
     PageControl1: TPageControl;
     Panel1: TPanel;
     Panel2: TPanel;
+    Panel3: TPanel;
     SynEditMiniPas: TSynEdit;
     SynEditPas: TSynEdit;
     SynEditLFM: TSynEdit;
