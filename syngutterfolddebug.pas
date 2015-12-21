@@ -131,22 +131,14 @@ var
         InProc := '- - ';
         if TSynCustomFoldHighlighter(HL) is SynHighlighterMiniPas2.TSynPasSyn then
         begin
-          with SynHighlighterMiniPas2.TSynHighlighterPasRangeList(TSynMiniPasSynAccess(HL).CurrentRanges).PasRangeInfo[y] do begin
-            if Length(InProcLevelArray) <= EndLevelIfDef then
-              InProc := '?'
-            else begin
-              J := InProcLevelArray[EndLevelIfDef];
-              InProc := inttostr(j);
-            end;
-            InProc := InProc +'/ '+ inttostr(EndLevelIfDef)+' ';
-          end;
+          //j:=SynHighlighterMiniPas2.TSynHighlighterPasRangeList(TSynMiniPasSynAccess(HL).CurrentRanges).PasRangeInfo[y].EndLevelIfDef;
           //InProc := inttostr(j)+' ';
-          //InProc := {InProc +} inttostr(TSynMiniPasSynAccess(HL).InProcLevel) + ' ';
+          InProc := {InProc +} inttostr(TSynMiniPasSynAccess(HL).InProcLevel) + ' ';
 
           if TSynMiniPasSynAccess(HL).InProcNeck then
             InProc := InProc + 'T '
           else
-            InProc := InProc + 'f ';
+            InProc := InProc + '. ';
 
           if TSynMiniPasSynAccess(HL).IsProcedureNeckInRange then
             InProc := InProc + 'R '
