@@ -2686,6 +2686,13 @@ var
     inc(fStringLen); // include $
     EndCustomCodeFoldBlock(ABlockType);
 
+
+     PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
+      CloseBeginEndBlocksBeforeProc;
+
+      if TopPascalCodeFoldBlockType in [cfbtVarType, cfbtLocalVarType] then
+        EndPascalCodeFoldBlockLastLine;
+
     //InsideProcedureNeck := TopPascalCodeFoldBlockType() = cfbtProcedure; //IsInProcedureNeck;
     InsideProcedureNeck := InProcNeck;
     ProcDept := self.InProcLevel;
