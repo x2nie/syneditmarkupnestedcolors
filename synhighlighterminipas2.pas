@@ -1923,7 +1923,7 @@ var
   InClass: Boolean;
 begin
   if KeyComp('Function') then begin
-    if not (rsInTypeBlock in fRange) then begin
+    if (rsImplementation in fRange) then begin
       InProcNeck := True;
       SetIsInProcLevel(True);
     end;
@@ -1958,7 +1958,8 @@ var
   InClass: Boolean;
 begin
   if KeyComp('Procedure') then begin
-    if not (rsInTypeBlock in fRange) then begin
+    //if not (rsInTypeBlock in fRange) then begin
+    if (rsImplementation in fRange) then begin
       InProcNeck := True;
       SetIsInProcLevel(True);
     end;
@@ -2003,6 +2004,10 @@ function TSynPasSyn.Func108: TtkTokenKind;
 begin
   if KeyComp('Operator') then
   begin
+     if (rsImplementation in fRange) then begin
+      InProcNeck := True;
+      SetIsInProcLevel(True);
+    end;
     if not(rsAfterEqualOrColon in fRange) then
     begin
       PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
@@ -2196,6 +2201,10 @@ var
 begin
   if KeyComp('Destructor') then
   begin
+    if (rsImplementation in fRange) then begin
+      InProcNeck := True;
+      SetIsInProcLevel(True);
+    end;
     if not(rsAfterEqualOrColon in fRange) then
     begin
       PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
@@ -2270,6 +2279,10 @@ var
   InClass: Boolean;
 begin
   if KeyComp('Constructor') then begin
+    if (rsImplementation in fRange) then begin
+      InProcNeck := True;
+      SetIsInProcLevel(True);
+    end;
     if not(rsAfterEqualOrColon in fRange) then begin
       PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
       CloseBeginEndBlocksBeforeProc;
@@ -2687,11 +2700,12 @@ var
     EndCustomCodeFoldBlock(ABlockType);
 
 
-     PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
+    { PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
       CloseBeginEndBlocksBeforeProc;
 
       if TopPascalCodeFoldBlockType in [cfbtVarType, cfbtLocalVarType] then
         EndPascalCodeFoldBlockLastLine;
+    }
 
     //InsideProcedureNeck := TopPascalCodeFoldBlockType() = cfbtProcedure; //IsInProcedureNeck;
     InsideProcedureNeck := InProcNeck;
