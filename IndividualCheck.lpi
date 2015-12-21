@@ -91,6 +91,12 @@
         <IncludeAssertionCode Value="True"/>
       </SyntaxOptions>
     </Parsing>
+    <CodeGeneration>
+      <Checks>
+        <RangeChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+      </Checks>
+    </CodeGeneration>
     <Linking>
       <Options>
         <Win32>
