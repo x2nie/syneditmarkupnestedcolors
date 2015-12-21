@@ -92,6 +92,7 @@ type
     rsAtClosingBracket,   // ')'
     rsAtCaseLabel,
     rsInProcHeader,       // Declaration or implementation header of a Procedure, function, constructor...
+    rsInProcNeck,         // Inside the proc implementation, but before begin.
     rsAfterClassMembers,  // Encountered a procedure, function, property, constructor or destructor in a class
     rsAfterClassField,    // after ";" of a field (static needs highlight)
     rsVarTypeInSpecification, // between ":"/"=" and ";" in a var or type section (or class members)
@@ -241,6 +242,10 @@ type
     MinLevelIfDef: Smallint;
     EndLevelRegion: Smallint;
     MinLevelRegion: Smallint;
+    // because $else breaks nested proc
+    InProcLevel : Smallint;
+    InProcNecks : Cardinal; //bits use with EndLevelIfDef
+    InProcBits  : Cardinal; //bits use with InProc
   end;
 
   { TSynHighlighterPasRangeList }
@@ -341,9 +346,15 @@ type
     // Divider
     FDividerDrawConfig: Array [TSynPasDividerDrawLocation] of TSynDividerDrawConfig;
 
+    function GetInProc: boolean;
+    function GetInProcLevel: integer;
+    function GetInProcNeck: boolean;
     function GetPasCodeFoldRange: TSynPasSynRange;
     procedure SetCompilerMode(const AValue: TPascalCompilerMode);
     procedure SetExtendedKeywordsMode(const AValue: Boolean);
+    procedure SetInProc(AValue: boolean);
+    procedure SetInProcLevel(AValue: integer);
+    procedure SetInProcNeck(AValue: boolean);
     procedure SetStringKeywordMode(const AValue: TSynPasStringMode);
     function TextComp(aText: PChar): Boolean;
     function KeyHash: Integer;
@@ -479,6 +490,7 @@ type
     // Divider
     procedure CreateDividerDrawConfig;
     procedure DestroyDividerDrawConfig;
+
   protected
     function KeyComp(const aKey: string): Boolean;
     function KeyCompEx(AText1, AText2: pchar; ALen: Integer): Boolean;
@@ -515,6 +527,13 @@ type
                        FinishingABlock: Boolean;
                        ABlockType: Pointer; aActions: TSynFoldActions;
                        AIsFold: Boolean); override;
+
+    //NestedProc vs IFDEF  // because $else breaks nested proc
+    function  IsProcedureNeckInRange : boolean;//debug
+    procedure SetIsInProcLevel(Increase:boolean);
+    property InProcLevel : integer read GetInProcLevel write SetInProcLevel;
+    property InProcNeck : boolean read GetInProcNeck write SetInProcNeck;
+    property InProc : boolean read GetInProc write SetInProc;
 
   protected
     function LastLinePasFoldLevelFix(Index: Integer; AType: Integer = 1;
@@ -885,6 +904,33 @@ begin
   DefHighlightChange(self);
 end;
 
+procedure TSynPasSyn.SetInProc(AValue: boolean);
+begin
+  with FSynPasRangeInfo do begin
+    InProcBits := InProcBits and not (1 shl InProcLevel); //set off
+    if AValue then begin
+      InProcBits := InProcBits or (1 shl InProcLevel); //set on
+      //fRange := fRange + [rsInProcNeck];
+    end;
+  end;
+end;
+
+procedure TSynPasSyn.SetInProcLevel(AValue: integer);
+begin
+  FSynPasRangeInfo.InProcLevel := AValue;
+end;
+
+procedure TSynPasSyn.SetInProcNeck(AValue: boolean);
+begin
+  with FSynPasRangeInfo do begin
+    InProcNecks := InProcNecks and not (1 shl EndLevelIfDef); //set off
+    if AValue then begin
+      InProcNecks := InProcNecks or (1 shl EndLevelIfDef); //set on
+      fRange := fRange + [rsInProcNeck];
+    end;
+  end;
+end;
+
 procedure TSynPasSyn.SetStringKeywordMode(const AValue: TSynPasStringMode);
 begin
   if FStringKeywordMode = AValue then exit;
@@ -896,6 +942,27 @@ end;
 function TSynPasSyn.GetPasCodeFoldRange: TSynPasSynRange;
 begin
   Result := TSynPasSynRange(CodeFoldRange);
+end;
+
+function TSynPasSyn.GetInProcNeck: boolean;
+begin
+  with FSynPasRangeInfo do begin
+    //Result := InProcNecks and (1 shl EndLevelIfDef) <> 0;
+    Result := InProcNecks and (1 shl EndLevelIfDef) <> 0;
+  end;
+end;
+
+function TSynPasSyn.GetInProc: boolean;
+begin
+  Result := FSynPasRangeInfo.InProcLevel > 0;
+  {with FSynPasRangeInfo do begin
+    Result :=  InProcBits and (1 shl InProcLevel) <> 0;
+  end;}
+end;
+
+function TSynPasSyn.GetInProcLevel: integer;
+begin
+  result := FSynPasRangeInfo.InProcLevel;
 end;
 
 function TSynPasSyn.Func15: TtkTokenKind;
@@ -971,8 +1038,13 @@ begin
           EndPascalCodeFoldBlock;
       end else if tfb in [cfbtTopBeginEnd, cfbtAsm] then begin
         EndPascalCodeFoldBlock;
-        if TopPascalCodeFoldBlockType in [cfbtProcedure] then
+        if TopPascalCodeFoldBlockType in [cfbtProcedure] then begin
           EndPascalCodeFoldBlock;
+        end;
+        if InProc then
+            SetIsInProcLevel(False);
+        InProcNeck := InProcLevel>0;
+
       end else if tfb in [cfbtCaseElse] then begin
         EndPascalCodeFoldBlock;
         EndPascalCodeFoldBlock; // must be cfbtCase
@@ -1096,6 +1168,9 @@ end;
 function TSynPasSyn.Func37: TtkTokenKind;
 begin
   if KeyComp('Begin') then begin
+    //if not (rsInTypeBlock in fRange) then
+      //fRange := fRange - [rsInProcNeck];
+      //InProcNeck := False;
     // if we are in an include file, we may not know the state
     if (fRange * [rsImplementation, rsInterface] = []) then
       Include(fRange, rsImplementation);
@@ -1103,8 +1178,11 @@ begin
     if TopPascalCodeFoldBlockType in [cfbtVarType, cfbtLocalVarType] then
       EndPascalCodeFoldBlockLastLine;
     Result := tkKey;
-    if TopPascalCodeFoldBlockType in [cfbtProcedure]
-    then StartPascalCodeFoldBlock(cfbtTopBeginEnd)
+    if InProcNeck {and InProc} // TopPascalCodeFoldBlockType in [cfbtProcedure]
+    then begin
+      InProcNeck := False;
+      StartPascalCodeFoldBlock(cfbtTopBeginEnd)
+    end
     else StartPascalCodeFoldBlock(cfbtBeginEnd);
     //debugln('TSynPasSyn.Func37 BEGIN ',dbgs(ord(TopPascalCodeFoldBlockType)),' LineNumber=',dbgs(fLineNumber),' ',dbgs(MinimumCodeFoldBlockLevel),' ',dbgs(CurrentCodeFoldBlockLevel));
   end else
@@ -1845,6 +1923,11 @@ var
   InClass: Boolean;
 begin
   if KeyComp('Function') then begin
+    if not (rsInTypeBlock in fRange) then begin
+      InProcNeck := True;
+      SetIsInProcLevel(True);
+    end;
+
     if not(rsAfterEqualOrColon in fRange) then begin
       PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
       CloseBeginEndBlocksBeforeProc;
@@ -1875,6 +1958,10 @@ var
   InClass: Boolean;
 begin
   if KeyComp('Procedure') then begin
+    if not (rsInTypeBlock in fRange) then begin
+      InProcNeck := True;
+      SetIsInProcLevel(True);
+    end;
     if not(rsAfterEqualOrColon in fRange) then begin
       PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
       CloseBeginEndBlocksBeforeProc;
@@ -2526,6 +2613,8 @@ begin
 end;
 
 procedure TSynPasSyn.BraceOpenProc;
+var
+  InsideProcedureNeck : Boolean;
   function ScanRegion: Boolean;
   var
     Txt: String;
@@ -2566,11 +2655,19 @@ procedure TSynPasSyn.BraceOpenProc;
     end;
   end;
 
+  procedure CheckInsideProcNec;
+  begin
+    //if InsideProcedureNeck then
+      //fRange := fRange + [rsInProcNeck];
+    InProcNeck := InsideProcedureNeck;
+  end;
+
   procedure StartDirectiveFoldBlock(ABlockType: TPascalCodeFoldBlockType); inline;
   begin
     dec(Run);
     inc(fStringLen); // include $
     StartCustomCodeFoldBlock(ABlockType);
+    CheckInsideProcNec;
     inc(Run);
   end;
 
@@ -2583,11 +2680,20 @@ procedure TSynPasSyn.BraceOpenProc;
   end;
 
   procedure EndStartDirectiveFoldBlock(ABlockType: TPascalCodeFoldBlockType); inline;
+  var ProcDept : integer;
   begin
     dec(Run);
     inc(fStringLen); // include $
     EndCustomCodeFoldBlock(ABlockType);
+
+    //InsideProcedureNeck := TopPascalCodeFoldBlockType() = cfbtProcedure; //IsInProcedureNeck;
+    InsideProcedureNeck := InProcNeck;
+    ProcDept := self.InProcLevel;
+
     StartCustomCodeFoldBlock(ABlockType);
+    CheckInsideProcNec;
+    self.InProcLevel := ProcDept;
+
     inc(Run);
   end;
 
@@ -2596,6 +2702,8 @@ var
 begin
   if (Run < fLineLen-1) and (fLine[Run+1] = '$') then begin
     // compiler directive
+    InsideProcedureNeck := InProcNeck;
+    //InProcNeck := IsInProcedureNeck;
     fRange := fRange + [rsDirective];
     inc(Run, 2);
     fToIdent := Run;
@@ -3247,6 +3355,9 @@ begin
     MinLevelIfDef := 0;
     EndLevelRegion := 0;
     MinLevelRegion := 0;
+    InProcNecks:=0;
+    InProcLevel:=0;
+    InProcBits:=0;
   end;
   Inherited ResetRange;
   CompilerMode:=pcmDelphi;
@@ -3596,6 +3707,13 @@ begin
     EndOffs := +1;
   //inherited DoInitNode(Node, FinishingABlock, ABlockType, aActions, AIsFold);
   aActions := aActions + [sfaMultiLine];
+
+  if (PasBlockType in [cfbtProcedure]) then begin
+      //SetInProcLevel(not FinishingABlock);
+      //InProc := not FinishingABlock;
+  end;
+
+
   if (not FinishingABlock) and  (ABlockType <> nil) then begin
     if (PasBlockType in [cfbtIfThen,cfbtProcedure]) then
       Include( aActions, sfaOutlineKeepColor);
@@ -3686,6 +3804,22 @@ begin
       end;
     end;
   end;}
+end;
+
+
+
+function TSynPasSyn.IsProcedureNeckInRange: boolean;
+begin
+  result := rsInProcNeck in fRange;
+end;
+
+procedure TSynPasSyn.SetIsInProcLevel(Increase: boolean);
+begin
+  with FSynPasRangeInfo do
+    if Increase then
+      Inc(InProcLevel)
+    else
+      Dec(InProcLevel);
 end;
 
 procedure TSynPasSyn.InitNode(out Node: TSynFoldNodeInfo; EndOffs: Integer;
@@ -4534,6 +4668,9 @@ begin
     Result.EndLevelRegion := 0;
     Result.MinLevelIfDef := 0;
     Result.EndLevelIfDef := 0;
+    Result.InProcNecks := 0;
+    Result.InProcLevel:=0;
+    Result.InProcBits:=0;
     exit;
   end;
   Result := TSynPasRangeInfo((ItemPointer[Index] + FItemOffset)^);

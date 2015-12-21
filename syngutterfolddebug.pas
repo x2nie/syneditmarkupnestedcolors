@@ -39,6 +39,8 @@ type
   //TSynColorFoldHighlighterAccess = class(TSynColorFoldHighlighter);
   TSynCustomFoldHighlighterAccess = class(TSynCustomFoldHighlighter);
   TSynPasSynAccess = class(TSynPasSyn);
+  TSynMiniPasSynAccess = class(SynHighlighterMiniPas2.TSynPasSyn);
+
 
 { TSynGutterFoldDebug }
 
@@ -58,6 +60,7 @@ var
   TmpNode: TSynFoldNodeInfo;
   NodeList: TLazSynFoldNodeInfoList;
   x1st,x1,x2,ty,oc : string;
+  InProc:string;
   p : Pointer;
  begin
    //y := aRow-1;
@@ -125,6 +128,28 @@ var
         x1   := '';
         x2   := '';
         ty   := '';
+        InProc := '- - ';
+        if TSynCustomFoldHighlighter(HL) is SynHighlighterMiniPas2.TSynPasSyn then
+        begin
+          //j:=SynHighlighterMiniPas2.TSynHighlighterPasRangeList(TSynMiniPasSynAccess(HL).CurrentRanges).PasRangeInfo[y].EndLevelIfDef;
+          //InProc := inttostr(j)+' ';
+          InProc := {InProc +} inttostr(TSynMiniPasSynAccess(HL).InProcLevel) + ' ';
+
+          if TSynMiniPasSynAccess(HL).InProcNeck then
+            InProc := InProc + '1 '
+          else
+            InProc := InProc + '- ';
+
+          if TSynMiniPasSynAccess(HL).IsProcedureNeckInRange then
+            InProc := InProc + 'R '
+          else
+            InProc := InProc + '- ';
+
+          //p := p - PtrUInt(CountPascalCodeFoldBlockOffset);
+          //p := TSynMiniPasSynAccess(HL).TopCodeFoldBlockType();
+          //InProc := InProc + copy( GetEnumName(TypeInfo(TPascalCodeFoldBlockType), PtrUint(p) ), 5,100) ;
+        end;
+
             NodeList.AddReference;
             if NodeList.Count > 0 then
             try
@@ -156,7 +181,7 @@ var
                     p := TmpNode.FoldType;
                     if p >= CountPascalCodeFoldBlockOffset then
                     p := p - PtrUInt(CountPascalCodeFoldBlockOffset);
-                    ty   := copy( GetEnumName(TypeInfo(TPascalCodeFoldBlockType), PtrUint(p) ), 5,100) ;
+                    ty   := copy( GetEnumName(TypeInfo(TPascalCodeFoldBlockType), PtrUint(p) ), 5,6) ;
                   end
                   else
                   if TSynCustomFoldHighlighter(HL) is TSynJScriptSyn then
@@ -164,7 +189,7 @@ var
                     p := TmpNode.FoldType;
                     ty   := copy( GetEnumName(TypeInfo(TJScriptFoldBlockType), PtrUint(p) ), 4,100) ;
                   end;
-                s := s + Format('%10s %2s..%2s ,%2s', [oc+ ty, x1,x2, IntToStr(y)])
+                s := s + Format('%10s %s..%s,%s', [oc+ ty, x1,x2, IntToStr(y)])
               end;
 
             finally
@@ -175,11 +200,12 @@ var
 
         NestCount:= Nest.Count;
         r := TSynCustomHighlighterRange(RngLst.Range[iLine-1]);
-        s:= format(' %2d  %2d  %3d %3d  %3d %3d   %s',
+        s:= format(' %2d  %2d  %3d %3d  %3d %3d  @%s  %s',
                    [//iLine, //r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
                     KeyWords, NestCount,
                     r.MinimumCodeFoldBlockLevel, r.CodeFoldStackSize, //, r.LastLineCodeFoldLevelFix
                     r.MinimumNestFoldBlockLevel, r.NestFoldStackSize,
+                    InProc,
                     s
                    ]
                   );

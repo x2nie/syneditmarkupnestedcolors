@@ -296,7 +296,7 @@ begin
   Nest.Line := y;
   Nest.FoldGroup := FDefaultGroup;//1;//FOLDGROUP_PASCAL;
   Nest.FoldFlags :=  [];//[sfbIncludeDisabled]; //
-  Nest.IncludeOpeningOnLine := True; // False; //
+  Nest.IncludeOpeningOnLine := True; //False; //
   NestCount := Nest.Count;
 
   try
