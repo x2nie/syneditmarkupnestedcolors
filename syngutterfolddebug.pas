@@ -136,9 +136,9 @@ var
           InProc := {InProc +} inttostr(TSynMiniPasSynAccess(HL).InProcLevel) + ' ';
 
           if TSynMiniPasSynAccess(HL).InProcNeck then
-            InProc := InProc + '1 '
+            InProc := InProc + 'T '
           else
-            InProc := InProc + '- ';
+            InProc := InProc + 'f ';
 
           if TSynMiniPasSynAccess(HL).IsProcedureNeckInRange then
             InProc := InProc + 'R '

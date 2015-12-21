@@ -1235,7 +1235,7 @@ begin
          cfbtUnit, cfbtUnitSection]) then begin
       if TopPascalCodeFoldBlockType in [cfbtVarType, cfbtLocalVarType] then
         EndPascalCodeFoldBlockLastLine;
-      if TopPascalCodeFoldBlockType in [cfbtProcedure]
+      if InProcLevel > 0 // TopPascalCodeFoldBlockType in [cfbtProcedure]
       then StartPascalCodeFoldBlock(cfbtLocalVarType)
       else StartPascalCodeFoldBlock(cfbtVarType);
     end;
@@ -3721,7 +3721,7 @@ begin
     if (PasBlockType in [cfbtProcedure]) then
       aActions := aActions + [sfaOutlineKeepColor,sfaOutlineHidden];
 
-    if (TopPascalCodeFoldBlockType = cfbtProcedure) and (PasBlockType in [cfbtProcedure]) then //nested
+    if (TopPascalCodeFoldBlockType = cfbtProcedure) and (InProcLevel > 1) {(PasBlockType in [cfbtProcedure])} then //nested
       aActions := aActions + [sfaOutlineForceIndent];
 
     if (PasBlockType in [cfbtExcept]) then
