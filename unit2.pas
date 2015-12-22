@@ -122,6 +122,7 @@ begin
     CaseLabelAttri.Background:= clYellow;
     //FoldConfig[ord(cfbtIfThen)].Enabled := True;
     CommentAttri.Foreground:=clTeal;
+    DirectiveAttri.Foreground := clRed;
   end;
 
   //================= INDIVIDUAL CHECK, so debug can be focused ================
