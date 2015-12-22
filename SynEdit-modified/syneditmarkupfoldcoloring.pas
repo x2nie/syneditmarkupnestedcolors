@@ -425,7 +425,7 @@ begin
         TmpNode := NodeList[i];
       end;
       if not (sfaInvalid in TmpNode.FoldAction) and (sfaOutline in TmpNode.FoldAction) then begin
-      if sfaOpen in TmpNode.FoldAction then
+        if sfaOpen in TmpNode.FoldAction then
         begin
           lvlB := lvl;
 
