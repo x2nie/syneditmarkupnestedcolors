@@ -92,7 +92,6 @@ type
     rsAtClosingBracket,   // ')'
     rsAtCaseLabel,
     rsInProcHeader,       // Declaration or implementation header of a Procedure, function, constructor...
-    rsInProcNeck,         // Inside the proc implementation, but before begin.
     rsAfterClassMembers,  // Encountered a procedure, function, property, constructor or destructor in a class
     rsAfterClassField,    // after ";" of a field (static needs highlight)
     rsVarTypeInSpecification, // between ":"/"=" and ";" in a var or type section (or class members)
@@ -529,7 +528,6 @@ type
                        AIsFold: Boolean); override;
 
     //NestedProc vs IFDEF  // because $else breaks nested proc
-    function  IsProcedureNeckInRange : boolean;//debug
     procedure SetIsInProcLevel(Increase:boolean);
     property InProcLevel : integer read GetInProcLevel write SetInProcLevel;
     property InProcNeck : boolean read GetInProcNeck write SetInProcNeck;
@@ -910,7 +908,6 @@ begin
     InProcBits := InProcBits and not (1 shl InProcLevel); //set off
     if AValue then begin
       InProcBits := InProcBits or (1 shl InProcLevel); //set on
-      //fRange := fRange + [rsInProcNeck];
     end;
   end;
 end;
@@ -926,7 +923,6 @@ begin
     InProcNecks := InProcNecks and not (1 shl EndLevelIfDef); //set off
     if AValue then begin
       InProcNecks := InProcNecks or (1 shl EndLevelIfDef); //set on
-      fRange := fRange + [rsInProcNeck];
     end;
   end;
 end;
@@ -3834,13 +3830,6 @@ begin
       end;
     end;
   end;}
-end;
-
-
-
-function TSynPasSyn.IsProcedureNeckInRange: boolean;
-begin
-  result := rsInProcNeck in fRange;
 end;
 
 procedure TSynPasSyn.SetIsInProcLevel(Increase: boolean);

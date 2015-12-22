@@ -140,10 +140,10 @@ var
           else
             InProc := InProc + '. ';
 
-          if TSynMiniPasSynAccess(HL).IsProcedureNeckInRange then
+          {if TSynMiniPasSynAccess(HL).IsProcedureNeckInRange then
             InProc := InProc + 'R '
           else
-            InProc := InProc + '- ';
+            InProc := InProc + '- ';}
 
           //p := p - PtrUInt(CountPascalCodeFoldBlockOffset);
           //p := TSynMiniPasSynAccess(HL).TopCodeFoldBlockType();
