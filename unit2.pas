@@ -141,6 +141,7 @@ begin
   AddMarkupFoldColors();
 end;
 
+
 procedure TForm2.btnConfigClick(Sender: TObject);
 begin
   frmConfig.ShowModal;
