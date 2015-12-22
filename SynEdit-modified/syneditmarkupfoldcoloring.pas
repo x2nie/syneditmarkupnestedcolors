@@ -300,12 +300,12 @@ begin
   NestCount := Nest.Count;
 
   try
-  lvl := 0;
-  i := 0;
-  while Allowed(i) do
-  begin
+    lvl := 0;
+    i := 0;
+    while Allowed(i) do
+    begin
 
-    TmpNode := Nest.HLNode[i];
+      TmpNode := Nest.HLNode[i];
       //find till valid
       while (sfaInvalid in TmpNode.FoldAction ) and Allowed(i+1) do //(i < Nest.Count) do
       begin
@@ -342,7 +342,7 @@ begin
       Later(i);
       //dec(i);
       //break; //debug
-  end;
+    end;
 
   finally
     Nest.Free;
@@ -426,56 +426,56 @@ begin
       end;
       if not (sfaInvalid in TmpNode.FoldAction) and (sfaOutline in TmpNode.FoldAction) then begin
       if sfaOpen in TmpNode.FoldAction then
-      begin
-        lvlB := lvl;
+        begin
+          lvlB := lvl;
 
-        if ( sfaOutlineForceIndent in TmpNode.FoldAction) then
-          inc(lvl);
-        if ( sfaOutlineMergeParent in TmpNode.FoldAction) then
-          dec(lvl);
-
-
-
-        AddHighlight(TmpNode);
-        if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
-          inc(lvl);
-        lvlA := lvl;
-
-        with FHighlights[z] do begin
-          LevelBefore := lvlB;
-          LevelAfter  := lvlA;
-        end;
+          if ( sfaOutlineForceIndent in TmpNode.FoldAction) then
+            inc(lvl);
+          if ( sfaOutlineMergeParent in TmpNode.FoldAction) then
+            dec(lvl);
 
 
-      end
-      else
-      if sfaClose in TmpNode.FoldAction then
-      begin
-        Found := False;
-        for j := Length(FHighlights)-1 downto 0 do begin
-          with FHighlights[j].SrcNode do begin
-            if  (FoldType = TmpNode.FoldType) and
-              (FoldGroup = TmpNode.FoldGroup) and
-              (sfaOpen in FoldAction) and
-              // (FoldLvlEnd = TmpNode.FoldLvlStart)
-              (NestLvlEnd = TmpNode.NestLvlStart)
 
-              then begin
-                lvl := FHighlights[j].ColorIdx;
-                lvlB := FHighlights[j].LevelBefore;
-                Found := True;
-                break;
-              end;
-          end;
-        end;
-        if Found then begin
           AddHighlight(TmpNode);
-          lvl := lvlB;
-        end;
+          if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
+            inc(lvl);
+          lvlA := lvl;
 
-        //if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
-          //inc(lvl);
-      end;
+          with FHighlights[z] do begin
+            LevelBefore := lvlB;
+            LevelAfter  := lvlA;
+          end;
+
+
+        end
+        else
+        if sfaClose in TmpNode.FoldAction then
+        begin
+          Found := False;
+          for j := Length(FHighlights)-1 downto 0 do begin
+            with FHighlights[j].SrcNode do begin
+              if  (FoldType = TmpNode.FoldType) and
+                (FoldGroup = TmpNode.FoldGroup) and
+                (sfaOpen in FoldAction) and
+                // (FoldLvlEnd = TmpNode.FoldLvlStart)
+                (NestLvlEnd = TmpNode.NestLvlStart)
+
+                then begin
+                  lvl := FHighlights[j].ColorIdx;
+                  lvlB := FHighlights[j].LevelBefore;
+                  Found := True;
+                  break;
+                end;
+            end;
+          end;
+          if Found then begin
+            AddHighlight(TmpNode);
+            lvl := lvlB;
+          end;
+
+          //if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
+            //inc(lvl);
+        end;
 
       end;
 
