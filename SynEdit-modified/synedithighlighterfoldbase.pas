@@ -85,6 +85,7 @@ type
                      sfaOutlineMergeParent,// This node want to decrease current color depth. (But Previous sibling increased) e.g. "except", "finally"
                      sfaOutlineForceIndent, // Node will temporary ignore sfaOutlineKeep. (Next sibling can.) e.g in NESTED "procedure"
                      sfaOutlineHidden,      // Node will not painted by nested-coloring, but may increase color (e.g. any "procedure")
+                     sfaOutlineNoLine,      // Node doesn't want to have vertical line. (e.g. "then")
                      sfaInvalid,  // Wrong Index
 
                      // TODO: deprecate

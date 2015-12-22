@@ -1919,11 +1919,6 @@ var
   InClass: Boolean;
 begin
   if KeyComp('Function') then begin
-    if (rsImplementation in fRange) then begin
-      InProcNeck := True;
-      SetIsInProcLevel(True);
-    end;
-
     if not(rsAfterEqualOrColon in fRange) then begin
       PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
       CloseBeginEndBlocksBeforeProc;
@@ -1938,6 +1933,11 @@ begin
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
     end;
+    if (rsImplementation in fRange) then begin
+      InProcNeck := True;
+      SetIsInProcLevel(True);
+    end;
+
     fRange := fRange + [rsInProcHeader];
     Result := tkKey;
   end
@@ -1955,10 +1955,6 @@ var
 begin
   if KeyComp('Procedure') then begin
     //if not (rsInTypeBlock in fRange) then begin
-    if (rsImplementation in fRange) then begin
-      InProcNeck := True;
-      SetIsInProcLevel(True);
-    end;
     if not(rsAfterEqualOrColon in fRange) then begin
       PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
       CloseBeginEndBlocksBeforeProc;
@@ -1972,6 +1968,10 @@ begin
 
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
+    end;
+    if (rsImplementation in fRange) then begin
+      InProcNeck := True;
+      SetIsInProcLevel(True);
     end;
     fRange := fRange + [rsInProcHeader];
     Result := tkKey;
@@ -2197,10 +2197,6 @@ var
 begin
   if KeyComp('Destructor') then
   begin
-    if (rsImplementation in fRange) then begin
-      InProcNeck := True;
-      SetIsInProcLevel(True);
-    end;
     if not(rsAfterEqualOrColon in fRange) then
     begin
       PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
@@ -2216,6 +2212,10 @@ begin
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
       fRange := fRange + [rsInProcHeader];
+    end;
+    if (rsImplementation in fRange) then begin
+      InProcNeck := True;
+      SetIsInProcLevel(True);
     end;
     Result := tkKey;
   end else
@@ -2275,10 +2275,6 @@ var
   InClass: Boolean;
 begin
   if KeyComp('Constructor') then begin
-    if (rsImplementation in fRange) then begin
-      InProcNeck := True;
-      SetIsInProcLevel(True);
-    end;
     if not(rsAfterEqualOrColon in fRange) then begin
       PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
       CloseBeginEndBlocksBeforeProc;
@@ -2293,6 +2289,10 @@ begin
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
       fRange := fRange + [rsInProcHeader];
+    end;
+    if (rsImplementation in fRange) then begin
+      InProcNeck := True;
+      SetIsInProcLevel(True);
     end;
     Result := tkKey;
   end else
@@ -3957,6 +3957,8 @@ var
   act: TSynFoldActions;
   nd: TSynFoldNodeInfo;
   FoldBlock, BlockEnabled: Boolean;
+  i : integer;
+  J : Cardinal;
 begin
   FoldBlock := FFoldConfig[ord(ABlockType)].Enabled;
   //if not FFoldConfig[ord(ABlockType)].Enabled then exit;
@@ -3979,6 +3981,12 @@ begin
           dec(FSynPasRangeInfo.EndLevelIfDef);
         if FSynPasRangeInfo.EndLevelIfDef < FSynPasRangeInfo.MinLevelIfDef then
           FSynPasRangeInfo.MinLevelIfDef := FSynPasRangeInfo.EndLevelIfDef;
+
+        J := 0;
+        for i := 0 to FSynPasRangeInfo.EndLevelIfDef do
+          J := J or (1 shl i);
+        FSynPasRangeInfo.InProcNecks:= FSynPasRangeInfo.InProcNecks or J;
+
       end;
     cfbtRegion:
       begin
@@ -4357,10 +4365,14 @@ begin
   Result := inherited;
   r := TSynHighlighterPasRangeList(CurrentRanges).PasRangeInfo[Index];
   Result := Result
+        or (FSynPasRangeInfo.InProcNecks <> r.InProcNecks)
+        or (FSynPasRangeInfo.InProcLevel <> r.InProcLevel)
+
         or (FSynPasRangeInfo.EndLevelIfDef <> r.EndLevelIfDef)
         or (FSynPasRangeInfo.MinLevelIfDef <> r.MinLevelIfDef)
         or (FSynPasRangeInfo.EndLevelRegion <> r.EndLevelRegion)
         or (FSynPasRangeInfo.MinLevelRegion <> r.MinLevelRegion);
+
   TSynHighlighterPasRangeList(CurrentRanges).PasRangeInfo[Index] := FSynPasRangeInfo;
 end;
 

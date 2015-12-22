@@ -74,6 +74,7 @@ uses
   SynGutterFoldDebug,
   SynEditHighlighterFoldBase,
   SynEditMarkupFoldColoring,
+  SynEditMarkupIfDef,
   foldhl, SynHighlighterBracket,
   uConfig
   ;
@@ -123,6 +124,7 @@ begin
     //FoldConfig[ord(cfbtIfThen)].Enabled := True;
     CommentAttri.Foreground:=clTeal;
     DirectiveAttri.Foreground := clRed;
+
   end;
 
   //================= INDIVIDUAL CHECK, so debug can be focused ================
@@ -149,6 +151,7 @@ var
   M : TSynEditMarkupFoldColors;
   i : integer;
   S : TSynEdit;
+  Mi : TSynEditMarkupIfDef;
 begin
   for i := 0 to Pred(ComponentCount) do
   begin
@@ -165,6 +168,16 @@ begin
       M := TSynEditMarkupFoldColors.Create(S);
       M.DefaultGroup := 0;
       S.MarkupManager.AddMarkUp(M);
+
+      //if S.Highlighter.ClassNameIs('TSynPasSyn') then
+      if S.Highlighter is SynHighlighterPas.TSynPasSyn then
+      begin
+        Mi := TSynEditMarkupIfDef.Create(S);
+        //Mi.FoldView := S.FoldedTextBuffer);
+        S.MarkupManager.AddMarkUp(Mi);
+        Mi.Highlighter := TSynPasSyn(S.Highlighter);
+      end;
+
     end;
   end;
 end;
