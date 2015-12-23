@@ -1108,6 +1108,7 @@ begin
           EndPascalCodeFoldBlock;
       end else if tfb in [cfbtTopBeginEnd, cfbtAsm] then begin
         EndPascalCodeFoldBlock;
+        InIfdefProcsMade := max(0, InIfdefProcsMade -1);
         if TopPascalCodeFoldBlockType in [cfbtProcedure] then begin
           EndPascalCodeFoldBlock;
         end;
@@ -1224,6 +1225,7 @@ begin
     if TopPascalCodeFoldBlockType in [cfbtVarType, cfbtLocalVarType] then
       EndPascalCodeFoldBlockLastLine;
     StartPascalCodeFoldBlock(cfbtAsm);
+    InIfdefProcsMade := InIfdefProcsMade +1;
   end
   else Result := tkIdentifier;
 end;
@@ -1251,7 +1253,8 @@ begin
     if InProcNeck {and InProc} // TopPascalCodeFoldBlockType in [cfbtProcedure]
     then begin
       InProcNeck := False;
-      StartPascalCodeFoldBlock(cfbtTopBeginEnd)
+      StartPascalCodeFoldBlock(cfbtTopBeginEnd);
+      InIfdefProcsMade := InIfdefProcsMade +1;
     end
     else StartPascalCodeFoldBlock(cfbtBeginEnd);
     //debugln('TSynPasSyn.Func37 BEGIN ',dbgs(ord(TopPascalCodeFoldBlockType)),' LineNumber=',dbgs(fLineNumber),' ',dbgs(MinimumCodeFoldBlockLevel),' ',dbgs(CurrentCodeFoldBlockLevel));
