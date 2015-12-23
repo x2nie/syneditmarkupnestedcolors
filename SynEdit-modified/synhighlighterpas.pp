@@ -3739,17 +3739,13 @@ begin
       //InProc := not FinishingABlock;
   end;
 
-
   if (not FinishingABlock) and  (ABlockType <> nil) then begin
-
-
-    if (PasBlockType in [cfbtIfThen,cfbtProcedure]) then
+    if (PasBlockType in [cfbtIfThen]) then
       Include( aActions, sfaOutlineKeepLevel);
 
     if (PasBlockType in [cfbtProcedure]) then
-      aActions := aActions + [sfaOutlineKeepLevel{,sfaOutlineNoColor}];
+      aActions := aActions + [sfaOutlineKeepLevel,sfaOutlineNoColor];
 
-    //if (TopPascalCodeFoldBlockType = cfbtProcedure) and (InProcLevel > 1) {(PasBlockType in [cfbtProcedure])} then //nested
     if (PasBlockType in [cfbtProcedure]) and (InProcLevel > 0) then //nested
       aActions := aActions + [sfaOutlineForceIndent];
 
@@ -3758,10 +3754,7 @@ begin
 
     if (PasBlockType in [cfbtIfThen, cfbtClass,cfbtRecord]) then
       aActions := aActions + [sfaOutlineNoLine];
-
-
   end;
-
 
   Node.LineIndex := LineIndex;
   Node.LogXStart := Run;
