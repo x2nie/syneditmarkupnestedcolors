@@ -2699,8 +2699,6 @@ begin
 end;
 
 procedure TSynPasSyn.BraceOpenProc;
-var
-  InsideProcedureNeck : Boolean;
   function ScanRegion: Boolean;
   var
     Txt: String;
@@ -2741,25 +2739,26 @@ var
     end;
   end;
 
-  procedure CheckInsideProcNec;
-  begin
-    //if InsideProcedureNeck then
-      //fRange := fRange + [rsInProcNeck];
-    InProcNeck := InsideProcedureNeck;
-  end;
-
-var ProcDept : integer;
+var
+  InsideProcedureNeck : Boolean;
+  ProcDept : integer;
 
   procedure StartDirectiveFoldBlock(ABlockType: TPascalCodeFoldBlockType); inline;
   begin
     dec(Run);
     inc(fStringLen); // include $
 
-    ProcDept := self.InProcLevel;
-    StartCustomCodeFoldBlock(ABlockType);
-    CheckInsideProcNec;
-    self.InProcLevel := ProcDept;
-    InIfdefProcsMade:=0;
+    if ABlockType = cfbtIfDef then begin
+      InsideProcedureNeck := InProcNeck;
+      ProcDept := self.InProcLevel;
+      StartCustomCodeFoldBlock(ABlockType);
+      InProcNeck := InsideProcedureNeck;
+      self.InProcLevel := ProcDept;
+      InIfdefProcsMade:=0;
+    end
+    else
+      StartCustomCodeFoldBlock(ABlockType);
+
     inc(Run);
   end;
 
@@ -2770,13 +2769,15 @@ var ProcDept : integer;
     dec(Run);
     inc(fStringLen); // include $
 
-    InsideProcedureNeck := InProcNeck;
-    ProcDept := self.InProcLevel;
-
-    EndCustomCodeFoldBlock(ABlockType);
-
-    CheckInsideProcNec;
-    self.InProcLevel := ProcDept;
+    if ABlockType = cfbtIfDef then begin
+      InsideProcedureNeck := InProcNeck;
+      ProcDept := self.InProcLevel;
+      EndCustomCodeFoldBlock(ABlockType);
+      InProcNeck := InsideProcedureNeck;
+      self.InProcLevel := ProcDept;
+    end
+    else
+      StartCustomCodeFoldBlock(ABlockType);
 
     inc(Run);
   end;
@@ -2784,35 +2785,31 @@ var ProcDept : integer;
   procedure EndStartDirectiveFoldBlock(ABlockType: TPascalCodeFoldBlockType); inline;
   var i, lrun,llen : integer;
   begin
-    //close the created proc before $else
-    lrun := run; run := 0;
-    llen := fStringLen; fStringLen:=0;
-    //while InIfdefProcsMade > 0 do begin
-    for i := 0 to InIfdefProcsMade-1 do begin
-      EndPascalCodeFoldBlock;
-      //InIfdefProcsMade := InIfdefProcsMade -1;
+    if ABlockType = cfbtIfDef then begin
+      //close the created proc before $else
+      lrun := run; run := 0;
+      llen := fStringLen; fStringLen:=0;
+      for i := 0 to InIfdefProcsMade-1 do
+        EndPascalCodeFoldBlock;
+      run := lrun; fStringLen:=llen;
+
+      dec(Run);
+      inc(fStringLen); // include $
+      EndCustomCodeFoldBlock(ABlockType);
+      InsideProcedureNeck := InProcNeck;
+      ProcDept := self.InProcLevel;
+
+      StartCustomCodeFoldBlock(ABlockType);
+      InProcNeck := InsideProcedureNeck;
+      self.InProcLevel := ProcDept;
+    end
+    else
+    begin
+      dec(Run);
+      inc(fStringLen); // include $
+      EndCustomCodeFoldBlock(ABlockType);
+      StartCustomCodeFoldBlock(ABlockType);
     end;
-    run := lrun; fStringLen:=llen;
-
-    dec(Run);
-    inc(fStringLen); // include $
-    EndCustomCodeFoldBlock(ABlockType);
-
-
-    { PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
-      CloseBeginEndBlocksBeforeProc;
-
-      if TopPascalCodeFoldBlockType in [cfbtVarType, cfbtLocalVarType] then
-        EndPascalCodeFoldBlockLastLine;
-    }
-
-    //InsideProcedureNeck := TopPascalCodeFoldBlockType() = cfbtProcedure; //IsInProcedureNeck;
-    InsideProcedureNeck := InProcNeck;
-    ProcDept := self.InProcLevel;
-
-    StartCustomCodeFoldBlock(ABlockType);
-    CheckInsideProcNec;
-    self.InProcLevel := ProcDept;
 
     inc(Run);
   end;
@@ -2822,8 +2819,6 @@ var
 begin
   if (Run < fLineLen-1) and (fLine[Run+1] = '$') then begin
     // compiler directive
-    InsideProcedureNeck := InProcNeck;
-    //InProcNeck := IsInProcedureNeck;
     fRange := fRange + [rsDirective];
     inc(Run, 2);
     fToIdent := Run;
