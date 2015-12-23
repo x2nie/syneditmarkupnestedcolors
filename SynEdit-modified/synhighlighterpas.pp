@@ -2745,17 +2745,22 @@ var
     InProcNeck := InsideProcedureNeck;
   end;
 
+var ProcDept : integer;
+
   procedure StartDirectiveFoldBlock(ABlockType: TPascalCodeFoldBlockType); inline;
   begin
     dec(Run);
     inc(fStringLen); // include $
+
+    ProcDept := self.InProcLevel;
     StartCustomCodeFoldBlock(ABlockType);
     CheckInsideProcNec;
+    self.InProcLevel := ProcDept;
     InIfdefProcsMade:=0;
     inc(Run);
   end;
 
-var ProcDept : integer;
+
 
   procedure EndDirectiveFoldBlock(ABlockType: TPascalCodeFoldBlockType); inline;
   begin
