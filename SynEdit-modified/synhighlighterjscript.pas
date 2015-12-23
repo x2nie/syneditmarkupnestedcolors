@@ -1918,7 +1918,7 @@ procedure TSynJScriptSyn.DoInitNode(var Node: TSynFoldNodeInfo;
 begin
   inherited DoInitNode(Node, FinishingABlock, ABlockType, aActions, AIsFold);
   if (ABlockType <> nil) and (TJScriptFoldBlockType(PtrUInt(ABlockType)) = jsbFunction) then
-    Include( Node.FoldAction, sfaOutlineKeepColor);
+    Include( Node.FoldAction, sfaOutlineKeepLevel);
 end;
 
 function TSynJScriptSyn.CurrentJScriptCodeFoldBlockType: TJScriptFoldBlockType;

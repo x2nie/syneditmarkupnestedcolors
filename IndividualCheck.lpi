@@ -34,7 +34,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="7">
+    <Units Count="6">
       <Unit0>
         <Filename Value="IndividualCheck.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -62,18 +62,13 @@
         <UnitName Value="SynGutterFoldDebug"/>
       </Unit4>
       <Unit5>
-        <Filename Value="synhighlighterminipas2.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="SynHighlighterMiniPas2"/>
-      </Unit5>
-      <Unit6>
         <Filename Value="uconfig.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="frmConfig"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="uConfig"/>
-      </Unit6>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -81,10 +81,10 @@ type
                      sfaDefaultCollapsed,
                      sfaMarkup,   // This node can be highlighted, by the matching Word-Pair Markup
                      sfaOutline,  // This node will be higlighted by nested color replacing the token color
-                     sfaOutlineKeepColor, // Direct children should not increase color dept. (But grandchild can.)  e.g. "if","then" any "procedure"
+                     sfaOutlineKeepLevel, // Direct children should not increase color dept. (But grandchild can.)  e.g. "if","then" any "procedure"
                      sfaOutlineMergeParent,// This node want to decrease current color depth. (But Previous sibling increased) e.g. "except", "finally"
                      sfaOutlineForceIndent, // Node will temporary ignore sfaOutlineKeep. (Next sibling can.) e.g in NESTED "procedure"
-                     sfaOutlineHidden,      // Node will not painted by nested-coloring, but may increase color (e.g. any "procedure")
+                     sfaOutlineNoColor,     // Node will not painted by nested-coloring, but may increase color (e.g. any "procedure")
                      sfaOutlineNoLine,      // Node doesn't want to have vertical line. (e.g. "then")
                      sfaInvalid,  // Wrong Index
 

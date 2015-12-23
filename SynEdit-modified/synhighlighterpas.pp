@@ -3742,10 +3742,10 @@ begin
 
   if (not FinishingABlock) and  (ABlockType <> nil) then begin
     if (PasBlockType in [cfbtIfThen,cfbtProcedure]) then
-      Include( aActions, sfaOutlineKeepColor);
+      Include( aActions, sfaOutlineKeepLevel);
 
     if (PasBlockType in [cfbtProcedure]) then
-      aActions := aActions + [sfaOutlineKeepColor,sfaOutlineHidden];
+      aActions := aActions + [sfaOutlineKeepLevel,sfaOutlineNoColor];
 
     if (TopPascalCodeFoldBlockType = cfbtProcedure) and (InProcLevel > 1) {(PasBlockType in [cfbtProcedure])} then //nested
       aActions := aActions + [sfaOutlineForceIndent];

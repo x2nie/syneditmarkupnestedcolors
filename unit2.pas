@@ -9,7 +9,7 @@ uses
   Graphics, Dialogs, ExtCtrls, ComCtrls, StdCtrls,
   SynEditMarkupWordGroup,
   SynEditHighlighter,
-  SynHighlighterMiniPas2,//must before original
+  //SynHighlighterMiniPas2,//must before original
   SynHighlighterPas,
   SynHighlighterLFM,
   SynHighlighterPython,
@@ -120,7 +120,7 @@ begin
 
 
   SynEditMiniPas.Lines.Assign( SynEditPas.Lines);
-  SynEditMiniPas.Highlighter := SynHighlighterMiniPas2.TSynPasSyn.Create(self);
+{  SynEditMiniPas.Highlighter := SynHighlighterMiniPas2.TSynPasSyn.Create(self);
   with SynHighlighterMiniPas2.TSynPasSyn(SynEditMiniPas.Highlighter) do begin
     FoldConfig[ord(cfbtIfThen)].SupportedModes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
     FoldConfig[ord(cfbtIfThen)].Modes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
@@ -132,7 +132,7 @@ begin
     DirectiveAttri.Foreground := clRed;
 
   end;
-
+ }
   //================= INDIVIDUAL CHECK, so debug can be focused ================
   //LeaveOnly(SynEditDemoFold);
   //LeaveOnly(SynEditLFM);

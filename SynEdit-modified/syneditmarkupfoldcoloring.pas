@@ -233,7 +233,7 @@ begin
       if not (sfaInvalid in TmpNode.FoldAction) then
       begin
         AddHighlight(TmpNode);
-        if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
+        if not( sfaOutlineKeepLevel in TmpNode.FoldAction) then
           inc(lvl);
       end;
 
@@ -272,7 +272,7 @@ var
 
       if Border and (sfaOutlineNoLine in ANode.FoldAction) then
         Ignore := True;
-      if sfaOutlineHidden in ANode.FoldAction then
+      if not Border and (sfaOutlineNoColor in ANode.FoldAction) then
         Ignore := True;
       //else
         ColorIdx := lvl mod (length(Colors))
@@ -333,7 +333,7 @@ begin
           dec(lvl);
 
         AddVerticalLine(TmpNode);
-        if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
+        if not( sfaOutlineKeepLevel in TmpNode.FoldAction) then
           inc(lvl);
 
         lvlA := lvl;
@@ -380,7 +380,7 @@ var
       X  := ANode.LogXStart + 1;
       X2 := ANode.LogXEnd + 1;
       //ColorIdx := lvl;
-      if not (sfaOutlineHidden in ANode.FoldAction) then
+      if not (sfaOutlineNocolor in ANode.FoldAction) then
          ColorIdx := lvl mod (length(Colors))
       else
          ColorIdx := -1;
@@ -442,7 +442,7 @@ begin
 
 
           AddHighlight(TmpNode);
-          if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
+          if not( sfaOutlineKeepLevel in TmpNode.FoldAction) then
             inc(lvl);
           lvlA := lvl;
 
@@ -478,7 +478,7 @@ begin
             lvl := lvlB;
           end;
 
-          //if not( sfaOutlineKeepColor in TmpNode.FoldAction) then
+          //if not( sfaOutlineKeepLevel in TmpNode.FoldAction) then
             //inc(lvl);
         end;
 

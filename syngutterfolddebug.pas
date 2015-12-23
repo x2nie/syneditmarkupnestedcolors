@@ -31,7 +31,7 @@ uses
   SynEdit,SynEditHighlighter,SynTextDrawer,
   typinfo,
   SynHighlighterJScript,
-  SynHighlighterMiniPas2,
+  //SynHighlighterMiniPas2,
   SynHighlighterPas;
   //SynColorFoldHighlighter;
 
@@ -39,7 +39,7 @@ type
   //TSynColorFoldHighlighterAccess = class(TSynColorFoldHighlighter);
   TSynCustomFoldHighlighterAccess = class(TSynCustomFoldHighlighter);
   TSynPasSynAccess = class(TSynPasSyn);
-  TSynMiniPasSynAccess = class(SynHighlighterMiniPas2.TSynPasSyn);
+  //TSynMiniPasSynAccess = class(SynHighlighterMiniPas2.TSynPasSyn);
 
 
 { TSynGutterFoldDebug }
@@ -129,13 +129,13 @@ var
         x2   := '';
         ty   := '';
         InProc := '- - ';
-        if TSynCustomFoldHighlighter(HL) is SynHighlighterMiniPas2.TSynPasSyn then
+        if TSynCustomFoldHighlighter(HL) is {SynHighlighterMiniPas2.}TSynPasSyn then
         begin
           //j:=SynHighlighterMiniPas2.TSynHighlighterPasRangeList(TSynMiniPasSynAccess(HL).CurrentRanges).PasRangeInfo[y].EndLevelIfDef;
           //InProc := inttostr(j)+' ';
-          InProc := {InProc +} inttostr(TSynMiniPasSynAccess(HL).InProcLevel) + ' ';
+          InProc := {InProc +} inttostr(TSynPasSynAccess(HL).InProcLevel) + ' ';
 
-          if TSynMiniPasSynAccess(HL).InProcNeck then
+          if TSynPasSynAccess(HL).InProcNeck then
             InProc := InProc + 'T '
           else
             InProc := InProc + '. ';
@@ -176,7 +176,8 @@ var
                     oc := '->'
                   else oc := '?~';
                   if TSynCustomFoldHighlighter(HL) is TSynPasSyn
-                  or TSynCustomFoldHighlighter(HL) is SynHighlighterMiniPas2.TSynPasSyn then
+                  //or TSynCustomFoldHighlighter(HL) is SynHighlighterMiniPas2.TSynPasSyn
+                  then
                   begin
                     p := TmpNode.FoldType;
                     if p >= CountPascalCodeFoldBlockOffset then
