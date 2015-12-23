@@ -116,7 +116,7 @@ begin
   if (CurrentY = aRow) then
     for i := 0 to length(FHighlights)-1 do
       with FHighlights[i] do
-        if (aStartCol.Logical >= x) and (aStartCol.Logical < X2) then
+        if not Ignore and (aStartCol.Logical >= x) and (aStartCol.Logical < X2) then
         begin
           if ColorIdx >= 0 then
           begin
@@ -161,11 +161,11 @@ begin
   ANextPhys := -1;
   if (CurrentY = aRow) then
   for i := 0 to length(FHighlights)-1 do begin
-    if FHighlights[i].Ignore then
-      continue;
     if FHighlights[i].X  <= aStartCol.Logical then
       continue;
     if FHighlights[i].X2  < aStartCol.Logical then
+      continue;
+    if FHighlights[i].Ignore then
       continue;
     ANextLog := FHighlights[i].X;
     break;
