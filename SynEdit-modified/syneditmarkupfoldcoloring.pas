@@ -90,7 +90,6 @@ type
     FCaretY : integer;    // flag identify for refresh begin______
     FPrevCaretText : string;  // flag identify for refresh begin______
 
-    procedure DoMarkupFoldAtRow(aRow: Integer);
     procedure DoMarkupParentFoldAtRow(aRow: Integer);
     procedure DoMarkupParentCloseFoldAtRow(aRow: Integer);
 
@@ -117,12 +116,12 @@ implementation
 uses
   SynEdit,SynEditTypes, SynEditFoldedView, SynEditMiscProcs;
 
+  {%region Sorting FoldInfo /fold}
   function CompareFI(Item1, Item2: Pointer): Integer;
   begin
     result := PMarkupFoldColorInfo(Item1)^.X - PMarkupFoldColorInfo(Item2)^.X;
     if result = 0 then
         result := PMarkupFoldColorInfo(Item1)^.X2 - PMarkupFoldColorInfo(Item2)^.X2;
-
   end;
 
   function SortLeftMostFI(a: TMarkupFoldColorInfos): TMarkupFoldColorInfos;
@@ -140,6 +139,7 @@ uses
       result[i] := PMarkupFoldColorInfo(l[i])^;
      l.Free;
   end;
+  {%endregion}
 
 { TSynEditMarkupFoldColors }
 
@@ -171,40 +171,40 @@ begin
   if (CurrentY = aRow) then
     for i := 0 to length(FHighlights)-1 do
       with FHighlights[i] do
-        if not Ignore and (X <> X2) and (aStartCol.Logical >= x) and (aStartCol.Logical < X2) then
+        if not Ignore
+        and (X < X2)
+        and (ColorIdx >= 0)
+        and (aStartCol.Logical >= x)
+        and (aStartCol.Logical < X2) then
         begin
-          if ColorIdx >= 0 then
+          MarkupInfo.FrameColor:= clNone;
+          MarkupInfo.Foreground:= clNone;
+          MarkupInfo.Background:= clNone;
+          MarkupInfo.FrameEdges:= sfeNone;
+          //MarkupInfo.FrameColor:= clGreen; //debug
+
+          Result := MarkupInfo;
+          MarkupInfo.SetFrameBoundsLog(x, x2);
+          if Border then
           begin
-            MarkupInfo.FrameColor:= clNone;
-            MarkupInfo.Foreground:= clNone;
-            MarkupInfo.Background:= clNone;
-            MarkupInfo.FrameEdges:= sfeNone;
-            //MarkupInfo.FrameColor:= clGreen; //debug
+            MarkupInfo.FrameColor:= Colors[ColorIdx];
+            MarkupInfo.FrameEdges:= sfeLeft;//sfeAround;//
+          end
+          else
+            MarkupInfo.Foreground := Colors[ColorIdx];
 
-            Result := MarkupInfo;
-            MarkupInfo.SetFrameBoundsLog(x, x2);
-            if Border then
-            begin
-              MarkupInfo.FrameColor:= Colors[ColorIdx];
-              MarkupInfo.FrameEdges:= sfeLeft;//sfeAround;//
-            end
-            else
-              MarkupInfo.Foreground := Colors[ColorIdx];
+          //MarkupInfo.FrameEdges:= sfeAround; //debug
 
-            //MarkupInfo.FrameEdges:= sfeAround; //debug
-
-            //2nd debug
-            if x > x2 then
-            begin
-              MarkupInfo.Background:= clYellow;
-              MarkupInfo.SetFrameBoundsLog(x-1, x2+20);
-              MarkupInfo.FrameColor:= clBlue; //debug
-            end;
-
-          end;
+          {//2nd debug
+          if x > x2 then
+          begin
+            MarkupInfo.Background:= clYellow;
+            MarkupInfo.SetFrameBoundsLog(x-1, x2+20);
+            MarkupInfo.FrameColor:= clBlue; //debug
+          end;}
 
           break;
-        end
+        end;
 end;
 
 procedure TSynEditMarkupFoldColors.GetNextMarkupColAfterRowCol(
@@ -215,92 +215,18 @@ begin
   ANextLog := -1;
   ANextPhys := -1;
   if (CurrentY = aRow) then
-  for i := 0 to length(FHighlights)-1 do begin
-    if FHighlights[i].X  = FHighlights[i].X2 then
-      continue;
-    if FHighlights[i].X  <= aStartCol.Logical then
-      continue;
-    if FHighlights[i].X2  < aStartCol.Logical then
-      continue;
-    if FHighlights[i].Ignore then
-      continue;
-    ANextLog := FHighlights[i].X;
-    break;
-  end;
-end;
+  for i := 0 to length(FHighlights)-1 do
+    with FHighlights[i] do begin
+      if Ignore
+      or (ColorIdx >= 0)
+      or (X  >= X2)
+      or (X  <= aStartCol.Logical)
+      or (X2  < aStartCol.Logical) then
+        continue;
 
-procedure TSynEditMarkupFoldColors.DoMarkupFoldAtRow(aRow: Integer);
-var
-  lvl : integer;
-
-  procedure AddHighlight( ANode: TSynFoldNodeInfo );
-  var x : integer;
-  begin
-    //exit; //debug
-    x := Length(FHighlights);
-    SetLength(FHighlights, x+1);
-    with FHighlights[x] do begin
-      Border := False;
-      Y  := ANode.LineIndex + 1;
-      X  := ANode.LogXStart + 1;
-      X2 := ANode.LogXEnd + 1;
-      ColorIdx := lvl;
+      ANextLog := X;
+      break;
     end;
-  end;
-
-var
-  y,i : integer;
-  HL: TSynCustomFoldHighlighter;
-  NodeList: TLazSynFoldNodeInfoList;
-  TmpNode: TSynFoldNodeInfo;
-
-begin
-  y := aRow -1;
-
-  HL := TCustomSynEdit(self.SynEdit).Highlighter as TSynCustomFoldHighlighter;
-  HL.CurrentLines := Lines;
-  HL.FoldNodeInfo[y].ClearFilter; // only needed once, in case the line was already used
-
-  NodeList := HL.FoldNodeInfo[y];
-  NodeList.AddReference;
-  try
-    NodeList.ActionFilter := [
-        {sfaMarkup,}
-//        sfaFold
-      sfaOutline
-      ,sfaClose
-        //sfaFoldFold
-        //sfaFoldHide
-        //sfaSingleLine
-        //sfaMultiLine
-        //sfaOpen
-        ];
-    //NodeList.FoldFlags:= [sfbIncludeDisabled];
-    lvl := 0;
-    i := 0;
-    repeat
-      TmpNode := NodeList[i];
-
-      //find till valid
-      while (sfaInvalid in TmpNode.FoldAction) and (i < NodeList.Count) do
-      begin
-        inc(i);
-        TmpNode := NodeList[i];
-      end;
-      if not (sfaInvalid in TmpNode.FoldAction) then
-      begin
-        AddHighlight(TmpNode);
-        if not( sfaOutlineKeepLevel in TmpNode.FoldAction) then
-          inc(lvl);
-      end;
-
-
-      inc(i);
-    until i >= NodeList.Count;
-
-  finally
-    NodeList.ReleaseReference;
-  end;
 end;
 
 procedure TSynEditMarkupFoldColors.DoMarkupParentFoldAtRow(aRow: Integer);
@@ -402,7 +328,6 @@ begin
       end;
 
       Later(i);
-      //dec(i);
       //break; //debug
     end;
 
@@ -460,17 +385,7 @@ begin
   NodeList := HL.FoldNodeInfo[y];
   NodeList.AddReference;
   try
-    NodeList.ActionFilter := [
-        {sfaMarkup,}
-//        sfaFold
-      sfaOutline
-//      ,sfaClose
-        //sfaFoldFold
-        //sfaFoldHide
-        //sfaSingleLine
-        //sfaMultiLine
-        //sfaOpen
-        ];
+    NodeList.ActionFilter := [sfaOutline];
     //NodeList.FoldFlags:= [sfbIncludeDisabled];
     lvl := 0;
     J := Length(FHighlights)-1;
@@ -496,8 +411,6 @@ begin
           if ( sfaOutlineMergeParent in TmpNode.FoldAction) then
             dec(lvl);
 
-
-
           AddHighlight(TmpNode);
           if not( sfaOutlineKeepLevel in TmpNode.FoldAction) then
             inc(lvl);
@@ -507,7 +420,6 @@ begin
             LevelBefore := lvlB;
             LevelAfter  := lvlA;
           end;
-
 
         end
         else
@@ -538,9 +450,7 @@ begin
           //if not( sfaOutlineKeepLevel in TmpNode.FoldAction) then
             //inc(lvl);
         end;
-
       end;
-
 
       inc(i);
     until i >= NodeList.Count;
