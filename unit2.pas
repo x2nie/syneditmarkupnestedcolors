@@ -111,7 +111,13 @@ begin
   if self <> Form2 then
     exit; // avoid infinite loop
 
-  SynFreePascalSyn1.FoldConfig[ord(cfbtIfThen)].Modes:=[fmMarkup, fmOutline]; //.Enabled := True;
+  with  SynFreePascalSyn1 do begin
+    //FoldConfig[ord(cfbtIfThen)].Modes:=[fmMarkup, fmOutline]; //.Enabled := True;
+    FoldConfig[ord(cfbtIfThen)].SupportedModes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
+    FoldConfig[ord(cfbtIfThen)].Modes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
+
+  end;
+
 
   SynEditMiniPas.Lines.Assign( SynEditPas.Lines);
   SynEditMiniPas.Highlighter := SynHighlighterMiniPas2.TSynPasSyn.Create(self);

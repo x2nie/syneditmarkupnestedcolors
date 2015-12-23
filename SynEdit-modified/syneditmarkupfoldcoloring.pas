@@ -15,6 +15,7 @@ type
     Y, X, X2: Integer;
     ColorIdx: Integer;
     Border  : Boolean;
+    Ignore  : Boolean; //no color no line
     SrcNode : TSynFoldNodeInfo;
     LevelBefore, LevelAfter : integer;//needed by non nest nodes
   end;
@@ -160,6 +161,8 @@ begin
   ANextPhys := -1;
   if (CurrentY = aRow) then
   for i := 0 to length(FHighlights)-1 do begin
+    if FHighlights[i].Ignore then
+      continue;
     if FHighlights[i].X  <= aStartCol.Logical then
       continue;
     if FHighlights[i].X2  < aStartCol.Logical then
@@ -264,13 +267,15 @@ var
       Border := ANode.LineIndex + 1 <> aRow;
       X  := ANode.LogXStart + 1;
       Y  := aRow;//ANode.LineIndex + 1;
-
       X2 := X+1; //ANode.LogXEnd + 1;
+      Ignore := False;
 
-      if not (sfaOutlineHidden in ANode.FoldAction) then
+      if Border and (sfaOutlineNoLine in ANode.FoldAction) then
+        Ignore := True;
+      if sfaOutlineHidden in ANode.FoldAction then
+        Ignore := True;
+      //else
         ColorIdx := lvl mod (length(Colors))
-      else
-        ColorIdx := -1;
     end;
   end;
 

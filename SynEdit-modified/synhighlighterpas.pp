@@ -3753,6 +3753,10 @@ begin
     if (PasBlockType in [cfbtExcept]) then
       Include( aActions, sfaOutlineMergeParent);
 
+    if (PasBlockType in [cfbtIfThen, cfbtClass,cfbtRecord]) then
+      aActions := aActions + [sfaOutlineNoLine];
+
+
   end;
 
 
