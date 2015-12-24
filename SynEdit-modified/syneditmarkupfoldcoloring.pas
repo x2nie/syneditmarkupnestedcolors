@@ -86,9 +86,12 @@ type
      // Physical Position
     FHighlights : TMarkupFoldColorInfos; //array of TMarkupFoldColorInfo;
     Colors : array of TColor;
+
+    {%region invalidating}
     CurrentY : integer;  //??
     FCaretY : integer;    // flag identify for refresh begin______
     FPrevCaretText : string;  // flag identify for refresh begin______
+    {%endregion}
 
     procedure DoMarkupParentFoldAtRow(aRow: Integer);
     procedure DoMarkupParentCloseFoldAtRow(aRow: Integer);
@@ -156,7 +159,7 @@ begin
   Colors[0] := clRed;
   Colors[1] := $000098F7; //orange
   Colors[2] := $0022CC40; //green
-  Colors[3] := $00D5D500;//$0098CC42; //$00D1D54A; // teal
+  Colors[3] := $00D5D500; // $0098CC42; // $00D1D54A; // teal
   Colors[4] := $00FF682A; //blue
   Colors[5] := $00CF00C4; //purple
 end;
