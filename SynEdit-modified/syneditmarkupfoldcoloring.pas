@@ -125,6 +125,10 @@ uses
     result := PMarkupFoldColorInfo(Item1)^.X - PMarkupFoldColorInfo(Item2)^.X;
     if result = 0 then
         result := PMarkupFoldColorInfo(Item1)^.X2 - PMarkupFoldColorInfo(Item2)^.X2;
+    if result = 0 then
+        result := (PMarkupFoldColorInfo(Item1)^.X2 - PMarkupFoldColorInfo(Item1)^.X)
+          - (PMarkupFoldColorInfo(Item2)^.X2 - PMarkupFoldColorInfo(Item2)^.X);
+
   end;
 
   function SortLeftMostFI(a: TMarkupFoldColorInfos): TMarkupFoldColorInfos;
@@ -217,20 +221,20 @@ var i : integer;
 begin
   ANextLog := -1;
   ANextPhys := -1;
-  if (CurrentY = aRow) then
-  for i := 0 to length(FHighlights)-1 do
-    with FHighlights[i] do begin
-      if Ignore
-      or (ColorIdx >= 0)
-      or (X  >= X2)
-      or (X  <= aStartCol.Logical)
-      or (X2  < aStartCol.Logical) then
-        continue;
-
-      ANextLog := X;
-      break;
+  if (CurrentY = aRow)  then
+  for i := 0 to length(FHighlights)-1  do
+    with FHighlights[i] do
+    begin
+      //if Ignore or (ColorIdx < 0) or (X >= X2) or (aStartCol.Logical >= x) or (aStartCol.Logical > X2) then
+        //continue;
+      if not Ignore and (ColorIdx >= 0) and (X < X2) and (aStartCol.Logical < x) and (aStartCol.Logical <= X2) then
+      begin
+        ANextLog := FHighlights[i].X;
+        break;
+      end;
     end;
 end;
+
 
 procedure TSynEditMarkupFoldColors.DoMarkupParentFoldAtRow(aRow: Integer);
 var
@@ -348,6 +352,8 @@ var
   begin
         //don't replace; don't add when already found
     x  := ANode.LogXStart + 1;
+
+    if ANode.LogXStart < ANode.LogXEnd then
     for j := 0 to Pred(length(FHighlights)) do
       if (FHighlights[j].X = x) and (FHighlights[j].Border) then begin
        FHighlights[j].X2 := ANode.LogXEnd+1 ;//exit; //
@@ -617,6 +623,7 @@ var
   EndFoldLine,y : integer;
 begin
   if EndLine < 0 then exit; //already refreshed by syn
+  exit;//debug
 
   y := Caret.LineBytePos.y;
   EndFoldLine := IsFoldMoved(y);

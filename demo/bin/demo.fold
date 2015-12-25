@@ -1,0 +1,29 @@
+This is an example how to write a highlighter from scratch.
+See the units for each example highlighter.
+--
+This is NOT about extending the IDE. This is about SynEdit and it's Highlighter only.
+Therefore this does not include: ++
+- registration in the component pallette.
+- Using the Object Inspector
+Those steps are the same as they would be for any other self wriiten componont.
+
+-(-
+    Lorem ipsum dolor sit amet, 
+    consectetur adipisicing elit, 
+    sed -- do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+    -- (Nested double -) Ut enim ad minim veniam, 
+    quis nostrud exercitation ++ (Nested double +) ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+    ++ Excepteur sint occaecat cupidatat non proident, 
+    sunt in culpa qui officia deserunt mollit anim id est laborum.
+    -(- --
+        Lorem ipsum dolor sit amet, 
+        consectetur adipisicing elit, 
+        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+        ++ Ut enim ad minim veniam, 
+        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+        Excepteur sint occaecat cupidatat non proident, 
+        sunt in culpa qui officia deserunt mollit anim id est laborum.
+    -)-
+-)-

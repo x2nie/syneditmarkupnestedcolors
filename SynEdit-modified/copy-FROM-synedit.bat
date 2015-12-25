@@ -16,6 +16,12 @@ copy %SYNEDIT%\SynHighlighterJScript.pas
 copy %SYNEDIT%\SynEditMarkupFoldColoring.pas
 copy %SYNEDIT%\SynEditMarkupWordGroup.pp
 
+del .\test\*.pp
+del .\test\*.pas
+rem copy %SYNEDIT%\test\TestHighlightPas.pas .\test\
+
+
+
 SET IDE=%LAZ%\idE
 copy %ide%\SourceSynEditor.pas
 
