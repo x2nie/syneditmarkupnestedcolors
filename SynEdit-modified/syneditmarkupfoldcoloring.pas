@@ -216,19 +216,15 @@ begin
   if (CurrentY = aRow)  then
   for i := 0 to length(FHighlights)-1  do
     with FHighlights[i] do
-      {if FHighlights[i].X  = FHighlights[i].X2 then
-      continue;
-    if FHighlights[i].X  <= aStartCol.Logical then    stat.log > x
-      continue;
-    if FHighlights[i].X2  < aStartCol.Logical then    == start.log >= x2
-      continue;
-    if FHighlights[i].Ignore then
-      continue;}
-      if not Ignore and (ColorIdx >= 0) and (X < X2) and (aStartCol.Logical > x) and (aStartCol.Logical >= X2) then
+    begin
+      //if Ignore or (ColorIdx < 0) or (X >= X2) or (aStartCol.Logical >= x) or (aStartCol.Logical > X2) then
+        //continue;
+      if not Ignore and (ColorIdx >= 0) and (X < X2) and (aStartCol.Logical < x) {and (aStartCol.Logical >= X2)} then
       begin
         ANextLog := FHighlights[i].X;
         break;
       end;
+    end;
 end;
 
 procedure TSynEditMarkupFoldColors.DoMarkupFoldAtRow(aRow: Integer);

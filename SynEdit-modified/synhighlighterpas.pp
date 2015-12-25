@@ -942,11 +942,11 @@ procedure TSynPasSyn.SetIsInProcLevel(Increase: boolean);
 begin
   if Increase then begin
     InProcLevel := InProcLevel + 1; //Inc(InProcLevel)
-    InIfdefProcsMade := InIfdefProcsMade +1;
+    //InIfdefProcsMade := InIfdefProcsMade +1;
   end
   else begin
     InProcLevel := InProcLevel - 1; //Dec(InProcLevel);
-    InIfdefProcsMade := max(0, InIfdefProcsMade -1);
+    //InIfdefProcsMade := max(0, InIfdefProcsMade -1);
   end;
 end;
 
@@ -1108,7 +1108,7 @@ begin
           EndPascalCodeFoldBlock;
       end else if tfb in [cfbtTopBeginEnd, cfbtAsm] then begin
         EndPascalCodeFoldBlock;
-        InIfdefProcsMade := max(0, InIfdefProcsMade -1);
+        //InIfdefProcsMade := max(0, InIfdefProcsMade -1);
         if TopPascalCodeFoldBlockType in [cfbtProcedure] then begin
           EndPascalCodeFoldBlock;
         end;
@@ -1225,7 +1225,7 @@ begin
     if TopPascalCodeFoldBlockType in [cfbtVarType, cfbtLocalVarType] then
       EndPascalCodeFoldBlockLastLine;
     StartPascalCodeFoldBlock(cfbtAsm);
-    InIfdefProcsMade := InIfdefProcsMade +1;
+    //InIfdefProcsMade := InIfdefProcsMade +1;
   end
   else Result := tkIdentifier;
 end;
@@ -1251,7 +1251,7 @@ begin
     then begin
       InProcNeck := False;
       StartPascalCodeFoldBlock(cfbtTopBeginEnd);
-      InIfdefProcsMade := InIfdefProcsMade +1;
+      //InIfdefProcsMade := InIfdefProcsMade +1;
     end
     else StartPascalCodeFoldBlock(cfbtBeginEnd);
     //debugln('TSynPasSyn.Func37 BEGIN ',dbgs(ord(TopPascalCodeFoldBlockType)),' LineNumber=',dbgs(fLineNumber),' ',dbgs(MinimumCodeFoldBlockLevel),' ',dbgs(CurrentCodeFoldBlockLevel));
@@ -2789,6 +2789,11 @@ var
       //close the created proc before $else
       lrun := run; run := 0;
       llen := fStringLen; fStringLen:=0;
+
+      {while (TopPascalCodeFoldBlockType in [cfbtIfThen]) do begin // no semicolon before end
+        EndPascalCodeFoldBlock(True);
+      end;}
+
       for i := 0 to InIfdefProcsMade-1 do
         EndPascalCodeFoldBlock;
       run := lrun; fStringLen:=llen;
@@ -4149,6 +4154,7 @@ begin
   if not FoldBlock then
     p := PtrInt(CountPascalCodeFoldBlockOffset);
   Result:=TSynCustomCodeFoldBlock(StartCodeFoldBlock(p+Pointer(PtrInt(ABlockType)), FoldBlock));
+  InIfdefProcsMade := InIfdefProcsMade +1;
 end;
 
 procedure TSynPasSyn.EndPascalCodeFoldBlock(NoMarkup: Boolean = False);
@@ -4176,6 +4182,7 @@ begin
     CollectingNodeInfoList.Add(nd);
   end;}
   EndCodeFoldBlock(DecreaseLevel, TopCodeFoldBlockType);
+  InIfdefProcsMade := max(0, InIfdefProcsMade -1);
 end;
 
 procedure TSynPasSyn.CloseBeginEndBlocksBeforeProc;
