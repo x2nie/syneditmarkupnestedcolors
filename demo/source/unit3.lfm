@@ -1,0 +1,133 @@
+object Form3: TForm3
+  Left = 128
+  Height = 553
+  Top = 75
+  Width = 847
+  Caption = 'Form3'
+  ClientHeight = 553
+  ClientWidth = 847
+  OnCreate = FormCreate
+  LCLVersion = '1.7'
+  Visible = True
+  WindowState = wsMaximized
+  object Panel1: TPanel
+    Left = 0
+    Height = 86
+    Top = 467
+    Width = 847
+    Align = alBottom
+    Caption = 'Panel1'
+    ClientHeight = 86
+    ClientWidth = 847
+    Color = 9830346
+    ParentColor = False
+    TabOrder = 0
+    Visible = False
+    object Panel3: TPanel
+      Left = 56
+      Height = 50
+      Top = 24
+      Width = 170
+      Caption = 'Panel3'
+      Color = 14013696
+      ParentColor = False
+      TabOrder = 0
+    end
+  end
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 435
+    Top = 32
+    Width = 847
+    ActivePage = TabSheet7
+    Align = alClient
+    TabIndex = 7
+    TabOrder = 1
+    object TabSheet1: TTabSheet
+      Caption = 'Pascal'
+    end
+    object TabSheet8: TTabSheet
+      Caption = 'Mini Pascal'
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'LFM'
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'Demo Fold'
+    end
+    object TabSheet6: TTabSheet
+      Caption = 'Color Fold'
+    end
+    object TabSheet4: TTabSheet
+      Caption = 'Python'
+    end
+    object TabSheet5: TTabSheet
+      Caption = 'XML'
+    end
+    object TabSheet7: TTabSheet
+      Caption = 'JS'
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 32
+    Top = 0
+    Width = 847
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 32
+    ClientWidth = 847
+    TabOrder = 2
+    object btnConfig: TButton
+      Left = 35
+      Height = 25
+      Top = 4
+      Width = 75
+      Caption = '&Config'
+      OnClick = btnConfigClick
+      TabOrder = 0
+    end
+  end
+  object SynFreePascalSyn1: TSynFreePascalSyn
+    Enabled = False
+    CommentAttri.Foreground = clTeal
+    DirectiveAttri.Foreground = clFuchsia
+    CompilerMode = pcmObjFPC
+    NestedComments = True
+    left = 432
+    top = 72
+  end
+  object SynLFMSyn1: TSynLFMSyn
+    DefaultFilter = 'Lazarus Form Files (*.lfm)|*.lfm'
+    Enabled = False
+    left = 480
+    top = 192
+  end
+  object SynPythonSyn1: TSynPythonSyn
+    DefaultFilter = 'Python Files (*.py)|*.py'
+    Enabled = False
+    left = 238
+    top = 133
+  end
+  object SynHTMLSyn1: TSynHTMLSyn
+    DefaultFilter = 'HTML Document (*.htm,*.html)|*.htm;*.html'
+    Enabled = False
+    left = 158
+    top = 251
+  end
+  object SynXMLSyn1: TSynXMLSyn
+    DefaultFilter = 'XML Document (*.xml,*.xsd,*.xsl,*.xslt,*.dtd)|*.xml;*.xsd;*.xsl;*.xslt;*.dtd'
+    Enabled = False
+    WantBracesParsed = False
+    left = 160
+    top = 304
+  end
+  object SynJScriptSyn1: TSynJScriptSyn
+    Enabled = False
+    CommentAttri.Foreground = clTeal
+    EventAttri.Foreground = clBlue
+    StringAttri.Foreground = clBlue
+    left = 568
+    top = 168
+  end
+end
