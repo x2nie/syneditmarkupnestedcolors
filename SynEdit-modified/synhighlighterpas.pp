@@ -531,6 +531,7 @@ type
                        AIsFold: Boolean); override;
 
     //NestedProc vs IFDEF  // needed by $else to reconect (not break) nested proc
+    procedure CheckInProcNeck;
     procedure SetIsInProcLevel(Increase:boolean);
     property InProcLevel : integer read GetInProcLevel write SetInProcLevel;
     property InProcNeck : boolean read GetInProcNeck write SetInProcNeck;
@@ -918,8 +919,6 @@ begin
     DepthProcsMade[EndLevelIfDef+1] := chr(AValue);
   end;
 end;
-
-
 
 procedure TSynPasSyn.SetIsInProcLevel(Increase: boolean);
 begin
@@ -1968,10 +1967,7 @@ begin
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
     end;
-    if (rsImplementation in fRange) then begin
-      InProcNeck := True;
-      SetIsInProcLevel(True);
-    end;
+    CheckInProcNeck;
 
     fRange := fRange + [rsInProcHeader];
     Result := tkKey;
@@ -2004,10 +2000,7 @@ begin
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
     end;
-    if (rsImplementation in fRange) then begin
-      InProcNeck := True;
-      SetIsInProcLevel(True);
-    end;
+    CheckInProcNeck;
     fRange := fRange + [rsInProcHeader];
     Result := tkKey;
   end
@@ -2035,10 +2028,7 @@ function TSynPasSyn.Func108: TtkTokenKind;
 begin
   if KeyComp('Operator') then
   begin
-     if (rsImplementation in fRange) then begin
-      InProcNeck := True;
-      SetIsInProcLevel(True);
-    end;
+    CheckInProcNeck;
     if not(rsAfterEqualOrColon in fRange) then
     begin
       PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
@@ -2248,10 +2238,7 @@ begin
         fRange := fRange + [rsAfterClassMembers];
       fRange := fRange + [rsInProcHeader];
     end;
-    if (rsImplementation in fRange) then begin
-      InProcNeck := True;
-      SetIsInProcLevel(True);
-    end;
+    CheckInProcNeck;
     Result := tkKey;
   end else
   if KeyComp('compilerproc') then // fpc modifier
@@ -2325,10 +2312,7 @@ begin
         fRange := fRange + [rsAfterClassMembers];
       fRange := fRange + [rsInProcHeader];
     end;
-    if (rsImplementation in fRange) then begin
-      InProcNeck := True;
-      SetIsInProcLevel(True);
-    end;
+    CheckInProcNeck;
     Result := tkKey;
   end else
     if KeyComp('Implementation') then begin
@@ -3880,6 +3864,17 @@ begin
       end;
     end;
   end;}
+end;
+
+procedure TSynPasSyn.CheckInProcNeck;
+begin
+  // called by Procedure, Function, Constructor, Destructor. Operator?
+  //if (rsImplementation in fRange) then
+  if not (rsAfterClassMembers in fRange) then
+  begin
+    InProcNeck := True;
+    SetIsInProcLevel(True);
+  end;
 end;
 
 procedure TSynPasSyn.InitNode(out Node: TSynFoldNodeInfo; EndOffs: Integer;
