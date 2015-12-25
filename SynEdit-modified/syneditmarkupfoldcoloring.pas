@@ -122,6 +122,9 @@ uses
     result := PMarkupFoldColorInfo(Item1)^.X - PMarkupFoldColorInfo(Item2)^.X;
     if result = 0 then
         result := PMarkupFoldColorInfo(Item1)^.X2 - PMarkupFoldColorInfo(Item2)^.X2;
+    if result = 0 then
+        result := (PMarkupFoldColorInfo(Item1)^.X2 - PMarkupFoldColorInfo(Item1)^.X)
+          - (PMarkupFoldColorInfo(Item2)^.X2 - PMarkupFoldColorInfo(Item2)^.X);
 
   end;
 
@@ -219,7 +222,7 @@ begin
     begin
       //if Ignore or (ColorIdx < 0) or (X >= X2) or (aStartCol.Logical >= x) or (aStartCol.Logical > X2) then
         //continue;
-      if not Ignore and (ColorIdx >= 0) and (X < X2) and (aStartCol.Logical < x) {and (aStartCol.Logical >= X2)} then
+      if not Ignore and (ColorIdx >= 0) and (X < X2) and (aStartCol.Logical < x) and (aStartCol.Logical <= X2) then
       begin
         ANextLog := FHighlights[i].X;
         break;
@@ -418,6 +421,8 @@ var
   begin
         //don't replace; don't add when already found
     x  := ANode.LogXStart + 1;
+
+    if ANode.LogXStart < ANode.LogXEnd then
     for j := 0 to Pred(length(FHighlights)) do
       if (FHighlights[j].X = x) and (FHighlights[j].Border) then begin
        FHighlights[j].X2 := ANode.LogXEnd+1 ;//exit; //
