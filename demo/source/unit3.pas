@@ -45,15 +45,12 @@ type
     TabSheet6: TTabSheet;
     TabSheet7: TTabSheet;
     TabSheet8: TTabSheet;
-    procedure btnConfigClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
     { private declarations }
     FSyns : array[0..7] of TSynCustomHighlighter;
-    procedure AddMarkupFoldColors;
     procedure CreateSynEdits;
     procedure LeaveOnly(ASynEdit:TSynEdit);
-    procedure SetHighlighter(ASynEdit:TSynEdit; HLClass: TSynCustomHighlighterClass);
   public
     { public declarations }
   end;
@@ -73,29 +70,6 @@ uses
   ;
 
 {$R *.lfm}
-
-function ComponentToStringProc(Component: TComponent): string;
-var
-  BinStream:TMemoryStream;
-  StrStream: TStringStream;
-  //s: string;
-begin
-  BinStream := TMemoryStream.Create;
-  try
-    StrStream := TStringStream.Create('');
-    try
-      BinStream.WriteComponent(Component);
-      BinStream.Seek(0, soFromBeginning);
-      ObjectBinaryToText(BinStream, StrStream);
-      StrStream.Seek(0, soFromBeginning);
-      Result:= StrStream.DataString;
-    finally
-      StrStream.Free;
-    end;
-  finally
-    BinStream.Free
-  end;
-end;
 
 { TForm3 }
 
@@ -132,56 +106,10 @@ begin
   //LeaveOnly(SynEditLFM);
   //LeaveOnly(SynEditMiniPas);
 
-  //FillLfmToSynEdit2();
-
-  //SetHighlighter(SynEditColorFold, TSynHighlighterBracket);
-
-  //SetHighlighter(SynEditDemoFold, TSynDemoHlFold);
-
-  //AddMarkupFoldColors();
 end;
 
 
-procedure TForm3.btnConfigClick(Sender: TObject);
-begin
 
-end;
-
-procedure TForm3.AddMarkupFoldColors;
-var
-  M : TSynEditMarkupFoldColors;
-  i : integer;
-  S : TSynEdit;
-  Mi : TSynEditMarkupIfDef;
-begin
-  for i := 0 to Pred(ComponentCount) do
-  begin
-    if Components[i] is TSynEdit then
-    begin
-      S := TSynEdit(Components[i]);
-      if not (S.Highlighter is TSynCustomFoldHighlighter) then
-        continue;
-
-      S.LineHighlightColor.Background:=panel1.Color;
-      TSynGutterFoldDebug.Create(S.RightGutter.Parts);
-
-      //continue; //debug
-      M := TSynEditMarkupFoldColors.Create(S);
-      M.DefaultGroup := 0;
-      S.MarkupManager.AddMarkUp(M);
-
-      //if S.Highlighter.ClassNameIs('TSynPasSyn') then
-      if S.Highlighter is SynHighlighterPas.TSynPasSyn then
-      begin
-        Mi := TSynEditMarkupIfDef.Create(S);
-        //Mi.FoldView := S.FoldedTextBuffer);
-        S.MarkupManager.AddMarkUp(Mi);
-        Mi.Highlighter := TSynPasSyn(S.Highlighter);
-      end;
-
-    end;
-  end;
-end;
 
 procedure TForm3.CreateSynEdits;
 var i : integer;
@@ -217,11 +145,6 @@ begin
     begin
       TSynGutterFoldDebug.Create(S.RightGutter.Parts);
 
-      //continue; //debug
-      {M := TSynEditMarkupFoldColors.Create(S);
-      M.DefaultGroup := 0;
-      S.MarkupManager.AddMarkUp(M);}
-
       {if S.Highlighter is SynHighlighterPas.TSynPasSyn then
       begin
         Mi := TSynEditMarkupIfDef.Create(S);
@@ -254,12 +177,6 @@ begin
   PageControl1.ActivePage := TTabSheet(ASynEdit.Parent);
 end;
 
-procedure TForm3.SetHighlighter(ASynEdit: TSynEdit;
-  HLClass: TSynCustomHighlighterClass);
-begin
-  if Assigned(ASynEdit) then
-    ASynEdit.Highlighter := HLClass.Create(self);
-end;
 
 end.
 

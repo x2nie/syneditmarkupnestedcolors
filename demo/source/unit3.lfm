@@ -1,7 +1,7 @@
 object Form3: TForm3
-  Left = 128
+  Left = 117
   Height = 553
-  Top = 75
+  Top = 172
   Width = 847
   Caption = 'Form3'
   ClientHeight = 553
@@ -39,9 +39,9 @@ object Form3: TForm3
     Height = 435
     Top = 32
     Width = 847
-    ActivePage = TabSheet7
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 7
+    TabIndex = 0
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Pascal'
@@ -84,7 +84,6 @@ object Form3: TForm3
       Top = 4
       Width = 75
       Caption = '&Config'
-      OnClick = btnConfigClick
       TabOrder = 0
     end
   end
