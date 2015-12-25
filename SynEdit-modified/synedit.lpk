@@ -18,9 +18,18 @@
       <CodeGeneration>
         <VerifyObjMethodCallValidity Value="True"/>
       </CodeGeneration>
+      <Linking>
+        <Debugging>
+          <DebugInfoType Value="dsDwarf2"/>
+        </Debugging>
+      </Linking>
       <Other>
         <Verbosity>
           <ShowGenInfo Value="False"/>
+          <ShowAll Value="True"/>
+          <ShowDebugInfo Value="True"/>
+          <ShowUsedFiles Value="True"/>
+          <ShowExecInfo Value="True"/>
         </Verbosity>
         <CompilerMessages>
           <IgnoredMessages idx5024="True" idx4055="True"/>
@@ -380,7 +389,7 @@ If you wish to allow use of your version of these files only under the terms of 
       </Item83>
       <Item84>
         <Filename Value="syneditmarkupfoldcoloring.pas"/>
-        <UnitName Value="syneditmarkupfoldcoloring"/>
+        <UnitName Value="SynEditMarkupFoldColoring"/>
       </Item84>
     </Files>
     <LazDoc Paths="docs\xml"/>

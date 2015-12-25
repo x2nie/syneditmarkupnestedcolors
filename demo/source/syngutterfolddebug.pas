@@ -32,6 +32,7 @@ uses
   typinfo,
   SynHighlighterJScript,
   //SynHighlighterMiniPas2,
+  OriSynHighlighterPas,
   SynHighlighterPas;
   //SynColorFoldHighlighter;
 
@@ -162,7 +163,8 @@ var
                   //sfaMultiLine
                   //sfaOpen
                   ];
-              for j := 0 to min(2, NodeList.Count-1) do
+              //for j := 0 to min(2, NodeList.Count-1) do
+              for j := 0 to NodeList.Count-1 do
               begin
               //NodeList.FoldFlags:= [sfbIncludeDisabled];
                 TmpNode := NodeList[j];
@@ -176,7 +178,7 @@ var
                     oc := '->'
                   else oc := '?~';
                   if TSynCustomFoldHighlighter(HL) is TSynPasSyn
-                  //or TSynCustomFoldHighlighter(HL) is SynHighlighterMiniPas2.TSynPasSyn
+                  or TSynCustomFoldHighlighter(HL) is OriSynHighlighterPas.TSynPasSyn
                   then
                   begin
                     p := TmpNode.FoldType;
@@ -190,7 +192,8 @@ var
                     p := TmpNode.FoldType;
                     ty   := copy( GetEnumName(TypeInfo(TJScriptFoldBlockType), PtrUint(p) ), 4,100) ;
                   end;
-                s := s + Format('%10s %s..%s,%s', [oc+ ty, x1,x2, IntToStr(y)])
+                  //s := s + Format('%10s %s..%s,%s', [oc+ ty, x1,x2, IntToStr(y)])
+                  s := s + Format('%s ', [oc+ ty])
               end;
 
             finally
@@ -374,7 +377,7 @@ constructor TSynGutterFoldDebug.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   AutoSize := False;
-  Width := 600;//PreferedWidth;
+  Width := 900;//PreferedWidth;
 end;
 
 procedure TSynGutterFoldDebug.Paint(Canvas: TCanvas; AClip: TRect; FirstLine,

@@ -10,6 +10,7 @@ uses
   SynEditMarkupWordGroup,
   SynEditHighlighter,
   //SynHighlighterMiniPas2,//must before original
+  OriSynHighlighterPas, //must before PAS
   SynHighlighterPas,
   SynHighlighterLFM,
   SynHighlighterPython,
@@ -119,7 +120,7 @@ var i : integer;
   F : array[0..7] of string = ('pas', 'pas', 'lfm', 'fold', 'bracket', 'py', 'xml', 'js');
 begin
   FSyns[0] := SynFreePascalSyn1;
-  FSyns[1] := SynFreePascalSyn1;
+  FSyns[1] := OriSynHighlighterPas.TSynFreePascalSyn.Create(self);
   FSyns[2] := SynLFMSyn1;
   FSyns[3] := TSynDemoHlFold.Create(self);
   FSyns[4] := TSynHighlighterBracket.Create(self);

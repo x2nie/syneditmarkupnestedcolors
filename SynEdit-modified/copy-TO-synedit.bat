@@ -4,3 +4,5 @@ rem SET SYNEDIT=E:\v\Githubs\LiteZarus\components\synedit
 copy *.pas %SYNEDIT%\
 copy *.pp %SYNEDIT%\
 copy *.lpk %SYNEDIT%\
+
+copy .\test\*.pas %SYNEDIT%\test\

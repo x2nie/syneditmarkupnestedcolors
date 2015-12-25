@@ -99,7 +99,7 @@ procedure TBitmap32.Draw(const DstRect, SrcRect: TRect; hSrc: Cardinal);
 begin
 end; 
 
-// but it is bug:
+// it is no longer a bug:
 {$IFDEF bar}
       {$IFDEF abc}
 procedure TBitmap32.Draw(const DstRect, SrcRect: TRect; hSrc: Cardinal);
