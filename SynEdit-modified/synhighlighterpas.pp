@@ -1240,9 +1240,6 @@ end;
 function TSynPasSyn.Func37: TtkTokenKind;
 begin
   if KeyComp('Begin') then begin
-    //if not (rsInTypeBlock in fRange) then
-      //fRange := fRange - [rsInProcNeck];
-      //InProcNeck := False;
     // if we are in an include file, we may not know the state
     if (fRange * [rsImplementation, rsInterface] = []) then
       Include(fRange, rsImplementation);
@@ -1250,7 +1247,7 @@ begin
     if TopPascalCodeFoldBlockType in [cfbtVarType, cfbtLocalVarType] then
       EndPascalCodeFoldBlockLastLine;
     Result := tkKey;
-    if InProcNeck {and InProc} // TopPascalCodeFoldBlockType in [cfbtProcedure]
+    if InProcNeck // TopPascalCodeFoldBlockType in [cfbtProcedure]
     then begin
       InProcNeck := False;
       StartPascalCodeFoldBlock(cfbtTopBeginEnd);
@@ -2742,6 +2739,7 @@ procedure TSynPasSyn.BraceOpenProc;
 var
   InsideProcedureNeck : Boolean;
   ProcDept : integer;
+  LProcMade : integer;
 
   procedure StartDirectiveFoldBlock(ABlockType: TPascalCodeFoldBlockType); inline;
   begin
@@ -2772,8 +2770,10 @@ var
     if ABlockType = cfbtIfDef then begin
       InsideProcedureNeck := InProcNeck;
       ProcDept := self.InProcLevel;
-      EndCustomCodeFoldBlock(ABlockType);
+      LProcMade := InIfdefProcsMade;
+      EndCustomCodeFoldBlock(ABlockType); //close $endif
       InProcNeck := InsideProcedureNeck;
+      InIfdefProcsMade := InIfdefProcsMade + LProcMade;
       self.InProcLevel := ProcDept;
     end
     else

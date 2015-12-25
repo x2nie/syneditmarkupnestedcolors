@@ -171,9 +171,8 @@ begin
   if (CurrentY = aRow) then
     for i := 0 to length(FHighlights)-1 do
       with FHighlights[i] do
-        if not Ignore and (X <> X2) and (aStartCol.Logical >= x) and (aStartCol.Logical < X2) then
+        if not Ignore and (ColorIdx >= 0) and (X < X2) and (aStartCol.Logical >= x) and (aStartCol.Logical < X2) then
         begin
-          if ColorIdx >= 0 then
           begin
             MarkupInfo.FrameColor:= clNone;
             MarkupInfo.Foreground:= clNone;
@@ -214,19 +213,22 @@ var i : integer;
 begin
   ANextLog := -1;
   ANextPhys := -1;
-  if (CurrentY = aRow) then
-  for i := 0 to length(FHighlights)-1 do begin
-    if FHighlights[i].X  = FHighlights[i].X2 then
+  if (CurrentY = aRow)  then
+  for i := 0 to length(FHighlights)-1  do
+    with FHighlights[i] do
+      {if FHighlights[i].X  = FHighlights[i].X2 then
       continue;
-    if FHighlights[i].X  <= aStartCol.Logical then
+    if FHighlights[i].X  <= aStartCol.Logical then    stat.log > x
       continue;
-    if FHighlights[i].X2  < aStartCol.Logical then
+    if FHighlights[i].X2  < aStartCol.Logical then    == start.log >= x2
       continue;
     if FHighlights[i].Ignore then
-      continue;
-    ANextLog := FHighlights[i].X;
-    break;
-  end;
+      continue;}
+      if not Ignore and (ColorIdx >= 0) and (X < X2) and (aStartCol.Logical > x) and (aStartCol.Logical >= X2) then
+      begin
+        ANextLog := FHighlights[i].X;
+        break;
+      end;
 end;
 
 procedure TSynEditMarkupFoldColors.DoMarkupFoldAtRow(aRow: Integer);
@@ -704,6 +706,7 @@ var
   EndFoldLine,y : integer;
 begin
   if EndLine < 0 then exit; //already refreshed by syn
+  exit;//debug
 
   y := Caret.LineBytePos.y;
   EndFoldLine := IsFoldMoved(y);
