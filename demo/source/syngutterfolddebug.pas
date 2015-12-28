@@ -117,7 +117,7 @@ var
         TextDrawer.SetBackColor(Gutter.Color);
 
 
-      if iLine = TCustomSynEdit(SynEdit).TopLine then
+      if (iLine <> TCustomSynEdit(SynEdit).CaretY) and (iLine = TCustomSynEdit(SynEdit).TopLine) then
         s := 'Kwd Nst   Min End  NMi Nst '
       else
       if iLine > 0 then begin
@@ -377,7 +377,7 @@ constructor TSynGutterFoldDebug.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   AutoSize := False;
-  Width := 900;//PreferedWidth;
+  Width := 400;//PreferedWidth;
 end;
 
 procedure TSynGutterFoldDebug.Paint(Canvas: TCanvas; AClip: TRect; FirstLine,

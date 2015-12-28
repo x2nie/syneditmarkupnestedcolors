@@ -1538,7 +1538,7 @@ begin
          cfbtUnit, cfbtUnitSection]) then begin
       if TopPascalCodeFoldBlockType in [cfbtVarType, cfbtLocalVarType] then
         EndPascalCodeFoldBlockLastLine;
-      if TopPascalCodeFoldBlockType in [cfbtProcedure]
+      if InProcLevel > 0 //TopPascalCodeFoldBlockType in [cfbtProcedure]
       then StartPascalCodeFoldBlock(cfbtLocalVarType)
       else StartPascalCodeFoldBlock(cfbtVarType);
     end;
@@ -4371,7 +4371,7 @@ begin
     cfbtRegion, cfbtNestedComment, cfbtAnsiComment, cfbtBorCommand, cfbtSlashComment:
       Result.SupportedModes := [fmFold, fmHide] + m;
     cfbtIfThen:
-      Result.SupportedModes := m;
+      Result.SupportedModes := [fmFold]+ m;
     cfbtFirstPrivate..high(TPascalCodeFoldBlockType):
       Result.SupportedModes := [];
     else

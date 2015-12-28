@@ -91,8 +91,9 @@ begin
 
   with  SynFreePascalSyn1 do begin
     //FoldConfig[ord(cfbtIfThen)].Modes:=[fmMarkup, fmOutline]; //.Enabled := True;
-    FoldConfig[ord(cfbtIfThen)].SupportedModes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
-    FoldConfig[ord(cfbtIfThen)].Modes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
+    FoldConfig[ord(cfbtIfThen)].Enabled := True;
+   // FoldConfig[ord(cfbtIfThen)].SupportedModes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
+  //  FoldConfig[ord(cfbtIfThen)].Modes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
 
   end;
 
@@ -185,7 +186,7 @@ begin
     Pan.Alignment:= taLeftJustify;
     Pan.BevelOuter:= bvNone;
     Pan.BevelInner:= bvLowered;
-    Pan.BorderWidth:=3;
+    Pan.BorderWidth:=1;
   end;
 
 end;
@@ -240,7 +241,7 @@ procedure TForm3.CaretChanged(LogCaret: TPoint);
         inc(i);
         TmpNode := NodeList[i];
       end;
-      if (TmpNode.LogXStart > LogCaret.X - 1) or (sfaInvalid in TmpNode.FoldAction) then begin
+      if (TmpNode.LogXStart > LogCaret.X - 1) {or (sfaInvalid in TmpNode.FoldAction)} then begin
         StatusBar1.Panels[1].Text := '-';
         StatusBar1.Panels[2].Text := '-';
         exit;
