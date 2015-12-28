@@ -87,6 +87,24 @@ object Form3: TForm3
       TabOrder = 0
     end
   end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 23
+    Top = 444
+    Width = 847
+    Panels = <    
+      item
+        Alignment = taCenter
+        Width = 70
+      end    
+      item
+        Width = 30
+      end    
+      item
+        Width = 50
+      end>
+    SimplePanel = False
+  end
   object SynFreePascalSyn1: TSynFreePascalSyn
     Enabled = False
     CommentAttri.Foreground = clTeal
