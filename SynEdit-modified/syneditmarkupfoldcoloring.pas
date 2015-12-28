@@ -172,10 +172,12 @@ function TSynEditMarkupFoldColors.GetMarkupAttributeAtRowCol(
   const aRow: Integer; const aStartCol: TLazSynDisplayTokenBound;
   const AnRtlInfo: TLazSynDisplayRtlInfo): TSynSelectedColor;
 var
-  i : integer;
+  i,x2both : integer;
 begin
   Result := nil;
-  if (CurrentY = aRow) then
+  if (CurrentY = aRow) then begin
+
+    x2both := -3; //flag
     for i := 0 to length(FHighlights)-1 do
       with FHighlights[i] do
         if not Ignore
@@ -184,14 +186,19 @@ begin
         and (aStartCol.Logical >= x)
         and (aStartCol.Logical < X2) then
         begin
-          MarkupInfo.FrameColor:= clNone;
-          MarkupInfo.Foreground:= clNone;
-          MarkupInfo.Background:= clNone;
-          MarkupInfo.FrameEdges:= sfeNone;
           //MarkupInfo.FrameColor:= clGreen; //debug
+          if x2both = -3 then //first call flag
+          begin
+            MarkupInfo.FrameColor:= clNone;
+            MarkupInfo.Foreground:= clNone;
+            MarkupInfo.Background:= clNone;
+            MarkupInfo.FrameEdges:= sfeNone;
+            x2both := 0;
+          end;
 
           Result := MarkupInfo;
-          MarkupInfo.SetFrameBoundsLog(x, x2);
+          x2both := max(x2both, x2);
+          MarkupInfo.SetFrameBoundsLog(x, x2both);
           if Border then
           begin
             MarkupInfo.FrameColor:= Colors[ColorIdx];
@@ -210,8 +217,9 @@ begin
             MarkupInfo.FrameColor:= clBlue; //debug
           end;}
 
-          break;
+          //break;
         end;
+  end;
 end;
 
 procedure TSynEditMarkupFoldColors.GetNextMarkupColAfterRowCol(
@@ -355,7 +363,11 @@ var
 
     if ANode.LogXStart < ANode.LogXEnd then
     for j := 0 to Pred(length(FHighlights)) do
-      if (FHighlights[j].X = x) and (FHighlights[j].Border) then begin
+      if (FHighlights[j].X = x)
+      and (FHighlights[j].Border)
+      and (FHighlights[j].SrcNode.FoldType = ANode.FoldType )
+      and (FHighlights[j].SrcNode.FoldLvlEnd = ANode.FoldLvlStart )
+      then begin
        FHighlights[j].X2 := ANode.LogXEnd+1 ;//exit; //
        FHighlights[j].Border := False
 
