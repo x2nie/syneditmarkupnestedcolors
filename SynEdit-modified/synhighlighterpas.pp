@@ -1321,6 +1321,7 @@ begin
 end;
 
 function TSynPasSyn.Func47: TtkTokenKind;
+var withinIfThen : boolean;
 begin
   if KeyComp('Then') then begin
     Result := tkKey;
@@ -1328,7 +1329,9 @@ begin
     if (TopPascalCodeFoldBlockType = cfbtIfThen) then
       EndPascalCodeFoldBlock;
     //if TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen] then
-      StartPascalCodeFoldBlock(cfbtIfThen, not (TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen]));
+    //  StartPascalCodeFoldBlock(cfbtIfThen, not (TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen]));
+    //if TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen] then
+      StartPascalCodeFoldBlock(cfbtIfThen, True);
   end
   else
     Result := tkIdentifier;

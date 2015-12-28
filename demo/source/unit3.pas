@@ -91,9 +91,10 @@ begin
 
   with  SynFreePascalSyn1 do begin
     //FoldConfig[ord(cfbtIfThen)].Modes:=[fmMarkup, fmOutline]; //.Enabled := True;
-    FoldConfig[ord(cfbtIfThen)].Enabled := True;
+    //FoldConfig[ord(cfbtIfThen)].Enabled := True;
    // FoldConfig[ord(cfbtIfThen)].SupportedModes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
   //  FoldConfig[ord(cfbtIfThen)].Modes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
+    FoldConfig[ord(cfbtIfThen)].Modes:= FoldConfig[ord(cfbtIfThen)].Modes + [fmMarkup] ;//- [fmFold];
 
   end;
 

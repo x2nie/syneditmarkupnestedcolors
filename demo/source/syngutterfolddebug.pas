@@ -377,7 +377,7 @@ constructor TSynGutterFoldDebug.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   AutoSize := False;
-  Width := 400;//PreferedWidth;
+  Width := 600;//PreferedWidth;
 end;
 
 procedure TSynGutterFoldDebug.Paint(Canvas: TCanvas; AClip: TRect; FirstLine,
