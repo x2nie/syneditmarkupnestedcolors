@@ -329,8 +329,7 @@ type
     function  StartCodeFoldBlock(ABlockType: Pointer = nil;
                       IncreaseLevel: Boolean = true): TSynCustomCodeFoldBlock; virtual;
     procedure EndCodeFoldBlock(
-                      DecreaseLevel: Boolean = True;
-                      ABlockType: Pointer = nil); virtual;
+                      DecreaseLevel: Boolean = True); virtual;
     procedure CollectNodeInfo(FinishingABlock : Boolean; ABlockType: Pointer;
               LevelChanged: Boolean); virtual;
     procedure DoInitNode(var Node: TSynFoldNodeInfo;
@@ -1157,12 +1156,14 @@ begin
 end;
 
 procedure TSynCustomFoldHighlighter.EndCodeFoldBlock(
-  DecreaseLevel: Boolean = True;
-  ABlockType: Pointer = nil);
+  DecreaseLevel: Boolean = True);
+var
+  BlockType: Pointer;
 begin
   //ABlockType required for detect whether singleline /multiline is being paired
+  BlockType := TopCodeFoldBlockType;
   if FIsCollectingNodeInfo then
-    CollectNodeInfo(True, ABlockType, DecreaseLevel);
+    CollectNodeInfo(True, BlockType, DecreaseLevel);
 
   CodeFoldRange.Pop(DecreaseLevel);
 end;

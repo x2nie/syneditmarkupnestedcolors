@@ -3423,6 +3423,7 @@ begin
     InProcNecks:=0;
     InProcLevel:=0;
     InProcBits:=#0;
+    InIfdefProcsMade := 0;
   end;
   Inherited ResetRange;
   CompilerMode:=pcmDelphi;
@@ -4132,7 +4133,7 @@ begin
     DoInitNode(nd, True, Pointer(PtrInt(ABlockType)), act, DecreaseLevel);
     CollectingNodeInfoList.Add(nd);
   end;}
-  EndCodeFoldBlock(DecreaseLevel, TopCodeFoldBlockType);
+  EndCodeFoldBlock(DecreaseLevel);
   InIfdefProcsMade := max(0, InIfdefProcsMade -1);
 end;
 

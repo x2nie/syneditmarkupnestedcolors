@@ -1909,7 +1909,7 @@ end;
 
 procedure TSynJScriptSyn.FinishJScriptCodeFoldBlock;
 begin
-  EndCodeFoldBlock(true, TopCodeFoldBlockType );
+  EndCodeFoldBlock(True);
 end;
 
 procedure TSynJScriptSyn.DoInitNode(var Node: TSynFoldNodeInfo;
