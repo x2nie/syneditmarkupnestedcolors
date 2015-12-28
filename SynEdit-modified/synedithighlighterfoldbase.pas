@@ -1260,8 +1260,8 @@ begin
     while (i >= 0) and
           ( (nd^.FoldType <> node.FoldType) or
             (nd^.FoldGroup <> node.FoldGroup) or
-            (not (sfaOpenFold in nd^.FoldAction)) or
-            (nd^.FoldLvlEnd <> Node.FoldLvlStart)
+            (not (sfaOpenFold in nd^.FoldAction))
+            //or (nd^.FoldLvlEnd <> Node.FoldLvlStart)
           )
     do begin
       dec(i);
