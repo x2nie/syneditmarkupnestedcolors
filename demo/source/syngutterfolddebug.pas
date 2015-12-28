@@ -177,6 +177,7 @@ var
                   else if sfaClose in TmpNode.FoldAction then
                     oc := '->'
                   else oc := '?~';
+                  ty := '';
                   if TSynCustomFoldHighlighter(HL) is TSynPasSyn
                   or TSynCustomFoldHighlighter(HL) is OriSynHighlighterPas.TSynPasSyn
                   then
