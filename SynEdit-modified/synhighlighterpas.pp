@@ -547,10 +547,12 @@ type
     function GetDividerDrawConfigCount: Integer; override;
 
     // Fold Config
+    function GetFoldConfig(Index: Integer): TSynCustomFoldConfig; override;
     function GetFoldConfigInstance(Index: Integer): TSynCustomFoldConfig; override;
     function GetFoldConfigCount: Integer; override;
     function GetFoldConfigInternalCount: Integer; override;
     procedure DoFoldConfigChanged(Sender: TObject); override;
+    function HasFoldConfig(Index: Integer): boolean; override; //pascal has blocktype > foldconfigCount
   public
     class function GetCapabilities: TSynHighlighterCapabilities; override;
     class function GetLanguageName: string; override;
@@ -3767,8 +3769,14 @@ var
   OneLine: Boolean;
   nd: PSynFoldNodeInfo;
 
+var
+  p: Pointer;
 begin
-  PasBlockType := TPascalCodeFoldBlockType(PtrUint(ABlockType));
+  p := ABlockType;
+  if p >= CountPascalCodeFoldBlockOffset then
+    p := p - PtrUInt(CountPascalCodeFoldBlockOffset);
+  //PasBlockType := TPascalCodeFoldBlockType(PtrUint(ABlockType));
+  PasBlockType := TPascalCodeFoldBlockType(PtrUint(p));
 
   if FinishingABlock then
     EndOffs := -1
@@ -3797,7 +3805,7 @@ begin
   Node.LineIndex := LineIndex;
   Node.LogXStart := Run;
   Node.LogXEnd := Run + fStringLen;
-  Node.FoldType := Pointer(PtrUInt(PasBlockType));
+  Node.FoldType := Pointer(PtrInt(ABlockType)); //Pointer(PtrUInt(PasBlockType));
   Node.FoldTypeCompatible := Pointer(PtrUInt(PascalFoldTypeCompatibility[PasBlockType]));
   Node.FoldAction := aActions;
   case PasBlockType of
@@ -4439,6 +4447,13 @@ begin
   inherited DoFoldConfigChanged(Sender);
 end;
 
+function TSynPasSyn.HasFoldConfig(Index: Integer): boolean;
+begin
+  if Index >= Ptruint(CountPascalCodeFoldBlockOffset) then
+    Dec(Index, Ptruint(CountPascalCodeFoldBlockOffset));
+  Result:=inherited HasFoldConfig(Index);
+end;
+
 function TSynPasSyn.GetDividerDrawConfig(Index: Integer): TSynDividerDrawConfig;
 begin
   Result := FDividerDrawConfig[TSynPasDividerDrawLocation(Index)];
@@ -4448,6 +4463,13 @@ function TSynPasSyn.GetDividerDrawConfigCount: Integer;
 begin
   Result := ord(high(TSynPasDividerDrawLocation))
           - ord(low(TSynPasDividerDrawLocation)) + 1;
+end;
+
+function TSynPasSyn.GetFoldConfig(Index: Integer): TSynCustomFoldConfig;
+begin
+  if Index >= Ptruint(CountPascalCodeFoldBlockOffset) then
+    Dec(Index, Ptruint(CountPascalCodeFoldBlockOffset));
+  Result:=inherited GetFoldConfig(Index);
 end;
 
 function TSynPasSyn.GetRangeClass: TSynCustomHighlighterRangeClass;

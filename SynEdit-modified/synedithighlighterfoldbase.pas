@@ -300,6 +300,7 @@ type
     // Fold Config
     FFoldConfig: Array of TSynCustomFoldConfig;
     function GetFoldConfig(Index: Integer): TSynCustomFoldConfig; virtual;
+    function HasFoldConfig(Index: Integer): boolean; virtual; //pascal has blocktype > foldconfigCount
     procedure SetFoldConfig(Index: Integer; const AValue: TSynCustomFoldConfig); virtual;
     function GetFoldConfigCount: Integer; virtual;
     function GetFoldConfigInternalCount: Integer; virtual;
@@ -1024,6 +1025,11 @@ begin
   Result := FFoldConfig[Index];
 end;
 
+function TSynCustomFoldHighlighter.HasFoldConfig(Index: Integer): boolean;
+begin
+  Result := Index < FoldConfigCount;
+end;
+
 procedure TSynCustomFoldHighlighter.SetFoldConfig(Index: Integer; const AValue: TSynCustomFoldConfig);
 begin
   BeginUpdate;
@@ -1178,28 +1184,29 @@ var
 begin
   if not IsCollectingNodeInfo then exit;
 
-  BlockConfExists := (PtrUInt(ABlockType) < FoldConfigCount);
+  //BlockConfExists := (PtrUInt(ABlockType) < FoldConfigCount);  // how about pascal that has blocktype > foldconfigcount?
+  BlockConfExists := HasFoldConfig(PtrUInt(ABlockType));
   BlockTypeEnabled := False;
   if BlockConfExists then
-    BlockTypeEnabled := FFoldConfig[PtrUInt(ABlockType)].Enabled;
+    BlockTypeEnabled := FoldConfig[PtrUInt(ABlockType)].Enabled;
 
   //Start
   if not FinishingABlock then
   begin
     act := [sfaOpen, sfaOpenFold]; // todo deprecate sfaOpenFold
     if BlockTypeEnabled then
-      act := act + FFoldConfig[PtrUInt(ABlockType)].FoldActions
+      act := act + FoldConfig[PtrUInt(ABlockType)].FoldActions
     else
     if not BlockConfExists then
       act := act + [sfaFold,sfaFoldFold, sfaMarkup, sfaOutline];
-    DoInitNode(nd, FinishingABlock, ABlockType, act, True);
+    DoInitNode(nd, FinishingABlock, ABlockType, act, LevelChanged);
   end
   else
   //Finish
   begin
     act := [sfaClose, sfaCloseFold]; // todo deprecate sfaCloseFold
     if BlockTypeEnabled then
-      act := act + FFoldConfig[PtrUInt(ABlockType)].FoldActions
+      act := act + FoldConfig[PtrUInt(ABlockType)].FoldActions
     else
     if not BlockConfExists then
       act := act + [sfaFold, sfaFoldFold, sfaMarkup, sfaOutline];

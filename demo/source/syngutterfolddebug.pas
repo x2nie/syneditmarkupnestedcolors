@@ -182,9 +182,11 @@ var
                   then
                   begin
                     p := TmpNode.FoldType;
-                    if p >= CountPascalCodeFoldBlockOffset then
-                    p := p - PtrUInt(CountPascalCodeFoldBlockOffset);
-                    ty   := copy( GetEnumName(TypeInfo(TPascalCodeFoldBlockType), PtrUint(p) ), 5,6) ;
+                    if p >= CountPascalCodeFoldBlockOffset then begin
+                      p := p - PtrUInt(CountPascalCodeFoldBlockOffset);
+                      ty := '^';
+                    end;
+                    ty   := ty + copy( GetEnumName(TypeInfo(TPascalCodeFoldBlockType), PtrUint(p) ), 5,6) ;
                   end
                   else
                   if TSynCustomFoldHighlighter(HL) is TSynJScriptSyn then
