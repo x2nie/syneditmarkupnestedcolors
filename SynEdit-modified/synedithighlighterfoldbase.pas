@@ -326,11 +326,9 @@ type
       write FRootCodeFoldBlock;
 
     // Open/Close Folds
-    procedure GetTokenBounds(out LogX1,LogX2: Integer); virtual;
-    function  StartCodeFoldBlock(ABlockType: Pointer = nil;
-                      IncreaseLevel: Boolean = true): TSynCustomCodeFoldBlock; virtual;
-    procedure EndCodeFoldBlock(
-                      DecreaseLevel: Boolean = True); virtual;
+    function StartCodeFoldBlock(ABlockType: Pointer = nil;
+              IncreaseLevel: Boolean = true): TSynCustomCodeFoldBlock; virtual;
+    procedure EndCodeFoldBlock(DecreaseLevel: Boolean = True); virtual;
     procedure CollectNodeInfo(FinishingABlock : Boolean; ABlockType: Pointer;
               LevelChanged: Boolean); virtual;
     procedure DoInitNode(var Node: TSynFoldNodeInfo;
@@ -338,6 +336,7 @@ type
                        ABlockType: Pointer; aActions: TSynFoldActions;
                        AIsFold: Boolean); virtual;
     procedure RepairSingleLineNode(var Node: TSynFoldNodeInfo); virtual;
+    procedure GetTokenBounds(out LogX1,LogX2: Integer); virtual;
 
     // Info about Folds
     function CreateFoldNodeInfoList: TLazSynFoldNodeInfoList; virtual;
@@ -1027,7 +1026,7 @@ end;
 
 function TSynCustomFoldHighlighter.HasFoldConfig(Index: Integer): boolean;
 begin
-  Result := Index < FoldConfigCount;
+  Result := Index < FoldConfigCount; //pascal may has valid index beyond configCount
 end;
 
 procedure TSynCustomFoldHighlighter.SetFoldConfig(Index: Integer; const AValue: TSynCustomFoldConfig);
@@ -1161,8 +1160,7 @@ begin
   Result:=CodeFoldRange.Add(ABlockType, IncreaseLevel);
 end;
 
-procedure TSynCustomFoldHighlighter.EndCodeFoldBlock(
-  DecreaseLevel: Boolean = True);
+procedure TSynCustomFoldHighlighter.EndCodeFoldBlock(DecreaseLevel: Boolean = True);
 var
   BlockType: Pointer;
 begin
