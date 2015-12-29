@@ -1261,7 +1261,7 @@ begin
           ( (nd^.FoldType <> node.FoldType) or
             (nd^.FoldGroup <> node.FoldGroup) or
             (not (sfaOpenFold in nd^.FoldAction))
-            //or (nd^.FoldLvlEnd <> Node.FoldLvlStart)
+            or (nd^.FoldLvlEnd <> Node.FoldLvlStart)
           )
     do begin
       dec(i);

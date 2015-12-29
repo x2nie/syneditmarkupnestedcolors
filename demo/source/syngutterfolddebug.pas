@@ -195,8 +195,8 @@ var
                     p := TmpNode.FoldType;
                     ty   := copy( GetEnumName(TypeInfo(TJScriptFoldBlockType), PtrUint(p) ), 4,100) ;
                   end;
-                  //s := s + Format('%10s %s..%s,%s', [oc+ ty, x1,x2, IntToStr(y)])
-                  s := s + Format('%s ', [oc+ ty])
+                  s := s + Format('%10s %s..%s,%s', [oc+ ty, x1,x2, IntToStr(y)])
+                  //s := s + Format('%s ', [oc+ ty])
               end;
 
             finally

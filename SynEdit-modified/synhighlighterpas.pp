@@ -1331,9 +1331,9 @@ begin
     if (TopPascalCodeFoldBlockType = cfbtIfThen) then
       EndPascalCodeFoldBlock;
     //if TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen] then
-    //  StartPascalCodeFoldBlock(cfbtIfThen, not (TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen]));
+      StartPascalCodeFoldBlock(cfbtIfThen, not (TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen]));
     //if TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen] then
-      StartPascalCodeFoldBlock(cfbtIfThen, True);
+//      StartPascalCodeFoldBlock(cfbtIfThen, True);
   end
   else
     Result := tkIdentifier;
@@ -4712,7 +4712,8 @@ end;
 
 function TSynPasSynRange.Add(ABlockType: Pointer; IncreaseLevel: Boolean): TSynCustomCodeFoldBlock;
 begin
-  Result := inherited;// Add(ABlockType, True);
+  //Result := inherited;// Add(ABlockType, True);
+  Result := inherited Add(ABlockType, True);
   if IncreaseLevel and assigned(result) then
     inc(FPasFoldEndLevel);
 end;
@@ -4725,7 +4726,8 @@ begin
     if FPasFoldMinLevel > FPasFoldEndLevel then
       FPasFoldMinLevel := FPasFoldEndLevel;
   end;
-  inherited;// Pop(True);
+  //inherited;// Pop(True);
+  inherited Pop(True);
 end;
 
 function TSynPasSynRange.MaxFoldLevel: Integer;
