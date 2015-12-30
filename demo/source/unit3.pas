@@ -95,9 +95,12 @@ begin
     FoldConfig[ord(cfbtIfThen)].Enabled := True;
    // FoldConfig[ord(cfbtIfThen)].SupportedModes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
   //  FoldConfig[ord(cfbtIfThen)].Modes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
-    //FoldConfig[ord(cfbtIfThen)].Modes:= FoldConfig[ord(cfbtIfThen)].Modes + [fmMarkup]  ;//- [fmFold];
+    FoldConfig[ord(cfbtIfThen)].Modes:= FoldConfig[ord(cfbtIfThen)].Modes + [fmMarkup]  - [fmFold];//;//
 
     FoldConfig[ord(cfbtForDo)].Enabled := True;
+    FoldConfig[ord(cfbtForDo)].Modes:= FoldConfig[ord(cfbtForDo)].Modes + [fmMarkup]  - [fmFold];//;//
+
+
     FoldConfig[ord(cfbtWithDo)].Enabled := True;
     FoldConfig[ord(cfbtWhileDo)].Enabled := True;
 

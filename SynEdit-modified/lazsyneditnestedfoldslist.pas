@@ -108,6 +108,15 @@ uses
 
 { TLazSynEditNestedFoldsList }
 
+constructor TLazSynEditNestedFoldsList.Create(AHighLighterGetter: TSynGetHighLighter);
+begin
+  FHighLighterGetter := AHighLighterGetter;
+  FIncludeOpeningOnLine := True;
+  FFoldFlags := [];
+  FFoldGroup := 0;
+  FFoldNodeInfoListHoldCnt := 0;
+end;
+
 procedure TLazSynEditNestedFoldsList.SetLine(AValue: TLineIdx);
 begin
   if FLine = AValue then Exit;
@@ -590,15 +599,6 @@ begin
   if FFoldGroup = AValue then Exit;
   FFoldGroup := AValue;
   Clear;
-end;
-
-constructor TLazSynEditNestedFoldsList.Create(AHighLighterGetter: TSynGetHighLighter);
-begin
-  FHighLighterGetter := AHighLighterGetter;
-  FIncludeOpeningOnLine := True;
-  FFoldFlags := [];
-  FFoldGroup := 0;
-  FFoldNodeInfoListHoldCnt := 0;
 end;
 
 

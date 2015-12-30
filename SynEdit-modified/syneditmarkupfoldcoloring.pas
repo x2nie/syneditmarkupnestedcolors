@@ -296,7 +296,6 @@ begin
   y := aRow-1;
   Nest := TLazSynEditNestedFoldsList.Create(@GetFoldHighLighter);
   Nest.ResetFilter;
-  Nest.Clear;
   Nest.Line := y;
   Nest.FoldGroup := FDefaultGroup;//1;//FOLDGROUP_PASCAL;
   Nest.FoldFlags :=  [sfbIncludeDisabled]; //[];//

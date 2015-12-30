@@ -8,8 +8,7 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, unit3, SynEditMarkupFoldColoring, //SynColorFoldHighlighter,
-SynHighlighterBracket, SynGutterFoldDebug
-  { you can add units after this };
+SynHighlighterBracket, SynGutterFoldDebug;
 
 begin
   RequireDerivedFormResource:=True;

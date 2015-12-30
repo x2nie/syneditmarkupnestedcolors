@@ -48,7 +48,7 @@ unit SynHighlighterPas;
 
 {$I synedit.inc}
 
-{$DEFINE PASFOLD} //use original or newer baseclass?
+{.$DEFINE PASFOLD} //use original or newer baseclass?
 
 interface
 
@@ -3982,16 +3982,17 @@ begin
           OneLine := FinishingABlock and (Node.FoldLvlStart > PasCodeFoldRange.MinimumCodeFoldBlockLevel);
         end;
         {$else}
-        //if AIsFold then
+        if AIsFold then
         begin
           Node.FoldLvlStart := PasCodeFoldRange.CodeFoldStackSize;
           Node.NestLvlStart := PasCodeFoldRange.NestFoldStackSize;
           OneLine := FinishingABlock and (Node.FoldLvlStart > PasCodeFoldRange.MinimumCodeFoldBlockLevel); // MinimumCodeFoldBlockLevel);
-        end {else begin
+          //OneLine := FinishingABlock and (Node.NestLvlStart > PasCodeFoldRange.MinimumCodeFoldBlockLevel); // MinimumCodeFoldBlockLevel);
+        end else begin
           Node.FoldLvlStart := PasCodeFoldRange.NestFoldStackSize; // Todo: zero?
           Node.NestLvlStart := PasCodeFoldRange.NestFoldStackSize;
           OneLine := FinishingABlock and (Node.FoldLvlStart > PasCodeFoldRange.MinimumNestFoldBlockLevel);
-        end; }
+        end;
         {$endif}
       end;
   end;
@@ -4867,7 +4868,7 @@ begin
   if Result<>0 then exit;
   Result := FPasFoldMinLevel - TSynPasSynRange(Range).FPasFoldMinLevel;
   if Result<>0 then exit;
-
+  {$else}
   {$endif}
   Result := FPasFoldFixLevel - TSynPasSynRange(Range).FPasFoldFixLevel;
 end;

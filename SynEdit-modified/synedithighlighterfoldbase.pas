@@ -284,7 +284,7 @@ type
     property CodeFoldStackSize: integer read FCodeFoldStackSize; // excl disabled, only IncreaseLevel
     property MinimumCodeFoldBlockLevel: integer
       read FMinimumCodeFoldBlockLevel write FMinimumCodeFoldBlockLevel;
-    property NestFoldStackSize: integer read FCodeFoldStackSize; // all, incl disabled (not IncreaseLevel)
+    property NestFoldStackSize: integer read FNestFoldStackSize; // all, incl disabled (not IncreaseLevel)
     property MinimumNestFoldBlockLevel: integer
       read FMinimumNestFoldBlockLevel; // write FMinimumNestFoldBlockLevel;
     property Top: TSynCustomCodeFoldBlock read FTop;
@@ -1558,6 +1558,7 @@ procedure TSynCustomHighlighterRange.Clear;
 begin
   FRangeType:=nil;
   FCodeFoldStackSize := 0;
+  FNestFoldStackSize := 0;
   FMinimumCodeFoldBlockLevel := 0;
   FMinimumNestFoldBlockLevel:= 0;
   FTop:=nil;
@@ -1576,7 +1577,9 @@ begin
   else begin
     FTop := nil;
     FCodeFoldStackSize := 0;
+    FNestFoldStackSize := 0;
     FMinimumCodeFoldBlockLevel := 0;
+    FMinimumNestFoldBlockLevel := 0;
     FRangeType := nil;
   end;
 end;
