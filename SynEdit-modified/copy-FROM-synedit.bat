@@ -16,6 +16,8 @@ copy %SYNEDIT%\SynHighlighterPAS.pp
 copy %SYNEDIT%\SynHighlighterJScript.pas
 copy %SYNEDIT%\SynEditMarkupFoldColoring.pas
 copy %SYNEDIT%\SynEditMarkupWordGroup.pp
+copy %SYNEDIT%\LazSynEditNestedFoldsList.pas
+
 
 del .\test\*.pas
 copy %SYNEDIT%\test\TestHighlightPas.pas .\test\

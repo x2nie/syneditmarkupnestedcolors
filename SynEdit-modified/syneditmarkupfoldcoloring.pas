@@ -117,7 +117,8 @@ type
 
 implementation
 uses
-  SynEdit,SynEditTypes, SynEditFoldedView, SynEditMiscProcs;
+  SynEdit,SynEditTypes, SynEditFoldedView, SynEditMiscProcs,
+  LazSynEditNestedFoldsList;
 
   {%region Sorting FoldInfo /fold}
   function CompareFI(Item1, Item2: Pointer): Integer;
