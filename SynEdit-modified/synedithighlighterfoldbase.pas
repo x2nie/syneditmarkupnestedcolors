@@ -947,6 +947,7 @@ procedure TSynCustomFoldHighlighter.SetLine(const NewValue: String;
 begin
   inherited;
   FCodeFoldRange.MinimumCodeFoldBlockLevel := FCodeFoldRange.FCodeFoldStackSize;
+  FCodeFoldRange.FMinimumNestFoldBlockLevel := FCodeFoldRange.NestFoldStackSize;
 end;
 
 procedure TSynCustomFoldHighlighter.DoCurrentLinesChanged;
@@ -1558,6 +1559,7 @@ begin
   FRangeType:=nil;
   FCodeFoldStackSize := 0;
   FMinimumCodeFoldBlockLevel := 0;
+  FMinimumNestFoldBlockLevel:= 0;
   FTop:=nil;
 end;
 
@@ -1567,6 +1569,8 @@ begin
     FTop := Src.FTop;
     FCodeFoldStackSize := Src.FCodeFoldStackSize;
     FMinimumCodeFoldBlockLevel := Src.FMinimumCodeFoldBlockLevel;
+    FNestFoldStackSize := Src.FNestFoldStackSize;
+    FMinimumNestFoldBlockLevel := Src.FMinimumNestFoldBlockLevel;
     FRangeType := Src.FRangeType;
   end
   else begin
