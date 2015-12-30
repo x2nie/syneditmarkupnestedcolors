@@ -159,13 +159,13 @@ begin
   MarkupInfo.StyleMask := [];
   MarkupInfo.FrameEdges:= sfeLeft;//sfeAround;//sfeBottom;//
 
-  SetLength(Colors, 6);
+  SetLength(Colors, 5);
   Colors[0] := clRed;
   Colors[1] := $000098F7; //orange
   Colors[2] := $0022CC40; //green
-  Colors[3] := $00D5D500; // $0098CC42; // $00D1D54A; // teal
-  Colors[4] := $00FF682A; //blue
-  Colors[5] := $00CF00C4; //purple
+  //Colors[3] := $00D5D500; // $0098CC42; // $00D1D54A; // teal
+  Colors[3] := $00FF682A; //blue
+  Colors[4] := $00CF00C4; //purple
 end;
 
 function TSynEditMarkupFoldColors.GetMarkupAttributeAtRowCol(
