@@ -96,6 +96,11 @@ begin
   //  FoldConfig[ord(cfbtIfThen)].Modes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
     FoldConfig[ord(cfbtIfThen)].Modes:= FoldConfig[ord(cfbtIfThen)].Modes + [fmMarkup]  - [fmFold];
 
+    FoldConfig[ord(cfbtForDo)].Enabled := True;
+    FoldConfig[ord(cfbtWithDo)].Enabled := True;
+    FoldConfig[ord(cfbtWhileDo)].Enabled := True;
+
+
   end;
 
   CreateSynEdits;

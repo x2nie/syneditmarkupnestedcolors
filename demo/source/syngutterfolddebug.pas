@@ -39,7 +39,7 @@ uses
 type
   //TSynColorFoldHighlighterAccess = class(TSynColorFoldHighlighter);
   TSynCustomFoldHighlighterAccess = class(TSynCustomFoldHighlighter);
-  TSynPasSynAccess = class(TSynPasSyn);
+  TSynPasSynAccess = class(SynHighlighterPas.TSynPasSyn);
   //TSynMiniPasSynAccess = class(SynHighlighterMiniPas2.TSynPasSyn);
   TSynOriPasSynAccess = class(OriSynHighlighterPas.TSynPasSyn);
 

@@ -2,6 +2,7 @@ del *.pas
 del *.pp
 del *.lpk
 
+REM SET LAZ=c:\lazarus_1_6_x
 SET LAZ=C:\lazarus_trunk
 rem SET LAZ=E:\v\Githubs\LiteZarus
 
