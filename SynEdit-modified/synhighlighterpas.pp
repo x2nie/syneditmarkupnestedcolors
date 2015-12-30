@@ -1055,8 +1055,11 @@ begin
       CodeFoldRange.Add(Pointer(PtrInt(cfbtUses)), false);
     end
     else
-    if (TopPascalCodeFoldBlockType = cfbtCase) then
+    if (TopPascalCodeFoldBlockType = cfbtCase) then begin
+      EndPascalCodeFoldBlock();
+      StartPascalCodeFoldBlock(cfbtCase);
       fRange := fRange + [rsAtCaseLabel];
+    end;
   end
   else Result := tkIdentifier;
 end;
