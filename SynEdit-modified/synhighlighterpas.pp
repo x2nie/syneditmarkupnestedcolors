@@ -1113,7 +1113,7 @@ begin
         EndPascalCodeFoldBlock;
         if TopPascalCodeFoldBlockType = cfbtProgram then
           EndPascalCodeFoldBlock;
-        while (TopPascalCodeFoldBlockType in [cfbtIfThen,cfbtForDo,cfbtWhileDo,cfbtWithDo]) do begin // no semicolon after end
+        while (TopPascalCodeFoldBlockType in [{cfbtIfThen,}cfbtForDo,cfbtWhileDo,cfbtWithDo]) do begin // no semicolon after end
           sl := fStringLen;
           fStringLen:=0;
           EndPascalCodeFoldBlock(True);

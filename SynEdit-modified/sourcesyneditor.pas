@@ -962,9 +962,6 @@ begin
   TextDrawer := Gutter.TextDrawer;
   dc := Canvas.Handle;
   //TSynHighlighterPasRangeList
-  //mojo
-  //woles
-  //getuk
   RngLst := TSynHighlighterRangeList(TheLinesView.Ranges[TCustomSynEdit(SynEdit).Highlighter]);
 
   // Clear all
@@ -1623,7 +1620,6 @@ procedure TIDESynEditor.SetHighlighter(const Value: TSynCustomHighlighter);
 var
   i: Integer;
 begin
-
   if Value = Highlighter then begin
     inherited SetHighlighter(Value);
     exit
