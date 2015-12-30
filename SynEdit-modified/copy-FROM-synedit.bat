@@ -17,14 +17,18 @@ copy %SYNEDIT%\SynHighlighterJScript.pas
 copy %SYNEDIT%\SynEditMarkupFoldColoring.pas
 copy %SYNEDIT%\SynEditMarkupWordGroup.pp
 
-del .\test\*.pp
 del .\test\*.pas
-rem copy %SYNEDIT%\test\TestHighlightPas.pas .\test\
+copy %SYNEDIT%\test\TestHighlightPas.pas .\test\
 
 
-
+del .\ide\*.pas
+del .\ide\frames\*.pas
 SET IDE=%LAZ%\idE
-copy %ide%\SourceSynEditor.pas
+copy %ide%\SourceSynEditor.pas .\ide
+copy %ide%\lazarusidestrconsts.pas .\ide
+copy %ide%\frames\editor_codefolding_options.pas .\ide\frames
+
+
 
 
 pause

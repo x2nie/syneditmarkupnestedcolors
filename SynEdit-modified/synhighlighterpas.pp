@@ -153,7 +153,7 @@ const
     [cfbtBeginEnd, cfbtTopBeginEnd, cfbtProcedure, cfbtClass, cfbtProgram, cfbtRecord,
      cfbtTry, cfbtExcept, cfbtRepeat, cfbtAsm, cfbtCase, cfbtCaseElse,
      cfbtIfDef, cfbtRegion,
-     cfbtIfThen
+     cfbtIfThen, cfbtForDo,cfbtWhileDo,cfbtWithDo
     ];
   PascalNoOutlineRanges: TPascalCodeFoldBlockTypes =
     [cfbtProgram,cfbtUnit,cfbtUnitSection, cfbtRegion, //cfbtProcedure,//=need by nested proc?
