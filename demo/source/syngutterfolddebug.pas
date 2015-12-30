@@ -41,6 +41,8 @@ type
   TSynCustomFoldHighlighterAccess = class(TSynCustomFoldHighlighter);
   TSynPasSynAccess = class(TSynPasSyn);
   //TSynMiniPasSynAccess = class(SynHighlighterMiniPas2.TSynPasSyn);
+  TSynOriPasSynAccess = class(OriSynHighlighterPas.TSynPasSyn);
+
 
 
 { TSynGutterFoldDebug }
@@ -240,11 +242,11 @@ var
   dc: HDC;
   s: String;
   RngLst: TSynHighlighterRangeList;
-  r: TSynPasSynRange;//TSynPasSynRange;
-  HL : TSynPasSynAccess;
+  r: OriSynHighlighterPas.TSynPasSynRange;//TSynPasSynRange;
+  HL : TSynOriPasSynAccess;
 begin
   if TCustomSynEdit(SynEdit).Highlighter = nil then exit;
-  if not(TCustomSynEdit(SynEdit).Highlighter is TSynPasSyn)  then exit;
+  if not(TCustomSynEdit(SynEdit).Highlighter is OriSynHighlighterPas.TSynPasSyn)  then exit;
   //TCustomSynEdit(SynEdit).Highlighter.CurrentLines := TheLinesView;
   TextDrawer := Gutter.TextDrawer;
   dc := Canvas.Handle;
@@ -254,7 +256,7 @@ begin
   //getuk
   //RngLst := TSynHighlighterRangeList(TheLinesView.Ranges[TCustomSynEdit(SynEdit).Highlighter]);
 
-  HL := TSynPasSynAccess( TCustomSynEdit(self.SynEdit).Highlighter );
+  HL := TSynOriPasSynAccess( TCustomSynEdit(self.SynEdit).Highlighter );
   RngLst := HL.CurrentRanges;
   // Clear all
   TextDrawer.BeginDrawing(dc);
@@ -284,7 +286,7 @@ begin
 
 
       if iLine > 0 then begin
-        r := TSynPasSynRange(RngLst.Range[iLine-1]);
+        r := OriSynHighlighterPas.TSynPasSynRange(RngLst.Range[iLine-1]);
         s:= format('%2d %2d %2d  %2d %2d  ',
                    [r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
                     r.CodeFoldStackSize, r.MinimumCodeFoldBlockLevel //, r.LastLineCodeFoldLevelFix
@@ -392,8 +394,8 @@ begin
   {if TCustomSynEdit(self.SynEdit).Highlighter is TSynColorFoldHighlighter then //higher checked first
     PaintColorFoldLvl(Canvas, AClip, FirstLine, LastLine)
   else}
-  //if TCustomSynEdit(self.SynEdit).Highlighter is TSynPasSyn then //lower
-    //PaintPasFoldLvl(Canvas, AClip, FirstLine, LastLine)  else
+  if TCustomSynEdit(self.SynEdit).Highlighter is OriSynHighlighterPas.TSynPasSyn then //lower
+    PaintPasFoldLvl(Canvas, AClip, FirstLine, LastLine)  else
     PaintFoldLvl(Canvas, AClip, FirstLine, LastLine);
 end;
 
