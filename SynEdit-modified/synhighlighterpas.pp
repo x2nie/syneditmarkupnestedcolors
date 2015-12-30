@@ -2014,8 +2014,8 @@ begin
 
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
+      CheckInProcNeck;
     end;
-    CheckInProcNeck;
 
     fRange := fRange + [rsInProcHeader];
     Result := tkKey;
@@ -2047,8 +2047,8 @@ begin
 
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
+      CheckInProcNeck;
     end;
-    CheckInProcNeck;
     fRange := fRange + [rsInProcHeader];
     Result := tkKey;
   end
@@ -2076,7 +2076,6 @@ function TSynPasSyn.Func108: TtkTokenKind;
 begin
   if KeyComp('Operator') then
   begin
-    CheckInProcNeck;
     if not(rsAfterEqualOrColon in fRange) then
     begin
       PasCodeFoldRange.BracketNestLevel := 0; // Reset in case of partial code
@@ -2086,6 +2085,7 @@ begin
       if ((rsImplementation in fRange) and
         not(TopPascalCodeFoldBlockType in [cfbtClass, cfbtClassSection, cfbtRecord])) then
         StartPascalCodeFoldBlock(cfbtProcedure);
+      CheckInProcNeck;
     end;
     Result := tkKey;
   end
@@ -2285,8 +2285,8 @@ begin
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
       fRange := fRange + [rsInProcHeader];
+      CheckInProcNeck;
     end;
-    CheckInProcNeck;
     Result := tkKey;
   end else
   if KeyComp('compilerproc') then // fpc modifier
@@ -2359,8 +2359,8 @@ begin
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
       fRange := fRange + [rsInProcHeader];
+      CheckInProcNeck;
     end;
-    CheckInProcNeck;
     Result := tkKey;
   end else
     if KeyComp('Implementation') then begin

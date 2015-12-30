@@ -1,6 +1,8 @@
 unit unit3;
 
 {$mode objfpc}{$H+}
+{$define gutterFoldDebug}
+{$define coloring}
 
 interface
 
@@ -36,7 +38,6 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     StatusBar1: TStatusBar;
-    SynEdit1: TSynEdit;
     SynFreePascalSyn1: TSynFreePascalSyn;
     SynHTMLSyn1: TSynHTMLSyn;
     SynJScriptSyn1: TSynJScriptSyn;
@@ -94,7 +95,7 @@ begin
     FoldConfig[ord(cfbtIfThen)].Enabled := True;
    // FoldConfig[ord(cfbtIfThen)].SupportedModes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
   //  FoldConfig[ord(cfbtIfThen)].Modes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
-    FoldConfig[ord(cfbtIfThen)].Modes:= FoldConfig[ord(cfbtIfThen)].Modes + [fmMarkup]  - [fmFold];
+    //FoldConfig[ord(cfbtIfThen)].Modes:= FoldConfig[ord(cfbtIfThen)].Modes + [fmMarkup]  ;//- [fmFold];
 
     FoldConfig[ord(cfbtForDo)].Enabled := True;
     FoldConfig[ord(cfbtWithDo)].Enabled := True;
@@ -166,14 +167,18 @@ begin
 
     S.OnStatusChange:= @SynEditStatusChange;
 
-
+    {$ifdef coloring}
     M := TSynEditMarkupFoldColors.Create(S);
     M.DefaultGroup := 0;
     S.MarkupManager.AddMarkUp(M);
+    {$endif}
+
 
     if S.Highlighter is TSynCustomFoldHighlighter then
     begin
+      {$ifdef gutterFoldDebug}
       TSynGutterFoldDebug.Create(S.RightGutter.Parts);
+      {$endif}
 
       {if S.Highlighter is SynHighlighterPas.TSynPasSyn then
       begin

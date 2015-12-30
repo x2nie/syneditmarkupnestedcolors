@@ -19,6 +19,13 @@ type
 
   TMarkupFoldColorInfos = array of TMarkupFoldColorInfo;
   TSynFoldNodeInfos     = array of TSynFoldNodeInfo; //for quick compare detection
+  
+  TProcTableProc = procedure of object;
+
+  PIdentFuncTableFunc = ^TIdentFuncTableFunc;
+  TIdentFuncTableFunc = function: TtkTokenKind of object;
+
+
 
   { TSynEditMarkupFoldColors }
 
