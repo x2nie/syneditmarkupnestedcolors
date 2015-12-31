@@ -1,8 +1,7 @@
 unit unit3;
 
 {$mode objfpc}{$H+}
-{$define gutterFoldDebug}
-{$define coloring}
+
 
 interface
 
@@ -71,6 +70,9 @@ var
   Form3: TForm3;
 
 implementation
+
+{$define gutterFoldDebug}
+{$define coloring}
 
 uses
   SynGutterFoldDebug,
