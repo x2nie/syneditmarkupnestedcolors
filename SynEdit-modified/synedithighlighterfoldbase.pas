@@ -1508,7 +1508,14 @@ begin
   else if Pointer(FTop) > Pointer(Range.FTop) then
     Result:= 1
   else
-    Result := FMinimumCodeFoldBlockLevel - Range.FMinimumCodeFoldBlockLevel;
+    Result := FMinimumNestFoldBlockLevel - Range.FMinimumNestFoldBlockLevel;
+  if Result <> 0 then
+    exit;
+  Result := FNestFoldStackSize - Range.FNestFoldStackSize;
+  if Result <> 0 then
+    exit;
+
+  Result := FMinimumCodeFoldBlockLevel - Range.FMinimumCodeFoldBlockLevel;
   if Result <> 0 then
     exit;
   Result := FCodeFoldStackSize - Range.FCodeFoldStackSize;

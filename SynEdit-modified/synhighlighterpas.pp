@@ -3989,9 +3989,10 @@ begin
           OneLine := FinishingABlock and (Node.FoldLvlStart > PasCodeFoldRange.MinimumCodeFoldBlockLevel); // MinimumCodeFoldBlockLevel);
           //OneLine := FinishingABlock and (Node.NestLvlStart > PasCodeFoldRange.MinimumCodeFoldBlockLevel); // MinimumCodeFoldBlockLevel);
         end else begin
-          Node.FoldLvlStart := PasCodeFoldRange.NestFoldStackSize; // Todo: zero?
+          Node.FoldLvlStart := PasCodeFoldRange.CodeFoldStackSize; // Todo: zero?
           Node.NestLvlStart := PasCodeFoldRange.NestFoldStackSize;
-          OneLine := FinishingABlock and (Node.FoldLvlStart > PasCodeFoldRange.MinimumNestFoldBlockLevel);
+          //OneLine := FinishingABlock and (Node.FoldLvlStart > PasCodeFoldRange.MinimumNestFoldBlockLevel);
+          OneLine := FinishingABlock and (Node.NestLvlStart > PasCodeFoldRange.MinimumNestFoldBlockLevel); // MinimumCodeFoldBlockLevel);
         end;
         {$endif}
       end;
