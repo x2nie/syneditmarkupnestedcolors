@@ -60,12 +60,35 @@ type
     procedure PrepareMarkupForRow(aRow : Integer); override;
     property DefaultGroup : integer read FDefaultGroup write FDefaultGroup;
   end;
+  
+var
+  GlobalFoo : TFoo = nil;
+
+// sample of routine declaration inside Inteface
+function StrToCompilerMode(const aName: string): TCompilerMode;   
+function StrToCompilerMode2(const aName: string): TCompilerMode;     
 
 implementation
 uses
   Forms {debug},
   SynEdit,SynEditTypes, SynEditFoldedView, SynEditMiscProcs;
 
+// sample of routine declaration inside Implementation
+Procedure First (n : longint); forward;
+Procedure Second;
+begin
+  WriteLn ('In second. Calling first...');
+  First (1);
+end;
+Function strlen (P : PChar) : Longint; cdecl; external;
+begin
+  WriteLn ('Length of (',p,') : ',strlen(p))
+end;
+Procedure First (n : longint);
+begin
+  WriteLn ('First received : ',n);
+end;
+  
 // Not a bug anymore:
 {$IFDEF BCB}
 procedure TBitmap32.Draw(const DstRect, SrcRect: TRect; hSrc: Cardinal);

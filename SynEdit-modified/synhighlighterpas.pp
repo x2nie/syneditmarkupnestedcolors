@@ -1736,6 +1736,9 @@ begin
     Result := tkKey;
     if TopPascalCodeFoldBlockType = cfbtProcedure then begin
       EndPascalCodeFoldBlock(True);
+      if InProcLevel > 0 then // nested proc
+            SetIsInProcLevel(False);
+      InProcNeck := False;
     end;
   end
   else
@@ -2009,12 +2012,13 @@ begin
         EndPascalCodeFoldBlockLastLine;
 
       InClass := TopPascalCodeFoldBlockType in [cfbtClass, cfbtClassSection, cfbtRecord];
-      if ( (rsImplementation in fRange) and (not InClass) ) then
+      if ( (rsImplementation in fRange) and (not InClass) ) then begin
         StartPascalCodeFoldBlock(cfbtProcedure);
+        CheckInProcNeck;
+      end;
 
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
-      CheckInProcNeck;
     end;
 
     fRange := fRange + [rsInProcHeader];
@@ -2042,12 +2046,13 @@ begin
         EndPascalCodeFoldBlockLastLine;
 
       InClass := TopPascalCodeFoldBlockType in [cfbtClass, cfbtClassSection, cfbtRecord];
-      if ( (rsImplementation in fRange) and (not InClass) ) then
+      if ( (rsImplementation in fRange) and (not InClass) ) then begin
         StartPascalCodeFoldBlock(cfbtProcedure);
+        CheckInProcNeck;
+      end;
 
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
-      CheckInProcNeck;
     end;
     fRange := fRange + [rsInProcHeader];
     Result := tkKey;
@@ -2279,13 +2284,14 @@ begin
         EndPascalCodeFoldBlockLastLine;
 
       InClass := TopPascalCodeFoldBlockType in [cfbtClass, cfbtClassSection, cfbtRecord];
-      if ( (rsImplementation in fRange) and (not InClass) ) then
+      if ( (rsImplementation in fRange) and (not InClass) ) then begin
         StartPascalCodeFoldBlock(cfbtProcedure);
+        CheckInProcNeck;
+      end;
 
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
       fRange := fRange + [rsInProcHeader];
-      CheckInProcNeck;
     end;
     Result := tkKey;
   end else
@@ -2353,13 +2359,14 @@ begin
         EndPascalCodeFoldBlockLastLine;
 
       InClass := TopPascalCodeFoldBlockType in [cfbtClass, cfbtClassSection, cfbtRecord];
-      if ( (rsImplementation in fRange) and (not InClass) ) then
+      if ( (rsImplementation in fRange) and (not InClass) ) then begin
         StartPascalCodeFoldBlock(cfbtProcedure);
+        CheckInProcNeck;
+      end;
 
       if InClass then
         fRange := fRange + [rsAfterClassMembers];
       fRange := fRange + [rsInProcHeader];
-      CheckInProcNeck;
     end;
     Result := tkKey;
   end else
@@ -4259,15 +4266,7 @@ begin
     exit(nil);
   FoldBlock := BlockEnabled and (FFoldConfig[ord(ABlockType)].Modes * [fmFold, fmHide] <> []);
   p := 0;
-  {if IsCollectingNodeInfo then begin // exclude subblocks, because they do not increase the foldlevel yet
-    act := [sfaOpen, sfaOpenFold]; //TODO: sfaOpenFold not for cfbtIfThen
-    if BlockEnabled then
-      act := act + FFoldConfig[ord(ABlockType)].FoldActions;
-    if not FAtLineStart then
-      act := act - [sfaFoldHide];
-    DoInitNode(nd, False, Pointer(PtrInt(ABlockType)), act, FoldBlock);
-    CollectingNodeInfoList.Add(nd);
-  end;}
+
   if not FoldBlock then
     p := PtrInt(CountPascalCodeFoldBlockOffset);
   {$ifdef PASFOLD}
