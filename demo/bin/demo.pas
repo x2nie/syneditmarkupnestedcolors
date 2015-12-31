@@ -75,15 +75,18 @@ uses
 
 // sample of routine declaration inside Implementation
 Procedure First (n : longint); forward;
+
 Procedure Second;
 begin
   WriteLn ('In second. Calling first...');
   First (1);
 end;
+
 Function strlen (P : PChar) : Longint; cdecl; external;
 begin
   WriteLn ('Length of (',p,') : ',strlen(p))
 end;
+
 Procedure First (n : longint);
 begin
   WriteLn ('First received : ',n);
