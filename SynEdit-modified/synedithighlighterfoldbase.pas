@@ -238,6 +238,7 @@ type
   TSynCustomCodeFoldBlock = class
   private
     FBlockType: Pointer;
+    FFoldable: boolean;
     FParent, FChildren: TSynCustomCodeFoldBlock;
     FRight, FLeft: TSynCustomCodeFoldBlock;
     FBalance: Integer;
@@ -253,6 +254,7 @@ type
   public
     procedure InitRootBlockType(AType: Pointer);
     property BlockType: Pointer read FBlockType;
+    property Foldable : boolean read FFoldable write FFoldable;
     property Parent: TSynCustomCodeFoldBlock read FParent;
     property Child[ABlockType: Pointer]: TSynCustomCodeFoldBlock read GetChild;
   end;
@@ -1532,6 +1534,7 @@ begin
     exit(nil);
   end;
   Result := FTop.Child[ABlockType];
+  Result.Foldable := IncreaseLevel;
   inc(FNestFoldStackSize);
   if IncreaseLevel then
     inc(FCodeFoldStackSize);

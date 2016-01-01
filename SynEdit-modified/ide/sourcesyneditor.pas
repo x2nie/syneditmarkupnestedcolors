@@ -988,9 +988,15 @@ begin
       if i > 0 then begin
         r := TSynPasSynRange(RngLst.Range[iLine-1]);
         s:= format('%2d %2d %2d  %2d %2d %2d ',
+        {$ifdef PASFOLD}
                    [r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
                     r.CodeFoldStackSize, r.MinimumCodeFoldBlockLevel, r.LastLineCodeFoldLevelFix
                    ]
+        {$else}
+                  [r.CodeFoldStackSize, r.MinimumCodeFoldBlockLevel, r.PasFoldFixLevel,
+                   r.NestFoldStackSize, r.MinimumNestFoldBlockLevel, r.LastLineCodeFoldLevelFix
+                  ]
+        {$endif}
                   );
       end
       else
