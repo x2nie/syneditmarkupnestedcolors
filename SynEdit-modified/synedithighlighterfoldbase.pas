@@ -302,7 +302,6 @@ type
     // Fold Config
     FFoldConfig: Array of TSynCustomFoldConfig;
     function GetFoldConfig(Index: Integer): TSynCustomFoldConfig; virtual;
-    function HasFoldConfig(Index: Integer): boolean; virtual; //pascal has blocktype > foldconfigCount
     procedure SetFoldConfig(Index: Integer; const AValue: TSynCustomFoldConfig); virtual;
     function GetFoldConfigCount: Integer; virtual;
     function GetFoldConfigInternalCount: Integer; virtual;
@@ -1027,11 +1026,6 @@ begin
   Result := FFoldConfig[Index];
 end;
 
-function TSynCustomFoldHighlighter.HasFoldConfig(Index: Integer): boolean;
-begin
-  Result := Index < FoldConfigCount; //pascal may has valid index beyond configCount
-end;
-
 procedure TSynCustomFoldHighlighter.SetFoldConfig(Index: Integer; const AValue: TSynCustomFoldConfig);
 begin
   BeginUpdate;
@@ -1185,8 +1179,8 @@ var
 begin
   if not IsCollectingNodeInfo then exit;
 
-  //BlockConfExists := (PtrUInt(ABlockType) < FoldConfigCount);  // how about pascal that has blocktype > foldconfigcount?
-  BlockConfExists := HasFoldConfig(PtrUInt(ABlockType));
+  BlockConfExists := (PtrUInt(ABlockType) < FoldConfigCount);  // how about pascal that has blocktype > foldconfigcount?
+  //BlockConfExists := HasFoldConfig(PtrUInt(ABlockType));
   BlockTypeEnabled := False;
   if BlockConfExists then
     BlockTypeEnabled := FoldConfig[PtrUInt(ABlockType)].Enabled;

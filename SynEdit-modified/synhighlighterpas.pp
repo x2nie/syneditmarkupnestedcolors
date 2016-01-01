@@ -48,8 +48,6 @@ unit SynHighlighterPas;
 
 {$I synedit.inc}
 
-{.$DEFINE BEYONDCFBT} //use CountPascalCodeFoldBlockOffset?
-
 interface
 
 uses
@@ -143,10 +141,6 @@ type
 const
   cfbtLastPublic = cfbtIfThen;
   cfbtFirstPrivate = cfbtCaseElse;
-  {$ifdef beyondcfbt}
-  CountPascalCodeFoldBlockOffset: Pointer =
-    Pointer(PtrInt(Integer(high(TPascalCodeFoldBlockType))+1));
-  {$endif}
 
   cfbtAll: TPascalCodeFoldBlockTypes =
     [low(TPascalCodeFoldBlockType)..high(TPascalCodeFoldBlockType)];
@@ -549,7 +543,6 @@ type
     function GetDividerDrawConfigCount: Integer; override;
 
     // Fold Config
-    function GetFoldConfig(Index: Integer): TSynCustomFoldConfig; override;
     function GetFoldConfigInstance(Index: Integer): TSynCustomFoldConfig; override;
     function GetFoldConfigCount: Integer; override;
     function GetFoldConfigInternalCount: Integer; override;
@@ -3632,26 +3625,15 @@ begin
         if ANestIndex < c then begin
           c := TSynPasSynRange(r).NestFoldStackSize - 1 - ANestIndex;
           Fold := TSynPasSynRange(r).Top;
-          {$ifdef beyondcfbt}
-          while (Fold <> nil) and
-            ( (c > 0) or (Fold.BlockType >= CountPascalCodeFoldBlockOffset) )
-          do begin
-            if (Fold.BlockType < CountPascalCodeFoldBlockOffset) then
-            {$else}
           while (Fold <> nil) and
               ( (c > 0) or (not Fold.Foldable) )
           do begin
             if (Fold.Foldable) then
-            {$endif}
               dec(c);
             Fold := Fold.Parent;
           end;
           if Fold <> nil then begin
             AType := Fold.BlockType;
-            {$ifdef beyondcfbt}
-            if AType >= CountPascalCodeFoldBlockOffset then
-              AType := AType - PtrUInt(CountPascalCodeFoldBlockOffset);
-            {$endif}
             Result := True;
           end;
         end;
@@ -3677,10 +3659,6 @@ begin
           end;
           if Fold <> nil then begin
             AType := Fold.BlockType;
-            {$ifdef beyondcfbt}
-            if AType >= CountPascalCodeFoldBlockOffset then
-              AType := AType - PtrUInt(CountPascalCodeFoldBlockOffset);
-            {$endif}
             Result := True;
           end;
         end;
@@ -3695,10 +3673,6 @@ var
   p: Pointer;
 begin
   p := TopCodeFoldBlockType(DownIndex);
-  {$ifdef beyondcfbt}
-  if p >= CountPascalCodeFoldBlockOffset then
-    p := p - PtrUInt(CountPascalCodeFoldBlockOffset);
-  {$endif}
   Result := TPascalCodeFoldBlockType(PtrUInt(p));
 end;
 
@@ -3823,15 +3797,7 @@ var
 var
   p: Pointer;
 begin
-  {$ifdef beyondcfbt}
-  p := ABlockType;
-  if p >= CountPascalCodeFoldBlockOffset then
-    p := p - PtrUInt(CountPascalCodeFoldBlockOffset);
-  //PasBlockType := TPascalCodeFoldBlockType(PtrUint(ABlockType));
-  PasBlockType := TPascalCodeFoldBlockType(PtrUint(p));
-  {$else}
   PasBlockType := TPascalCodeFoldBlockType(PtrUint(ABlockType));
-  {$endif}
 
 
   if FinishingABlock then
@@ -4155,7 +4121,6 @@ end;
 function TSynPasSyn.StartPascalCodeFoldBlock(ABlockType: TPascalCodeFoldBlockType;
   OnlyEnabled: Boolean): TSynCustomCodeFoldBlock;
 var
-  p: PtrInt;
   FoldBlock, BlockEnabled: Boolean;
   act: TSynFoldActions;
   nd: TSynFoldNodeInfo;
@@ -4164,17 +4129,7 @@ begin
   if (not BlockEnabled) and OnlyEnabled then
     exit(nil);
   FoldBlock := BlockEnabled and (FFoldConfig[ord(ABlockType)].Modes * [fmFold, fmHide] <> []);
-  p := 0;
-  {$ifdef beyondcfbt}
-  if not FoldBlock then
-    p := PtrInt(CountPascalCodeFoldBlockOffset);
-  {$endif}
-
-  {$ifdef beyondcfbt}
-  Result:=TSynCustomCodeFoldBlock(StartCodeFoldBlock(p+Pointer(PtrInt(ABlockType)), FoldBlock));
-  {$else}
   Result:=TSynCustomCodeFoldBlock(StartCodeFoldBlock(Pointer(PtrInt(ABlockType)), FoldBlock));
-  {$endif}
   InIfdefProcsMade := Min(InIfdefProcsMade +1,255);
 end;
 
@@ -4189,11 +4144,7 @@ begin
   if BlockType in [cfbtVarType, cfbtLocalVarType] then
     fRange := fRange - [rsInTypeBlock];
   fRange := fRange - [rsAfterEqual];
-  {$ifdef beyondcfbt}
-  DecreaseLevel := TopCodeFoldBlockType < CountPascalCodeFoldBlockOffset;
-  {$else}
   DecreaseLevel := CodeFoldRange.Top.Foldable;
-  {$endif}
   {if IsCollectingNodeInfo then begin // exclude subblocks, because they do not increase the foldlevel yet
     BlockEnabled := FFoldConfig[ord(BlockType)].Enabled;
     act := [sfaClose, sfaCloseFold];
@@ -4518,15 +4469,6 @@ function TSynPasSyn.GetDividerDrawConfigCount: Integer;
 begin
   Result := ord(high(TSynPasDividerDrawLocation))
           - ord(low(TSynPasDividerDrawLocation)) + 1;
-end;
-
-function TSynPasSyn.GetFoldConfig(Index: Integer): TSynCustomFoldConfig;
-begin
-  {$ifdef beyondcfbt}
-  if Index >= Ptruint(CountPascalCodeFoldBlockOffset) then
-    Dec(Index, Ptruint(CountPascalCodeFoldBlockOffset));
-  {$endif}
-  Result:=inherited GetFoldConfig(Index);
 end;
 
 function TSynPasSyn.GetRangeClass: TSynCustomHighlighterRangeClass;
