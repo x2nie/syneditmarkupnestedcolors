@@ -1,7 +1,7 @@
 object Form3: TForm3
-  Left = 816
+  Left = 366
   Height = 553
-  Top = 88
+  Top = 89
   Width = 847
   Caption = 'Form3'
   ClientHeight = 553
@@ -38,11 +38,13 @@ object Form3: TForm3
     Left = 0
     Height = 412
     Top = 32
-    Width = 847
+    Width = 460
+    TabStop = False
     ActivePage = TabSheet1
     Align = alClient
     TabIndex = 0
     TabOrder = 1
+    OnChange = PageControl1Change
     object TabSheet1: TTabSheet
       Caption = 'Pascal'
     end
@@ -86,6 +88,49 @@ object Form3: TForm3
       Caption = '&Config'
       TabOrder = 0
     end
+  end
+  object StringGrid1: TStringGrid
+    Left = 465
+    Height = 412
+    Top = 32
+    Width = 382
+    Align = alRight
+    AutoEdit = False
+    ColCount = 6
+    Columns = <    
+      item
+        Title.Caption = 'Enabled'
+        Width = 45
+      end    
+      item
+        Title.Caption = 'Fold'
+        Width = 45
+      end    
+      item
+        Title.Caption = 'Hide'
+        Width = 45
+      end    
+      item
+        Title.Caption = 'Markup'
+        Width = 45
+      end    
+      item
+        Title.Caption = 'Outline'
+        Width = 45
+      end>
+    DefaultColWidth = 120
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goColSpanning, goSmoothScroll]
+    TabOrder = 3
+    OnDblClick = StringGrid1DblClick
+    OnSelection = StringGrid1Selection
+  end
+  object Splitter1: TSplitter
+    Left = 460
+    Height = 412
+    Top = 32
+    Width = 5
+    Align = alRight
+    ResizeAnchor = akRight
   end
   object StatusBar1: TStatusBar
     Left = 0

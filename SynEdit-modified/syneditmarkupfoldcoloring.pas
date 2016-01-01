@@ -129,7 +129,6 @@ uses
     if result = 0 then
         result := (PMarkupFoldColorInfo(Item1)^.X2 - PMarkupFoldColorInfo(Item1)^.X)
           - (PMarkupFoldColorInfo(Item2)^.X2 - PMarkupFoldColorInfo(Item2)^.X);
-
   end;
 
   function SortLeftMostFI(a: TMarkupFoldColorInfos): TMarkupFoldColorInfos;

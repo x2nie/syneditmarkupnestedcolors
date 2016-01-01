@@ -1340,7 +1340,6 @@ begin
 end;
 
 function TSynPasSyn.Func47: TtkTokenKind;
-var withinIfThen : boolean;
 begin
   if KeyComp('Then') then begin
     Result := tkKey;
@@ -1349,8 +1348,6 @@ begin
       EndPascalCodeFoldBlock;
     //if TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen] then
       StartPascalCodeFoldBlock(cfbtIfThen, not (TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen]));
-    //if TopPascalCodeFoldBlockType in [cfbtCase, cfbtIfThen] then
-//      StartPascalCodeFoldBlock(cfbtIfThen, True);
   end
   else
     Result := tkIdentifier;
@@ -2770,11 +2767,6 @@ var
       //close the created proc before $else
       lrun := run; run := 0;
       llen := fStringLen; fStringLen:=0;
-
-      {while (TopPascalCodeFoldBlockType in [cfbtIfThen]) do begin // no semicolon before end
-        EndPascalCodeFoldBlock(True);
-      end;}
-
       for i := 0 to InIfdefProcsMade-1 do
         EndPascalCodeFoldBlock;
       run := lrun; fStringLen:=llen;
@@ -3794,11 +3786,8 @@ var
   OneLine: Boolean;
   nd: PSynFoldNodeInfo;
 
-var
-  p: Pointer;
 begin
   PasBlockType := TPascalCodeFoldBlockType(PtrUint(ABlockType));
-
 
   if FinishingABlock then
     EndOffs := -1
@@ -3860,11 +3849,9 @@ begin
           Node.FoldLvlStart := PasCodeFoldRange.CodeFoldStackSize;
           Node.NestLvlStart := PasCodeFoldRange.NestFoldStackSize;
           OneLine := FinishingABlock and (Node.FoldLvlStart > PasCodeFoldRange.MinimumCodeFoldBlockLevel); // MinimumCodeFoldBlockLevel);
-          //OneLine := FinishingABlock and (Node.NestLvlStart > PasCodeFoldRange.MinimumCodeFoldBlockLevel); // MinimumCodeFoldBlockLevel);
         end else begin
           Node.FoldLvlStart := PasCodeFoldRange.CodeFoldStackSize; // Todo: zero?
           Node.NestLvlStart := PasCodeFoldRange.NestFoldStackSize;
-          //OneLine := FinishingABlock and (Node.FoldLvlStart > PasCodeFoldRange.MinimumNestFoldBlockLevel);
           OneLine := FinishingABlock and (Node.NestLvlStart > PasCodeFoldRange.MinimumNestFoldBlockLevel); // MinimumCodeFoldBlockLevel);
         end;
       end;
@@ -4675,8 +4662,6 @@ begin
   FLastLineCodeFoldLevelFix := 0;
   FPasFoldFixLevel := 0;
 end;
-
-
 
 function TSynPasSynRange.Compare(Range: TSynCustomHighlighterRange): integer;
 begin

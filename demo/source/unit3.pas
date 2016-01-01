@@ -7,8 +7,9 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, SynEdit, Forms, Controls,
-  Graphics, Dialogs, ExtCtrls, ComCtrls, StdCtrls,
+  Graphics, Dialogs, ExtCtrls, ComCtrls, StdCtrls, Grids,
   TypInfo,
+  SynEditHighlighterFoldBase,
   SynEditMarkupWordGroup,
   SynEditHighlighter,
   //SynHighlighterMiniPas2,//must before original
@@ -37,6 +38,8 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     StatusBar1: TStatusBar;
+    Splitter1: TSplitter;
+    StringGrid1: TStringGrid;
     SynFreePascalSyn1: TSynFreePascalSyn;
     SynHTMLSyn1: TSynHTMLSyn;
     SynJScriptSyn1: TSynJScriptSyn;
@@ -53,14 +56,21 @@ type
     TabSheet8: TTabSheet;
     procedure FormCreate(Sender: TObject);
     procedure SynEditStatusChange(Sender: TObject; Changes: TSynStatusChanges);
+    procedure PageControl1Change(Sender: TObject);
+    procedure StringGrid1DblClick(Sender: TObject);
+    procedure StringGrid1Selection(Sender: TObject; aCol, aRow: Integer);
+
   private
     { private declarations }
+    FCell : TPoint;
     FSyns : array[0..MaxArray] of TSynCustomHighlighter;
     FSynEdits : array[0..MaxArray] of TSynEdit;
+    FRecords : array[0..MaxArray] of PTypeInfo;
     procedure CreateSynEdits;
     procedure LeaveOnly(ASynEdit:TSynEdit);
     procedure CaretChanged(LogCaret: TPoint);
   protected
+    FHL : TSynCustomFoldHighlighter;
     function Current : integer;
   public
     { public declarations }
@@ -76,7 +86,6 @@ implementation
 
 uses
   SynGutterFoldDebug,
-  SynEditHighlighterFoldBase,
   SynEditMarkupFoldColoring,
   SynEditMarkupIfDef,
   foldhl, SynHighlighterBracket
@@ -110,6 +119,8 @@ begin
   end;
 
   CreateSynEdits;
+  PageControl1Change(self); //show config
+
 
   //SynEditMiniPas.Lines.Assign( SynEditPas.Lines);
 {  SynEditMiniPas.Highlighter := SynHighlighterMiniPas2.TSynPasSyn.Create(self);
@@ -140,6 +151,64 @@ begin
     CaretChanged(FSynEdits[Current].LogicalCaretXY );
 end;
 
+procedure TForm3.PageControl1Change(Sender: TObject);
+   function Str(b:boolean): string; overload;
+   begin
+     if b then
+       result := '[x]'
+     else
+       result := '';
+   end;
+   function Str(b,b2:boolean): string; overload;
+   begin
+     if b
+     then
+       result := 'v'
+     else
+       result := ' ';
+     if b2 then
+       result := result + '  | [x]'
+     else
+       result := result + '  |';
+   end;
+var i,j :integer;
+begin
+  if FSyns[ PageControl1.ActivePageIndex] is TSynCustomFoldHighlighter then
+     FHL := TSynCustomFoldHighlighter(FSyns[ PageControl1.ActivePageIndex])
+  else
+      FHL := nil;
+
+  if (FHL <> nil) and (FRecords[ PageControl1.ActivePageIndex ] <> nil) then
+  begin
+    StringGrid1.RowCount:= FHL.FoldConfigCount + StringGrid1.FixedRows;
+    for i := 0 to Pred(FHL.FoldConfigCount) do begin
+      StringGrid1.Cells[0,i + StringGrid1.FixedRows] := GetEnumName(FRecords[ PageControl1.ActivePageIndex ] , i  );
+      StringGrid1.Cells[1,i + StringGrid1.FixedRows] := Str(FHL.FoldConfig[i].Enabled);
+
+      StringGrid1.Cells[2,i + StringGrid1.FixedRows] := Str(fmFold in FHL.FoldConfig[i].Modes, fmFold in FHL.FoldConfig[i].SupportedModes  );
+      StringGrid1.Cells[3,i + StringGrid1.FixedRows] := Str(fmHide in FHL.FoldConfig[i].Modes, fmHide in FHL.FoldConfig[i].SupportedModes );
+      StringGrid1.Cells[4,i + StringGrid1.FixedRows] := Str(fmMarkup in FHL.FoldConfig[i].Modes, fmMarkup in FHL.FoldConfig[i].SupportedModes );
+      StringGrid1.Cells[5,i + StringGrid1.FixedRows] := Str(fmOutline in FHL.FoldConfig[i].Modes, fmOutline in FHL.FoldConfig[i].SupportedModes );
+    end;
+
+  end
+  else
+      StringGrid1.RowCount:=1;
+end;
+
+procedure TForm3.StringGrid1DblClick(Sender: TObject);
+begin
+  if (FCell.x > StringGrid1.FixedCols) and (FCell.y > StringGrid1.FixedRows) then begin
+
+  end;
+  //StringGrid1.cur;
+end;
+
+procedure TForm3.StringGrid1Selection(Sender: TObject; aCol, aRow: Integer);
+begin
+  FCell  := Point(aCol, ARow);
+  //caption := format('%d, %d', [aCol, aRow]);
+end;
 
 
 
@@ -159,6 +228,16 @@ begin
   FSyns[5] := SynPythonSyn1;
   FSyns[6] := SynXMLSyn1;
   FSyns[7] := SynJScriptSyn1;
+
+  for i := 0 to 7 do
+      self.FRecords[i] := nil;
+  FRecords[0] := TypeInfo(SynHighlighterPas.TPascalCodeFoldBlockType);
+  FRecords[1] := TypeInfo(OriSynHighlighterPas.TPascalCodeFoldBlockType);
+  FRecords[2] := TypeInfo(TLfmCodeFoldBlockType);
+
+  FRecords[6] := TypeInfo(TXmlCodeFoldBlockType);
+  FRecords[7] := TypeInfo(TJScriptFoldBlockType);
+
 
   for i := 0 to Pred(self.PageControl1.PageCount) do
   begin

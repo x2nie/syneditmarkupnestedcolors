@@ -32,6 +32,7 @@ uses
   typinfo,
   SynHighlighterJScript,
   //SynHighlighterMiniPas2,
+  SynHighlighterLFM,
   OriSynHighlighterPas,
   SynHighlighterPas;
   //SynColorFoldHighlighter;
@@ -196,6 +197,12 @@ var
                   begin
                     p := TmpNode.FoldType;
                     ty   := copy( GetEnumName(TypeInfo(TJScriptFoldBlockType), PtrUint(p) ), 4,100) ;
+                  end
+                  else
+                  if TSynCustomFoldHighlighter(HL) is TSynLFMSyn then
+                  begin
+                    p := TmpNode.FoldType;
+                    ty   := copy( GetEnumName(TypeInfo(TLfmCodeFoldBlockType), PtrUint(p) ), 8,100) ;
                   end;
                   s := s + Format('%10s %s..%s,%s', [oc+ ty, x1,x2, IntToStr(y)])
                   //s := s + Format('%s ', [oc+ ty])
@@ -382,7 +389,7 @@ constructor TSynGutterFoldDebug.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   AutoSize := False;
-  Width := 600;//PreferedWidth;
+  Width := 500;//PreferedWidth;
 end;
 
 procedure TSynGutterFoldDebug.Paint(Canvas: TCanvas; AClip: TRect; FirstLine,
