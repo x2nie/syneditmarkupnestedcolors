@@ -8,7 +8,6 @@ interface
 uses
   Classes, SysUtils, FileUtil, SynEdit, Forms, Controls,
   Graphics, Dialogs, ExtCtrls, ComCtrls, StdCtrls, Grids,
-  TypInfo,
   SynEditHighlighterFoldBase,
   SynEditMarkupWordGroup,
   SynEditHighlighter,
@@ -19,7 +18,8 @@ uses
   SynHighlighterPython,
   SynHighlighterHTML,
   SynHighlighterXML,
-  SynHighlighterJScript, SynEditTypes;
+  SynHighlighterJScript, SynEditTypes,
+  TypInfo;
 
 const
   MaxArray = 7;
@@ -267,6 +267,7 @@ begin
     S.LineHighlightColor.Background:=panel1.Color;
 
     S.Lines.LoadFromFile('demo.'+ F[i]);
+    S.AfterLoadFromFile();
 
     S.OnStatusChange:= @SynEditStatusChange;
 
@@ -330,7 +331,8 @@ procedure TForm3.CaretChanged(LogCaret: TPoint);
     hl : TSynCustomFoldHighlighter;
     TmpNode: TSynFoldNodeInfo;
     NodeList: TLazSynFoldNodeInfoList;
-    y,i,c : integer;
+    y,i,c,j : integer;
+    p : pointer;
   begin
     if not (FSyns[Current] is TSynCustomFoldHighlighter) then
        exit;
@@ -364,17 +366,18 @@ procedure TForm3.CaretChanged(LogCaret: TPoint);
         exit;
       end;
 
-      StatusBar1.Panels[1].Text :=  GetEnumName(TypeInfo(TPascalCodeFoldBlockType), PtrUint(TmpNode.FoldType) ); // inttostr(TmpNode.FoldGroup);
+      p := TmpNode.FoldType;
+      StatusBar1.Panels[1].Text :=  GetEnumName(TypeInfo(SynHighlighterPas.TPascalCodeFoldBlockType), ptrUint(p) ); // inttostr(TmpNode.FoldGroup);
       StatusBar1.Panels[2].Text := SetToString(PTypeInfo(TypeInfo(TSynFoldActions)), integer( TmpNode.FoldAction), true);
 
-      if (i < c) then
+      if (i+1 < c) then
       begin
         inc(i);
-        TmpNode := NodeList[i];
+        {TmpNode := NodeList[i];
         if not (sfaInvalid in TmpNode.FoldAction) then begin
-          StatusBar2.Panels[1].Text := GetEnumName(TypeInfo(TPascalCodeFoldBlockType), PtrUint(TmpNode.FoldType) );
+          StatusBar2.Panels[1].Text := GetEnumName(TypeInfo(SynHighlighterPas.TPascalCodeFoldBlockType), Ptrint(TmpNode.FoldType) );
           StatusBar2.Panels[2].Text := SetToString(PTypeInfo(TypeInfo(TSynFoldActions)), integer( TmpNode.FoldAction), true);
-        end;
+        end;}
       end;
     finally
       NodeList.ReleaseReference;
