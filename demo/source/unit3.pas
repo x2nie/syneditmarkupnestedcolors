@@ -33,6 +33,8 @@ type
 
   TForm3 = class(TForm)
     btnConfig: TButton;
+    btnOpen: TButton;
+    OpenDialog1: TOpenDialog;
     PageControl1: TPageControl;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -54,6 +56,8 @@ type
     TabSheet6: TTabSheet;
     TabSheet7: TTabSheet;
     TabSheet8: TTabSheet;
+    procedure btnConfigClick(Sender: TObject);
+    procedure btnOpenClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure SynEditStatusChange(Sender: TObject; Changes: TSynStatusChanges);
     procedure PageControl1Change(Sender: TObject);
@@ -141,6 +145,18 @@ begin
   //LeaveOnly(SynEditLFM);
   //LeaveOnly(SynEditMiniPas);
 
+end;
+
+procedure TForm3.btnConfigClick(Sender: TObject);
+begin
+
+end;
+
+procedure TForm3.btnOpenClick(Sender: TObject);
+begin
+  OpenDialog1.Filter:= FSyns[self.Current].DefaultFilter;
+  if OpenDialog1.Execute then
+     FSynEdits[Current].Lines.LoadFromFile(OpenDialog1.FileName);
 end;
 
 procedure TForm3.SynEditStatusChange(Sender: TObject;
@@ -245,9 +261,10 @@ begin
     s := FSynEdits[i];
     s.Parent := PageControl1.Page[i];
     s.Align:= alClient;
-    S.Lines.LoadFromFile('demo.'+ F[i]);
     s.Highlighter := FSyns[i];
     S.LineHighlightColor.Background:=panel1.Color;
+
+    S.Lines.LoadFromFile('demo.'+ F[i]);
 
     S.OnStatusChange:= @SynEditStatusChange;
 

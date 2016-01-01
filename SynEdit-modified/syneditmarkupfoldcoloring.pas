@@ -120,7 +120,7 @@ uses
   SynEdit,SynEditTypes, SynEditFoldedView, SynEditMiscProcs,
   LazSynEditNestedFoldsList;
 
-  {%region Sorting FoldInfo /fold}
+  {%region Sorting FoldInfo -fold}
   function CompareFI(Item1, Item2: Pointer): Integer;
   begin
     result := PMarkupFoldColorInfo(Item1)^.X - PMarkupFoldColorInfo(Item2)^.X;

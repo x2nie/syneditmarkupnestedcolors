@@ -2755,7 +2755,7 @@ var
       self.InProcLevel := ProcDept;
     end
     else
-      StartCustomCodeFoldBlock(ABlockType);
+      EndCustomCodeFoldBlock(ABlockType);
 
     inc(Run);
   end;

@@ -91,6 +91,8 @@ Procedure First (n : longint);
 begin
   WriteLn ('First received : ',n);
 end;
+
+{%region 'Trial IFDEF vs nested procedures' -fold}
   
 // Not a bug anymore:
 {$IFDEF BCB}
@@ -144,6 +146,8 @@ procedure TBitmap32.Draw(const DstRect, SrcRect: TRect; hSrc: Cardinal);
 {$ENDIF}
 begin
 end;   
+
+{%endregion}
 
 procedure TBitmap32.DrawTo(hDst: {$IFDEF BCB}Cardinal{$ELSE}HDC{$ENDIF}; DstX, DstY: Integer);
 begin
