@@ -2768,7 +2768,7 @@ var
       lrun := run; run := 0;
       llen := fStringLen; fStringLen:=0;
       for i := 0 to InIfdefProcsMade-1 do
-        EndPascalCodeFoldBlock;
+        EndPascalCodeFoldBlockLastLine;
       run := lrun; fStringLen:=llen;
 
       dec(Run);
