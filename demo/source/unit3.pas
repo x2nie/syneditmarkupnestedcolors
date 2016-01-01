@@ -39,8 +39,10 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
+    Panel4: TPanel;
     StatusBar1: TStatusBar;
     Splitter1: TSplitter;
+    StatusBar2: TStatusBar;
     StringGrid1: TStringGrid;
     SynFreePascalSyn1: TSynFreePascalSyn;
     SynHTMLSyn1: TSynHTMLSyn;
@@ -330,7 +332,8 @@ procedure TForm3.CaretChanged(LogCaret: TPoint);
     NodeList: TLazSynFoldNodeInfoList;
     y,i,c : integer;
   begin
-    if not (FSyns[Current] is TSynCustomFoldHighlighter) then exit;
+    if not (FSyns[Current] is TSynCustomFoldHighlighter) then
+       exit;
     hl := TSynCustomFoldHighlighter(FSyns[Current]);
     y := LogCaret.Y - 1;
     //LCnt := Lines.Count;
@@ -344,6 +347,8 @@ procedure TForm3.CaretChanged(LogCaret: TPoint);
     i := 0;
     NodeList := HL.FoldNodeInfo[y];
     NodeList.AddReference;
+    StatusBar2.Panels[1].Text := '-';
+    StatusBar2.Panels[2].Text := '-';
     c := NodeList.Count;
     try
       NodeList.ActionFilter := [];// [sfaMarkup];
@@ -359,9 +364,18 @@ procedure TForm3.CaretChanged(LogCaret: TPoint);
         exit;
       end;
 
-      StatusBar1.Panels[1].Text := inttostr(TmpNode.FoldGroup);
+      StatusBar1.Panels[1].Text :=  GetEnumName(TypeInfo(TPascalCodeFoldBlockType), PtrUint(TmpNode.FoldType) ); // inttostr(TmpNode.FoldGroup);
       StatusBar1.Panels[2].Text := SetToString(PTypeInfo(TypeInfo(TSynFoldActions)), integer( TmpNode.FoldAction), true);
 
+      if (i < c) then
+      begin
+        inc(i);
+        TmpNode := NodeList[i];
+        if not (sfaInvalid in TmpNode.FoldAction) then begin
+          StatusBar2.Panels[1].Text := GetEnumName(TypeInfo(TPascalCodeFoldBlockType), PtrUint(TmpNode.FoldType) );
+          StatusBar2.Panels[2].Text := SetToString(PTypeInfo(TypeInfo(TSynFoldActions)), integer( TmpNode.FoldAction), true);
+        end;
+      end;
     finally
       NodeList.ReleaseReference;
     end;
