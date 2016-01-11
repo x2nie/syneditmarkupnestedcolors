@@ -366,18 +366,20 @@ procedure TForm3.CaretChanged(LogCaret: TPoint);
         exit;
       end;
 
-      p := TmpNode.FoldType;
-      StatusBar1.Panels[1].Text :=  GetEnumName(TypeInfo(SynHighlighterPas.TPascalCodeFoldBlockType), ptrUint(p) ); // inttostr(TmpNode.FoldGroup);
+      j := PtrUint(TmpNode.FoldType);
+      if j <= ord(high(TPascalCodeFoldBlockType)) then
+         StatusBar1.Panels[1].Text :=  GetEnumName(TypeInfo(SynHighlighterPas.TPascalCodeFoldBlockType), j );
+          //} inttostr(TmpNode.FoldGroup);
       StatusBar1.Panels[2].Text := SetToString(PTypeInfo(TypeInfo(TSynFoldActions)), integer( TmpNode.FoldAction), true);
 
       if (i+1 < c) then
       begin
         inc(i);
-        {TmpNode := NodeList[i];
+        TmpNode := NodeList[i];
         if not (sfaInvalid in TmpNode.FoldAction) then begin
           StatusBar2.Panels[1].Text := GetEnumName(TypeInfo(SynHighlighterPas.TPascalCodeFoldBlockType), Ptrint(TmpNode.FoldType) );
           StatusBar2.Panels[2].Text := SetToString(PTypeInfo(TypeInfo(TSynFoldActions)), integer( TmpNode.FoldAction), true);
-        end;}
+        end;
       end;
     finally
       NodeList.ReleaseReference;
