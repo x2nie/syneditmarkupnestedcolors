@@ -332,7 +332,7 @@ type
     procedure EndCodeFoldBlock(DecreaseLevel: Boolean = True); virtual;
     procedure CollectNodeInfo(FinishingABlock : Boolean; ABlockType: Pointer;
               LevelChanged: Boolean); virtual;
-    procedure DoInitNode(var Node: TSynFoldNodeInfo;
+    procedure DoInitNode(out Node: TSynFoldNodeInfo;
                        FinishingABlock: Boolean;
                        ABlockType: Pointer; aActions: TSynFoldActions;
                        AIsFold: Boolean); virtual;
@@ -1194,7 +1194,6 @@ begin
     else
     if not BlockConfExists then
       act := act + [sfaFold,sfaFoldFold, sfaMarkup, sfaOutline];
-    DoInitNode(nd, FinishingABlock, ABlockType, act, LevelChanged);
   end
   else
   //Finish
@@ -1206,9 +1205,9 @@ begin
     if not BlockConfExists then
       act := act + [sfaFold, sfaFoldFold, sfaMarkup, sfaOutline];
     act := act - [sfaFoldFold, sfaFoldHide]; // it is closing tag
-    DoInitNode(nd, FinishingABlock, ABlockType, act, LevelChanged);
   end;
 
+  DoInitNode(nd, FinishingABlock, ABlockType, act, LevelChanged);
   FCollectingNodeInfoList.Add(nd);
 end;
 

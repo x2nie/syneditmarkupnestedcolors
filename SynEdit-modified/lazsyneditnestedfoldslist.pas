@@ -30,7 +30,7 @@ uses
   SynEditHighlighter, SynEditHighlighterFoldBase, SynEditFoldedView;
 
 type
-    TLazSynEditNestedFoldsListEntry = record
+  TLazSynEditNestedFoldsListEntry = record
     FFLags: set of (nfeHasHNode, nfeMaxPrevReached);
     FGroupEndLevels: Array of Integer;
     //OpenCount: Integer;

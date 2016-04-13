@@ -132,13 +132,8 @@ begin
   j := 0;
   for i := 0 to FCurFoldInfo.Count - 1 do begin
     if Hl.FoldConfig[FCurFoldInfo.Info^[i].Index].SupportedModes * [fmFold, fmHide] <> [] then begin
-      {Hl.FoldConfig[FCurFoldInfo.Info^[i].Index].Enabled
-        := FoldConfigCheckListBox.Checked[j];}
-      with Hl.FoldConfig[FCurFoldInfo.Info^[i].Index] do begin
-        Modes :=  Modes - [fmFold, fmHide];
-        if FoldConfigCheckListBox.Checked[j] then
-          Modes := Modes + (SupportedModes * [fmFold, fmHide]);
-      end;
+      Hl.FoldConfig[FCurFoldInfo.Info^[i].Index].Enabled
+        := FoldConfigCheckListBox.Checked[j];
       inc(j);
     end;
   end;

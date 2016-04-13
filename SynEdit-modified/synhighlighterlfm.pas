@@ -27,7 +27,7 @@ replace them with the notice and other provisions required by the GPL.
 If you do not delete the provisions above, a recipient may use your version
 of this file under either the MPL or the GPL.
 
-$Id: synhighlighterlfm.pas 49091 2015-05-18 20:43:25Z martin $
+$Id: synhighlighterlfm.pas 52180 2016-04-12 23:01:29Z martin $
 
 You may retrieve the latest version of this file at the SynEdit home page,
 located at http://SynEdit.SourceForge.net
@@ -262,6 +262,10 @@ function TSynLFMSyn.GetFoldConfigInstance(Index: Integer): TSynCustomFoldConfig;
 begin
   Result := inherited GetFoldConfigInstance(Index);
   Result.Enabled := True;
+  if TLfmCodeFoldBlockType(Index) in [cfbtLfmObject, cfbtLfmList, cfbtLfmItem] then begin
+    Result.SupportedModes := Result.SupportedModes + [fmMarkup];
+    Result.Modes := Result.Modes + [fmMarkup];
+  end;
 end;
 
 constructor TSynLFMSyn.Create(AOwner: TComponent);

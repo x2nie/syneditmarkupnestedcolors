@@ -1,11 +1,11 @@
 object Form3: TForm3
-  Left = 465
-  Height = 553
-  Top = 151
-  Width = 847
+  Left = 141
+  Height = 539
+  Top = 106
+  Width = 788
   Caption = 'Form3'
-  ClientHeight = 553
-  ClientWidth = 847
+  ClientHeight = 539
+  ClientWidth = 788
   OnCreate = FormCreate
   LCLVersion = '1.7'
   Visible = True
@@ -13,12 +13,12 @@ object Form3: TForm3
   object Panel1: TPanel
     Left = 0
     Height = 86
-    Top = 467
-    Width = 847
+    Top = 453
+    Width = 788
     Align = alBottom
     Caption = 'Panel1'
     ClientHeight = 86
-    ClientWidth = 847
+    ClientWidth = 788
     Color = 9830346
     ParentColor = False
     TabOrder = 0
@@ -38,11 +38,11 @@ object Form3: TForm3
     Left = 0
     Height = 32
     Top = 0
-    Width = 847
+    Width = 788
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 32
-    ClientWidth = 847
+    ClientWidth = 788
     TabOrder = 1
     object btnConfig: TButton
       Left = 35
@@ -64,8 +64,8 @@ object Form3: TForm3
     end
   end
   object StringGrid1: TStringGrid
-    Left = 465
-    Height = 435
+    Left = 406
+    Height = 421
     Top = 32
     Width = 382
     Align = alRight
@@ -100,8 +100,8 @@ object Form3: TForm3
     OnSelection = StringGrid1Selection
   end
   object Splitter1: TSplitter
-    Left = 460
-    Height = 435
+    Left = 401
+    Height = 421
     Top = 32
     Width = 5
     Align = alRight
@@ -109,19 +109,19 @@ object Form3: TForm3
   end
   object Panel4: TPanel
     Left = 0
-    Height = 435
+    Height = 421
     Top = 32
-    Width = 460
+    Width = 401
     Align = alClient
     Caption = 'Panel4'
-    ClientHeight = 435
-    ClientWidth = 460
+    ClientHeight = 421
+    ClientWidth = 401
     TabOrder = 4
     object StatusBar1: TStatusBar
       Left = 1
-      Height = 23
-      Top = 388
-      Width = 458
+      Height = 20
+      Top = 380
+      Width = 399
       Panels = <      
         item
           Alignment = taCenter
@@ -137,9 +137,9 @@ object Form3: TForm3
     end
     object PageControl1: TPageControl
       Left = 1
-      Height = 387
+      Height = 379
       Top = 1
-      Width = 458
+      Width = 399
       TabStop = False
       ActivePage = TabSheet1
       Align = alClient
@@ -173,9 +173,9 @@ object Form3: TForm3
     end
     object StatusBar2: TStatusBar
       Left = 1
-      Height = 23
-      Top = 411
-      Width = 458
+      Height = 20
+      Top = 400
+      Width = 399
       Panels = <      
         item
           Alignment = taCenter

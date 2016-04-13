@@ -12,13 +12,14 @@ uses
   SynEditMarkupWordGroup,
   SynEditHighlighter,
   //SynHighlighterMiniPas2,//must before original
-  OriSynHighlighterPas, //must before PAS
+  //OriSynHighlighterPas, //must before PAS
   SynHighlighterPas,
   SynHighlighterLFM,
   SynHighlighterPython,
   SynHighlighterHTML,
   SynHighlighterXML,
-  SynHighlighterJScript, SynEditTypes,
+  SynHighlighterJScript,
+  SynEditTypes,
   TypInfo;
 
 const
@@ -113,14 +114,14 @@ begin
    // FoldConfig[ord(cfbtIfThen)].SupportedModes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
   //  FoldConfig[ord(cfbtIfThen)].Modes:=[fmFold, fmMarkup, fmOutline]; //.Enabled := True;
     FoldConfig[ord(cfbtIfThen)].Modes:= FoldConfig[ord(cfbtIfThen)].Modes + [fmMarkup]  - [fmFold];//;//
-
+{
     FoldConfig[ord(cfbtForDo)].Enabled := True;
     FoldConfig[ord(cfbtForDo)].Modes:= FoldConfig[ord(cfbtForDo)].Modes + [fmMarkup]  - [fmFold];//;//
 
 
     FoldConfig[ord(cfbtWithDo)].Enabled := True;
     FoldConfig[ord(cfbtWhileDo)].Enabled := True;
-
+ }
 
   end;
 
@@ -239,7 +240,7 @@ var i : integer;
   Pan : TPanel;
 begin
   FSyns[0] := SynFreePascalSyn1;
-  FSyns[1] := OriSynHighlighterPas.TSynFreePascalSyn.Create(self);
+  FSyns[1] := nil;//OriSynHighlighterPas.TSynFreePascalSyn.Create(self);
   FSyns[2] := SynLFMSyn1;
   FSyns[3] := TSynDemoHlFold.Create(self);
   FSyns[4] := TSynHighlighterBracket.Create(self);
@@ -250,7 +251,7 @@ begin
   for i := 0 to 7 do
       self.FRecords[i] := nil;
   FRecords[0] := TypeInfo(SynHighlighterPas.TPascalCodeFoldBlockType);
-  FRecords[1] := TypeInfo(OriSynHighlighterPas.TPascalCodeFoldBlockType);
+  FRecords[1] := nil;//TypeInfo(OriSynHighlighterPas.TPascalCodeFoldBlockType);
   FRecords[2] := TypeInfo(TLfmCodeFoldBlockType);
 
   FRecords[6] := TypeInfo(TXmlCodeFoldBlockType);
@@ -259,6 +260,7 @@ begin
 
   for i := 0 to Pred(self.PageControl1.PageCount) do
   begin
+    if FSyns[i] = nil then continue;
     FSynEdits[i] := TSynEdit.Create(self);
     s := FSynEdits[i];
     s.Parent := PageControl1.Page[i];

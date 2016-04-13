@@ -41,7 +41,7 @@ interface
 {$ENDIF}
 
 {$I ide.inc}
-{$define WithSynDebugGutter}
+
 uses
   {$IFDEF WinIME}
   LazSynIMM,
@@ -57,9 +57,6 @@ uses
   SynPluginTemplateEdit, SynPluginSyncroEdit, LazSynTextArea, SynEditHighlighter,
   SynEditHighlighterFoldBase, SynHighlighterPas, SynEditMarkupHighAll, SynEditKeyCmds,
   SynEditMarkupIfDef, SynEditMiscProcs, SynPluginMultiCaret, SynEditPointClasses,
-  {$IFDEF WithSynDebugGutter}
-  SynEditMouseCmds,
-  {$endif}
   etSrcEditMarks, LazarusIDEStrConsts;
 
 type
@@ -467,9 +464,7 @@ type
 
 implementation
 
-uses SourceMarks,
-  SynEditMarkupFoldColoring//x2nie
-  ;
+uses SourceMarks;
 
 { TSourceSynSearchTermDict }
 
@@ -988,15 +983,9 @@ begin
       if i > 0 then begin
         r := TSynPasSynRange(RngLst.Range[iLine-1]);
         s:= format('%2d %2d %2d  %2d %2d %2d ',
-        {$ifdef PASFOLD}
                    [r.PasFoldEndLevel, r.PasFoldMinLevel, r.PasFoldFixLevel,
                     r.CodeFoldStackSize, r.MinimumCodeFoldBlockLevel, r.LastLineCodeFoldLevelFix
                    ]
-        {$else}
-                  [r.CodeFoldStackSize, r.MinimumCodeFoldBlockLevel, r.PasFoldFixLevel,
-                   r.NestFoldStackSize, r.MinimumNestFoldBlockLevel, r.LastLineCodeFoldLevelFix
-                  ]
-        {$endif}
                   );
       end
       else
@@ -1651,9 +1640,6 @@ begin
 end;
 
 constructor TIDESynEditor.Create(AOwner: TComponent);
-var
-  M : TSynEditMarkupFoldColors;
-
 begin
   inherited Create(AOwner);
   FUserWordsList := TFPList.Create;
@@ -1668,12 +1654,6 @@ begin
 
   FMarkupForGutterMark := TSynEditMarkupGutterMark.Create(Self, FWordBreaker);
   TSynEditMarkupManager(MarkupMgr).AddMarkUp(FMarkupForGutterMark);
-
-  M := TSynEditMarkupFoldColors.Create(Self);
-  //M.DefaultGroup := 0;
-  TSynEditMarkupManager(MarkupMgr).AddMarkUp(M);
-
-
 
   FMarkupIfDef := TSourceSynEditMarkupIfDef.Create(Self);
   FMarkupIfDef.FoldView := TSynEditFoldedView(FoldedTextBuffer);
@@ -1786,8 +1766,8 @@ end;
 function TIDESynPasSyn.StartCodeFoldBlock(ABlockType: Pointer;
   IncreaseLevel: Boolean): TSynCustomCodeFoldBlock;
 begin
-  if (ABlockType = Pointer(PtrUInt(cfbtUnitSection))) or
-     (ABlockType = Pointer(PtrUInt(cfbtUnitSection)) + {%H-}PtrUInt(CountPascalCodeFoldBlockOffset))
+  if (ABlockType = Pointer(PtrUInt(cfbtUnitSection))) {or
+     (ABlockType = Pointer(PtrUInt(cfbtUnitSection)) + {%H-}PtrUInt(CountPascalCodeFoldBlockOffset))}
   then begin
     if KeyComp('Interface') then
       TIDESynHighlighterPasRangeList(CurrentRanges).FInterfaceLine := LineIndex  + 1;

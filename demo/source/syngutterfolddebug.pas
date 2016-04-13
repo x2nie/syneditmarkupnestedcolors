@@ -15,7 +15,7 @@ type
   TSynGutterFoldDebug = class(TSynGutterPartBase)
   private
     procedure PaintFoldLvl(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer);
-    procedure PaintPasFoldLvl(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer);
+    //procedure PaintPasFoldLvl(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer);
     //procedure PaintColorFoldLvl(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer);
     function GetFoldHighLighter: TSynCustomFoldHighlighter;
   public
@@ -33,7 +33,7 @@ uses
   SynHighlighterJScript,
   //SynHighlighterMiniPas2,
   SynHighlighterLFM,
-  OriSynHighlighterPas,
+  //OriSynHighlighterPas,
   SynHighlighterPas;
   //SynColorFoldHighlighter;
 
@@ -42,7 +42,7 @@ type
   TSynCustomFoldHighlighterAccess = class(TSynCustomFoldHighlighter);
   TSynPasSynAccess = class(SynHighlighterPas.TSynPasSyn);
   //TSynMiniPasSynAccess = class(SynHighlighterMiniPas2.TSynPasSyn);
-  TSynOriPasSynAccess = class(OriSynHighlighterPas.TSynPasSyn);
+  //TSynOriPasSynAccess = class(OriSynHighlighterPas.TSynPasSyn);
 
 
 
@@ -137,13 +137,13 @@ var
         begin
           //j:=SynHighlighterMiniPas2.TSynHighlighterPasRangeList(TSynMiniPasSynAccess(HL).CurrentRanges).PasRangeInfo[y].EndLevelIfDef;
           //InProc := inttostr(j)+' ';
-          InProc := {InProc +} inttostr(TSynPasSynAccess(HL).InProcLevel) + ' ';
+       {   InProc := {InProc +} inttostr(TSynPasSynAccess(HL).InProcLevel) + ' ';
 
           if TSynPasSynAccess(HL).InProcNeck then
             InProc := InProc + 'T '
           else
             InProc := InProc + '. ';
-
+        }
           {if TSynMiniPasSynAccess(HL).IsProcedureNeckInRange then
             InProc := InProc + 'R '
           else
@@ -182,7 +182,7 @@ var
                   else oc := '?~';
                   ty := '';
                   if TSynCustomFoldHighlighter(HL) is TSynPasSyn
-                  or TSynCustomFoldHighlighter(HL) is OriSynHighlighterPas.TSynPasSyn
+                  //or TSynCustomFoldHighlighter(HL) is OriSynHighlighterPas.TSynPasSyn
                   then
                   begin
                     p := TmpNode.FoldType;
@@ -241,7 +241,7 @@ var
 
 end;
 
-procedure TSynGutterFoldDebug.PaintPasFoldLvl(Canvas: TCanvas; AClip: TRect;
+{procedure TSynGutterFoldDebug.PaintPasFoldLvl(Canvas: TCanvas; AClip: TRect;
   FirstLine, LastLine: integer);
 var
   TextDrawer: TheTextDrawer;
@@ -312,7 +312,7 @@ begin
     TextDrawer.EndDrawing;
   end;
 
-end;
+end; }
 
 function TSynGutterFoldDebug.GetFoldHighLighter: TSynCustomFoldHighlighter;
 begin
@@ -402,8 +402,8 @@ begin
   {if TCustomSynEdit(self.SynEdit).Highlighter is TSynColorFoldHighlighter then //higher checked first
     PaintColorFoldLvl(Canvas, AClip, FirstLine, LastLine)
   else}
-  if TCustomSynEdit(self.SynEdit).Highlighter is OriSynHighlighterPas.TSynPasSyn then //lower
-    PaintPasFoldLvl(Canvas, AClip, FirstLine, LastLine)  else
+  {if TCustomSynEdit(self.SynEdit).Highlighter is OriSynHighlighterPas.TSynPasSyn then //lower
+    PaintPasFoldLvl(Canvas, AClip, FirstLine, LastLine)  else}
     PaintFoldLvl(Canvas, AClip, FirstLine, LastLine);
 end;
 

@@ -52,6 +52,10 @@ resourcestring
   lisChange  = 'Change';
   lisDelete  = 'Delete';
   lisBtnDelete = '&Delete';
+  lisMenuEditorGroupIndexValueSS = 'GroupIndex value(s): %s';
+  lisMenuEditorNoRadioitemsInThisMenu = 'No radioitems in this menu';
+  lisMenuEditorSGroupIndexD = '%s.GroupIndex: %d';
+  lisMenuEditorSIsNotARadioitem = '%s is not a radioitem';
   lisRemove = 'Remove';
   lisBtnRemove = '&Remove';
   lisRename = 'Rename';
@@ -247,7 +251,7 @@ resourcestring
   lisKMPublishProject = 'Publish project';
   lisOpenTheFileAsNormalSource = 'Open the file as normal source';
   lisOpenAsXmlFile = 'Open as XML file';
-  lisAnErrorOccuredAtLastStartupWhileLoadingLoadThisPro = 'An error occured '
+  lisAnErrorOccuredAtLastStartupWhileLoadingLoadThisPro = 'An error occurred '
     +'at last startup while loading %s!'
     +'%sLoad this project again?';
   lisOpenProjectAgain = 'Open project again';
@@ -1954,9 +1958,6 @@ resourcestring
   dlgFoldPasProcBeginEnd    = 'Begin/End (procedure)';
   dlgFoldPasNestedComment   = 'Nested Comment';
   dlgFoldPasIfThen          = 'If/Then/Else';
-  dlgFoldPasForDo           = 'For/Do';
-  dlgFoldPasWhileDo         = 'While/Do';
-  dlgFoldPasWithDo          = 'With/Do';
   dlgFoldPasProcedure       = 'Procedure';
   dlgFoldPasUses            = 'Uses';
   dlgFoldPasVarType         = 'Var/Type (global)';
@@ -3850,10 +3851,10 @@ resourcestring
   lisProjAddInvalidVersion = 'Invalid version';
   lisProjAddTheMinimumVersionIsInvalid = 'The Minimum Version "%s" is invalid.'
     +'%sPlease use the format major.minor.release.build'
-    +'%sFor exmaple: 1.0.20.10';
+    +'%sFor example: 1.0.20.10';
   lisProjAddTheMaximumVersionIsInvalid = 'The Maximum Version "%s" is invalid.'
     +'%sPlease use the format major.minor.release.build'
-    +'%sFor exmaple: 1.0.20.10';
+    +'%sFor example: 1.0.20.10';
   lisProjAddInvalidPascalUnitName = 'Invalid Pascal unit name';
   lisProjAddTheUnitNameIsNotAValidPascalIdentifier = 'The unit name "%s" is '
     +'not a valid Pascal identifier.';
@@ -4663,26 +4664,17 @@ resourcestring
   lisSuccessfullyExported = 'Successfully exported to "%s".';
 
   // menu editor
-  lisMenuEditor = 'Menu Editor ...';
   lisMenuEditorMenuEditor = 'Menu Editor';
-  lisMenuEditorAcceleratorKeySNeedsChanging = 'Accelerator(&&) key "%s" needs changing ';
-  lisMenuEditorAComponentWithNameExists = 'A component with the name %s already exists';
+  lisMenuEditorAcceleratorKeySNeedsChanging = 'Accelerator(&&) key "%s" needs changing';
   lisMenuEditorAddANewItemAboveSelectedItem = 'Add a new item above selected item';
   lisMenuEditorAddANewItemAfterSelectedItem = 'Add a new item after selected item';
   lisMenuEditorAddANewItemBeforeSelectedItem = 'Add a new item before selected item';
   lisMenuEditorAddANewItemBelowSelectedItem = 'Add a new item below selected item';
-  lisMenuEditorAddAnIconFromTheMenuSImageList = 'Add an icon from the menu''s ImageList';
-  lisMenuEditorAddAnOnClickEventToSelectedItem = 'Add an OnClick event to selected item';
-  lisMenuEditorAddASeparatorAfterSelectedItem = 'Add a separator after selected item';
-  lisMenuEditorAddASeparatorBeforeSelectedItem = 'Add a separator before selected item';
   lisMenuEditorAddASubmenuAtTheRightOfSelectedItem = 'Add a submenu at the right of selected item';
   lisMenuEditorAddASubmenuBelowSelectedItem = 'Add a submenu below selected item';
   lisMenuEditorAddFromTemplate = '&Add from template ...';
   lisMenuEditorAddIconFromS = 'Add icon from %s';
-  lisMenuEditorAddIconFromS2 = 'Add icon from %s ...';
   lisMenuEditorAddImagelistIcon = 'Add imagelist &icon';
-  lisMenuEditorAddImagelistIcon2 = 'Add imagelist icon';
-  lisMenuEditorAddItemsOneByOne = 'Add items one by one';
   lisMenuEditorAddNewItemAbove = '&Add new item above';
   lisMenuEditorAddNeWItemAfter = 'Add ne&w item after';
   lisMenuEditorAddNewItemBefore = '&Add new item before';
@@ -4704,11 +4696,8 @@ resourcestring
     '&Licence Information,,&Check for Updates,,-,,&About,,';
   lisMenuEditorBasicWindowMenuTemplate = '&Window,Basic window menu,' +
     '&New Window,,&Tile,,&Cascade,,&Arrange all,,-,,&Hide,,&Show,,';
-  lisMenuEditorCancelDeletion = 'Cancel deletion';
   lisMenuEditorCaption = 'Caption';
-  lisMenuEditorCaptionCannotBeBlank = 'Caption cannot be blank';
-  lisMenuEditorCaptionedItemsD = 'Captioned items: %d';
-  lisMenuEditorCaptionedItemsNA = 'Captioned items: n/a';
+  lisMenuEditorCaptionedItemsS = 'Captioned items: %s';
   lisMenuEditorCaptionShouldNotBeBlank = 'Caption should not be blank';
   lisMenuEditorChangeConflictingAcceleratorS = 'Change conflicting accelerator "%s"';
   lisMenuEditorChangeImagelistIcon = 'Change imagelist &icon';
@@ -4716,44 +4705,26 @@ resourcestring
   lisMenuEditorChangeShortcutConflictS = 'Change shortcut conflict "%s"';
   lisMenuEditorChangeTheShortCutForS = 'Change the shortCut for %s';
   lisMenuEditorChangeTheShortCutKey2ForS = 'Change the shortCutKey2 for %s';
-  lisMenuEditorCheckMarkAndRadioItemProps = '%s "%s" - Check mark and RadioItem properties';
-  lisMenuEditorCheckmarkRadioitem = 'Checkmark && &radioitem ...';
-  lisMenuEditorChooseTemplateToDelete = 'Choose template to delete';
   lisMenuEditorChooseTemplateToInsert = 'Choose template to insert';
+  lisMenuEditorChooseTemplateToDelete = 'Choose template to delete';
   lisMenuEditorClickANonGreyedItemToEditItsShortcut = 'Click a non-greyed item '
-    +'to edit its shortcut';
-  lisMenuEditorClose = '&Close';
+    +'to edit its shortcut or click header to sort by that column';
   lisMenuEditorComponentIsUnexpectedKind = 'Component is unexpected kind';
-  lisMenuEditorComponentIsUnnamed = 'component is unnamed';
+  lisMenuEditorComponentIsUnnamed = 'Component is unnamed';
   lisMenuEditorConflictResolutionComplete = '<conflict resolution complete>';
   lisMenuEditorDDItems = '%d (%d items)';
-  lisMenuEditorDeepestNestedMenuLevelD = 'Deepest nested menu level: %d';
-  lisMenuEditorDeepestNestedMenuLevelNA = 'Deepest nested menu level: n/a';
-  lisMenuEditorDeleteAllSubitems = 'Delete all subitems';
   lisMenuEditorDeleteItem = '&Delete item';
+  lisMenuEditorDeepestNestedMenuLevelS = 'Deepest nested menu level: %s';
   lisMenuEditorDeleteMenuTemplate = '&Delete menu template ...';
-  lisMenuEditorDeletePreviouslySavedMenuTemplate = 'Delete previously saved menu template';
   lisMenuEditorDeleteSavedMenuTemplate = 'Delete saved menu template';
   lisMenuEditorDeleteSelectedMenuTemplate = 'Delete selected menu template';
-  lisMenuEditorDeleteTheSelecteditem = 'Delete the selected item';
   lisMenuEditorDeleteThisItemAndItsSubitems = 'Delete this item and its subitems?';
-  lisMenuEditorDeletingItemWithASubmenu = 'Deleting item with a submenu';
-  lisMenuEditorDeletingThisItemWillDeleteAllSubitemsToo = 'Deleting this item '
-    +'will delete all subitems too.';
-  lisMenuEditorDiscoverAndResolveAnyConflictingShortcuts = 'Discover and '
-    +'resolve any conflicting shortcuts';
-  lisMenuEditorDisplayAListOfBothShortcutsAndAcceleratorKeys = 'Display a list '
-    +'of both shortcuts and accelerator keys';
-  lisMenuEditorDisplayAListOfMenuitemShortcuts = 'Display a list of menuitem shortcuts';
   lisMenuEditorDisplayPreviewAsPopupMenu = 'Display preview as &Popup menu';
-  lisMenuEditorDoYouWantToAddMenuItemsOneByOne = 'Do you want to add menu items one by one,';
   lisMenuEditorEditCaption = 'Edit &Caption';
   lisMenuEditorEditingCaptionOfS = 'Editing Caption of %s';
   lisMenuEditorEditingSForS = 'Editing %s for %s';
   lisMenuEditorEditingSdotS = 'To resolve conflict edit %s.%s';
-  lisMenuEditorEditingSSNoMenuItemSelected = 'Editing %s.%s - no menu item selected';
-  lisMenuEditorEditingSSNoMenuitemSelected2 = 'Editing %s.%s - no menuitem selected';
-  lisMenuEditorEditTheSelectedItemSCaption = 'Edit the selected item''s Caption';
+  lisMenuEditorEditingSSNoMenuItemSelected = 'Editing %s.%s - no menuitem selected';
   lisMenuEditorEnterAMenuDescription = 'Enter a menu &Description:';
   lisMenuEditorEnterANewShortCutForS = 'Enter a new ShortCut for %s';
   lisMenuEditorEnterANewShortCutKey2ForS = 'Enter a new ShortCutKey2 for %s';
@@ -4761,21 +4732,15 @@ resourcestring
   lisMenuEditorFurtherShortcutConflict = 'Further shortcut conflict';
   lisMenuEditorGetHelpToUseThisEditor = 'Get help to use this editor';
   lisMenuEditorGrabKey = '&Grab key';
-  lisMenuEditorGroupIndexDropdownShowsAnyExistingGroups = '&GroupIndex ('
-    +'dropdown shows any existing groups)';
   lisMenuEditorGroupIndexMenuItems = 'GroupIndex,MenuItems';
   lisMenuEditorInadequateDescription = 'Inadequate Description';
-  lisMenuEditorInitialMenuPopulation = 'Initial menu population';
-  lisMenuEditorInsertMenuTemplateInto = 'Insert menu template into ';
+  lisMenuEditorInsertMenuTemplateIntoRootOfS = 'Insert menu template into root of %s';
   lisMenuEditorInsertSelectedMenuTemplate = 'Insert selected menu template';
   lisMenuEditorIsNotAssigned = 'is not assigned';
-  lisMenuEditorItemsWithIconD = 'Items with icon: %d';
-  lisMenuEditorItemsWithIconNA = 'Items with icon: n/a';
+  lisMenuEditorItemsWithIconS = 'Items with icon: %s';
   lisMenuEditorListShortcutsAndAccelerators = 'List shortcuts and &accelerators for %s ...';
   lisMenuEditorListShortcutsForS = 'List shortcuts for %s ...';
-  lisMenuEditorManageCheckMarksAndRadiogroups = 'Manage check marks and radiogroups';
-  lisMenuEditorMenuEditorNoMenuIsSelected = 'Menu Editor - no menu is selected';
-  lisMenuEditorMenuitemShortcutConflictsIn = 'Menuitem shortcut conflicts in ';
+  lisMenuEditorMenuitemShortcutConflictsInS = 'Menuitem shortcut conflicts in %s';
   lisMenuEditorMoveDown = 'Move Down (or right)';
   lisMenuEditorMoVeItemDown = 'Mo&ve item down';
   lisMenuEditorMoveItemLeft = '&Move item left';
@@ -4785,49 +4750,31 @@ resourcestring
   lisMenuEditorMoveSelectedItemToTheLeft = 'Move selected item to the left';
   lisMenuEditorMoveSelectedItemToTheRight = 'Move selected item to the right';
   lisMenuEditorMoveSelectedItemUp = 'Move selected item up';
-  lisMenuEditorMoveSeparateDeleteInsertItems = 'Move Divide Delete  Add  items';
+  lisMenuEditorMenuItemActions = 'Menu Item actions';
   lisMenuEditorMoveUp = 'Move Up (or left)';
+  lisMenuEditorNA = 'n/a';
   lisMenuEditorNoMenuSelected = '(no menu selected)';
   lisMenuEditorNone = '<none>';
   lisMenuEditorNoneNone = '<none>,<none>';
-  lisMenuEditorNoShortcutConflictsFound = '<no shortcut conflicts found>';
-  lisMenuEditorNoShortcutConflictsRemain = '<no shortcut conflicts remain>';
-  lisMenuEditorNoShortcutConflictsToResolve = '<no shortcut conflicts to resolve>';
-  lisMenuEditorNoteGroupIndexDHasOnlyOneRadioItemItIsNotYetAGroup = ' Note: '
-    +'GroupIndex %d has only one RadioItem (it is not yet a group)';
+  lisMenuEditorNoShortcutConflicts = '<no shortcut conflicts>';
   lisMenuEditorNoUserSavedTemplates = 'No user-saved templates';
-  lisMenuEditorNumberOfDropdownItemsForEachMenubarItem = 'Number of dropdown '
-    +'items for each menubar item';
-  lisMenuEditorNumberOfInitialMenubarItems = 'Number of initial menubar items';
-  lisMenuEditorNumberOfInitialPopupMenuItems = 'Number of initial popup menu items';
-  lisMenuEditorOnlyStandardDefaultTemplatesAreAvailable = 'Only standard '
-    +'default templates are available.';
-  lisMenuEditorOrClickHeaderToSortByThatColumn = '  or click header to sort by that column';
-  lisMenuEditorOrStartWithASkeletonMenuOfSeveralItems = 'Or start with a '
-    +'skeleton menu of several items?';
   lisMenuEditorPickAnIconFromS = 'Pick an icon from %s';
-  lisMenuEditorPopupAssignmentsD = 'Popup assignments: %d';
-  lisMenuEditorPopupAssignmentsNA = 'Popup assignments n/a';
-  lisMenuEditorRemainingConflicts0 = 'Remaining conflicts: 0';
-  lisMenuEditorRemainingConflictsD = 'Remaining conflicts: %d';
+  lisMenuEditorPopupAssignmentsS = 'Popup assignments: %s';
+  lisMenuEditorRemainingConflictsS = 'Remaining conflicts: %s';
   lisMenuEditorRemoveAllSeparators = '&Remove all separators';
-  lisMenuEditorRemoveEverySeparatorinThisSubmenu = 'Remove every separator in this submenu';
-  lisMenuEditorResolvedConflicts0 = 'Resolved conflicts: 0';
-  lisMenuEditorResolvedConflictsD = 'Resolved conflicts: %d';
+  lisMenuEditorResolvedConflictsS = 'Resolved conflicts: %s';
+  lisMenuEditorShortcutItemsS = 'Shortcut items: %s';
   lisMenuEditorResolveSelectedConflict = 'Resolve selected conflict';
   lisMenuEditorResolveShortcutConflicts = '&Resolve shortcut conflicts ...';
+  lisMenuEditorRootMenu = 'Root menu';
   lisMenuEditorSavedTemplates = 'Saved templates';
   lisMenuEditorSaveMenuAsATemplate = '&Save menu as a template ...';
   lisMenuEditorSaveMenuAsTemplate = 'Save menu as template';
   lisMenuEditorSaveMenuAsTemplateForFutureUse = 'Save menu as template for future use';
   lisMenuEditorSaveMenuShownAsANewTemplate = 'Save menu shown as a new template';
-  lisMenuEditorEditCheckmarkProps = 'Edit Check mark and RadioItem properties';
-  lisMenuEditorSaveThisMenuLayoutForFutureReuse = 'Save this menu layout for future reuse';
   lisMenuEditorSConflictsWithS = '%s conflicts with %s';
   lisMenuEditorSeParators = 'Se&parators';
   lisMenuEditorShortcutConflictsFoundInitiallyD = 'Shortcut conflicts found initially: %d';
-  lisMenuEditorShortcutItemsD = 'Shortcut items: %d';
-  lisMenuEditorShortcutItemsNA = 'Shortcut items: n/a';
   lisMenuEditorShortcutNotYetChanged = 'Shortcut not yet changed';
   lisMenuEditorShortcutPropertyWithShortcut = 'Shortcut,Property with shortcut';
   lisMenuEditorShortcutPropertyWithShortcutAccelerator = 'Shortcut,Property '
@@ -4839,32 +4786,32 @@ resourcestring
     +'with Menus and Actions (%d)';
   lisMenuEditorShortcutsDAndAcceleratorKeysD = 'Shortcuts (%d) and Accelerator keys (%d)';
   lisMenuEditorShortcutsUsedInS = 'Shortcuts used in %s';
+  lisMenuEditorShortcutsUsedInSD = 'Shortcuts used in %s (%d)';
   lisMenuEditorShowMenuEditorTMenuParameterIsNil = 'ShowMenuEditor: TMenu parameter is nil';
   lisMenuEditorSInS = '"%s" in %s';
   lisMenuEditorSIsAlreadyInUse = '"%s" is '
-    +'already in use in %s as a shortcut.%sTry a different shortcut.';
+    +'already in use in %s as a shortcut.' + sLineBreak + 'Try a different shortcut.';
   lisMenuEditorSIsNotASufficientDescriptionPleaseExpand = 'Please expand: "%s" is not a '
     +'sufficient Description';
   lisMenuEditorSomeWidgetsetsDoNotAllowSeparatorsInTheMainMenubar = 'Some '
     +'widgetsets do not allow separators in the main menubar';
   lisMenuEditorSShortcuts = '%s: Shortcuts';
-  lisMenuEditorSShortcutsAcceleratorKeys = '%s: Shortcuts & accelerator keys';
   lisMenuEditorSShortcutsAndAcceleratorKeys = '%s: Shortcuts and accelerator keys';
   lisMenuEditorSShortcutSummary = '%s: Shortcut summary';
   lisMenuEditorSSSOnClickS = '%s.%s.%s - OnClick: %s';
   lisMenuEditorStandardTemplates = 'Standard templates';
-  lisMenuEditorStartingToCreateAMenu = 'Starting to create a menu';
-  lisMenuEditorStartWithSeveralItems = 'Start with several items';
+  lisMenuEditorAddMenuItem = 'Add menu item';
+  lisMenuEditorAddSubmenu = 'Add submenu';
+  lisMenuEditorSSubmenu = '%s submenu';
   lisMenuEditorTemplateDescription = 'Template description:';
   lisMenuEditorTemplates = '&Templates';
   lisMenuEditorTemplateSaved = 'Template saved';
-  lisMenuEditorThereAreNoUserSavedMenuTemplates = 'There are no user-saved menu templates.';
+  lisMenuEditorThereAreNoUserSavedMenuTemplates = 'There are no user-saved menu templates.' + sLineBreak + sLineBreak
+    +  'Only standard default templates are available.';
   lisMenuEditorTSCListGetScanListCompNameInvalidIndexDForFScanLis = 'TSCList.'
     +'GetScanListCompName: invalid index %d for FScanList';
-  lisMenuEditorUseAMenuTemplateToConstructMenuItemsHere = 'Use a menu template '
-    +'to construct menu items here';
   lisMenuEditorYouHaveToChangeTheShortcutFromSStoAvoidAConflict = 'You have to'
-    +' change the shortcut from %s%sto avoid a conflict';
+    +' change the shortcut from %s' + sLineBreak + 'to avoid a conflict';
   lisMenuEditorYouMustEnterTextForTheCaption = 'You must enter text for the Caption';
 
   // Standard File menu
@@ -5820,8 +5767,7 @@ resourcestring
   lisMoveOnePositionDown = 'Move "%s" one position down';
   lisShowDifferencesBetweenModes = 'Show differences between modes ...';
   lisBuildMode = 'Build Mode: %s';
-  lisCreateDebugAndReleaseModesNewProj = 'Create Debug and Release modes for new projects';
-  lisCreateNowForThisProject = 'Create now for this project';
+  lisCreateDebugAndReleaseModes = 'Create Debug and Release modes';
   lisChangeBuildMode = 'Change build mode';
   lisWarningThisIsTheMainUnitTheNewMainUnitWillBePas = '%sWarning: This is '
     +'the main unit. The new main unit will be %s.pas.';
@@ -5925,7 +5871,7 @@ resourcestring
     +'Lazarus package files (.lpk). Do not build.';
 
   // Custom form editor
-  lisCFEAnExceptionOccuredDuringDeletionOf = 'An exception occured during '
+  lisCFEAnExceptionOccuredDuringDeletionOf = 'An exception occurred during '
     +'deletion of%s"%s:%s"%s%s';
   lisCFETCustomFormEditorDeleteComponentWhereIsTheTCustomN = 'TCustomFormEditor'
     +'.DeleteComponent  Where is the TCustomNonFormDesignerForm? %s';
