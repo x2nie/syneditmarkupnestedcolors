@@ -94,9 +94,9 @@ object Form3: TForm3
         Width = 45
       end>
     DefaultColWidth = 120
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goRangeSelect, goColSizing, goRowSelect, goColSpanning, goSmoothScroll]
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goRangeSelect, goColSizing, goColSpanning, goSmoothScroll]
     TabOrder = 2
-    OnDblClick = StringGrid1DblClick
+    OnClick = StringGrid1DblClick
     OnSelection = StringGrid1Selection
   end
   object Splitter1: TSplitter

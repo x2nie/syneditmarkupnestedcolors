@@ -216,9 +216,31 @@ begin
 end;
 
 procedure TForm3.StringGrid1DblClick(Sender: TObject);
+var i : integer;
+  fm : TSynCustomFoldConfigMode;
 begin
-  if (FCell.x > StringGrid1.FixedCols) and (FCell.y > StringGrid1.FixedRows) then begin
-
+  if (FHL <> nil) then
+  if (FCell.x >= StringGrid1.FixedCols) and (FCell.y >= StringGrid1.FixedRows) then begin
+     caption := format('%d, %d',[FCell.x, FCell.y]);
+     i := FCell.y -1;
+     if FCell.X = 1 then
+     begin
+       FHL.FoldConfig[i].Enabled := not FHL.FoldConfig[i].Enabled;
+     end
+     else
+     begin
+       case FCell.X of
+            2 : fm := fmFold;
+            3 : fm := fmHide;
+            4 : fm := fmMarkup;
+            5 : fm := fmOutline;
+       end;
+       if fm in FHL.FoldConfig[i].Modes then
+          FHL.FoldConfig[i].Modes := FHL.FoldConfig[i].Modes - [fm]
+       else
+           FHL.FoldConfig[i].Modes := FHL.FoldConfig[i].Modes + [fm]
+     end;
+     PageControl1Change(self);
   end;
   //StringGrid1.cur;
 end;

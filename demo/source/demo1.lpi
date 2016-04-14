@@ -34,7 +34,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="5">
       <Unit0>
         <Filename Value="demo1.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -61,11 +61,6 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="SynGutterFoldDebug"/>
       </Unit4>
-      <Unit5>
-        <Filename Value="syneditmarkupnestline.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="SynEditMarkupNestLine"/>
-      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
