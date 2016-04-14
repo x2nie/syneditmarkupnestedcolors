@@ -1,12 +1,11 @@
-unit SynEditMarkupFoldColoring;
+unit Demo;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils,Graphics, SynEditMarkup, SynEditMiscClasses, Controls,
-  LCLProc, SynEditHighlighter, SynEditHighlighterFoldBase;
+  Classes, SysUtils;
 
 type
 
@@ -88,6 +87,25 @@ begin
 end;
 
 Procedure First (n : longint);
+  procedure Sub1;
+  var
+    I : integer;
+    procedure Sub2;
+    var
+      J : integer;
+      function Sub3;
+      begin
+        //
+      end;
+    begin
+      for J := 0 to 9 do Sub3;
+    end;
+  begin
+    for I := 10 to 19 do
+    begin
+      Sub3;
+    end;
+  end;
 begin
   WriteLn ('First received : ',n);
 end;
