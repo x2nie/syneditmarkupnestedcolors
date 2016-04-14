@@ -646,6 +646,7 @@ var
   EndFoldLine,y : integer;
 begin
   if EndLine < 0 then exit; //already refreshed by syn
+  exit;//debug
 
   y := Caret.LineBytePos.y;
   EndFoldLine := IsFoldMoved(y);

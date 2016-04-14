@@ -485,9 +485,9 @@ end;
 
 procedure TSynLFMSyn.SymbolProc;
 begin
+
   inc(Run);
   fTokenID := tkSymbol;
-
   if fLine[Run-1] = '<' then
   begin
     StartLfmCodeFoldBlock(cfbtLfmList)

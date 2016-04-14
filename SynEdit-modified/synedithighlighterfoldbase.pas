@@ -212,18 +212,21 @@ type
   private
     FEnabled: Boolean;
     FFoldActions: TSynFoldActions;
+    FIsEssential: boolean;
     FModes: TSynCustomFoldConfigModes;
     FOnChange: TNotifyEvent;
     FSupportedModes: TSynCustomFoldConfigModes;
     procedure SetEnabled(const AValue: Boolean);
     procedure SetModes(AValue: TSynCustomFoldConfigModes);
-    procedure SetSupportedModes(AValue: TSynCustomFoldConfigModes);
+    procedure SetSupportedModes(AValue: TSynCustomFoldConfigModes); deprecated 'use create';
   protected
     procedure DoOnChange;
   public
     constructor Create;
-    procedure Assign(Src: TSynCustomFoldConfig); reintroduce; virtual;
+    constructor Create(ASupportedModes: TSynCustomFoldConfigModes; AnIsEssential: Boolean = False);
+    procedure Assign(Src: TSynCustomFoldConfig); reintroduce; virtual; // TODO: do not copy supported modes
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
+    property IsEssential: boolean read FIsEssential;   // create node, even if disabled
     property SupportedModes: TSynCustomFoldConfigModes
              read FSupportedModes write SetSupportedModes;
     // Actions representing the modes
@@ -238,7 +241,6 @@ type
   TSynCustomCodeFoldBlock = class
   private
     FBlockType: Pointer;
-    FFoldable: boolean;
     FParent, FChildren: TSynCustomCodeFoldBlock;
     FRight, FLeft: TSynCustomCodeFoldBlock;
     FBalance: Integer;
@@ -254,7 +256,6 @@ type
   public
     procedure InitRootBlockType(AType: Pointer);
     property BlockType: Pointer read FBlockType;
-    property Foldable : boolean read FFoldable write FFoldable;
     property Parent: TSynCustomCodeFoldBlock read FParent;
     property Child[ABlockType: Pointer]: TSynCustomCodeFoldBlock read GetChild;
   end;
@@ -263,6 +264,7 @@ type
 
   TSynCustomHighlighterRange = class
   private
+    // TODO: either reduce to one level, or create subclass for 2nd level
     FCodeFoldStackSize: integer; // EndLevel
     FNestFoldStackSize: integer; // EndLevel
     FMinimumCodeFoldBlockLevel: integer;
@@ -305,6 +307,7 @@ type
     procedure SetFoldConfig(Index: Integer; const AValue: TSynCustomFoldConfig); virtual;
     function GetFoldConfigCount: Integer; virtual;
     function GetFoldConfigInternalCount: Integer; virtual;
+    function CreateFoldConfigInstance(Index: Integer): TSynCustomFoldConfig; virtual;
     function GetFoldConfigInstance(Index: Integer): TSynCustomFoldConfig; virtual;
     procedure InitFoldConfig;
     procedure DestroyFoldConfig;
@@ -328,11 +331,11 @@ type
 
     // Open/Close Folds
     function StartCodeFoldBlock(ABlockType: Pointer = nil;
-              IncreaseLevel: Boolean = true): TSynCustomCodeFoldBlock; virtual;
+              IncreaseLevel: Boolean = true; ForceDisabled: Boolean = False): TSynCustomCodeFoldBlock; virtual;
     procedure EndCodeFoldBlock(DecreaseLevel: Boolean = True); virtual;
     procedure CollectNodeInfo(FinishingABlock : Boolean; ABlockType: Pointer;
               LevelChanged: Boolean); virtual;
-    procedure DoInitNode(out Node: TSynFoldNodeInfo;
+    procedure DoInitNode(var Node: TSynFoldNodeInfo;
                        FinishingABlock: Boolean;
                        ABlockType: Pointer; aActions: TSynFoldActions;
                        AIsFold: Boolean); virtual;
@@ -342,13 +345,14 @@ type
     // Info about Folds
     function CreateFoldNodeInfoList: TLazSynFoldNodeInfoList; virtual;
     function GetFoldNodeInfo(Line: TLineIdx): TLazSynFoldNodeInfoList;
-    procedure InitFoldNodeInfo(AList: TLazSynFoldNodeInfoList; Line: TLineIdx); virtual;
+    procedure ScanFoldNodeInfo(); virtual;
+    procedure InitFoldNodeInfo(AList: TLazSynFoldNodeInfoList; Line: TLineIdx);
 
     // Info about Folds, on currently set line/range (simply forwarding to range
     function MinimumCodeFoldBlockLevel: integer; virtual;
     function CurrentCodeFoldBlockLevel: integer; virtual;
 
-    property IsCollectingNodeInfo : boolean read FIsCollectingNodeInfo write FIsCollectingNodeInfo;
+    property IsCollectingNodeInfo : boolean read FIsCollectingNodeInfo;
     property CollectingNodeInfoList : TLazSynFoldNodeInfoList read FCollectingNodeInfoList;
   public
     constructor Create(AOwner: TComponent); override;
@@ -440,6 +444,8 @@ function AllocateHighlighterRanges(
 
 function dbgs(AFoldActions: TSynFoldActions): String; overload;
 function dbgs(ANode: TSynFoldNodeInfo):string; overload;
+function dbgs(AMode: TSynCustomFoldConfigMode): String; overload;
+function dbgs(AModes: TSynCustomFoldConfigModes): String; overload;
 
 implementation
 
@@ -520,6 +526,25 @@ begin
                         FoldLvlStart, FoldLvlEnd, NestLvlStart, NestLvlEnd,
                         PtrUInt(FoldType), PtrUInt(FoldTypeCompatible), FoldGroup,
                         dbgs(FoldAction)]);
+end;
+
+function dbgs(AMode: TSynCustomFoldConfigMode): String;
+begin
+  WriteStr(Result{%H-}, AMode);
+end;
+
+function dbgs(AModes: TSynCustomFoldConfigModes): String;
+var
+  i: TSynCustomFoldConfigMode;
+  s: string;
+begin
+  Result:='';
+  for i := low(TSynCustomFoldConfigMode) to high(TSynCustomFoldConfigMode) do
+    if i in AModes then begin
+      WriteStr(s{%H-}, i);
+      Result := Result + s + ',';
+    end;
+  if Result <> '' then Result := '[' + copy(Result, 1, Length(Result)-1) + ']';
 end;
 
 { TLazSynFoldNodeInfoList }
@@ -1043,9 +1068,15 @@ begin
   Result := 0;
 end;
 
-function TSynCustomFoldHighlighter.GetFoldConfigInstance(Index: Integer): TSynCustomFoldConfig;
+function TSynCustomFoldHighlighter.CreateFoldConfigInstance(Index: Integer
+  ): TSynCustomFoldConfig;
 begin
   Result := TSynCustomFoldConfig.Create;
+end;
+
+function TSynCustomFoldHighlighter.GetFoldConfigInstance(Index: Integer): TSynCustomFoldConfig;
+begin
+  Result := CreateFoldConfigInstance(Index);
   Result.OnChange := @DoFoldConfigChanged;
   Result.Enabled := False;
 end;
@@ -1102,13 +1133,18 @@ begin
   Result.SetLineClean(Line);
 end;
 
+procedure TSynCustomFoldHighlighter.ScanFoldNodeInfo;
+begin
+  NextToEol;
+end;
+
 procedure TSynCustomFoldHighlighter.InitFoldNodeInfo(AList: TLazSynFoldNodeInfoList; Line: TLineIdx);
 begin
   FIsCollectingNodeInfo := True;
   try
     FCollectingNodeInfoList := TLazSynFoldNodeInfoList(AList);
     StartAtLineIndex(Line);
-    NextToEol;
+    ScanFoldNodeInfo();
   finally
     FIsCollectingNodeInfo := False;
   end;
@@ -1149,8 +1185,14 @@ begin
 end;
 
 function TSynCustomFoldHighlighter.StartCodeFoldBlock(ABlockType: Pointer;
-  IncreaseLevel: Boolean = True): TSynCustomCodeFoldBlock;
+  IncreaseLevel: Boolean; ForceDisabled: Boolean): TSynCustomCodeFoldBlock;
 begin
+  if (PtrUInt(ABlockType) < FoldConfigCount) and (not ForceDisabled) and
+     (not FoldConfig[PtrUInt(ABlockType)].Enabled) and
+     (not FoldConfig[PtrUInt(ABlockType)].IsEssential)
+  then
+    exit;
+
   if FIsCollectingNodeInfo then
     CollectNodeInfo(False, ABlockType, IncreaseLevel);
 
@@ -1218,6 +1260,7 @@ var
   OneLine: Boolean;
   EndOffs: Integer;
   LogX1, LogX2: Integer;
+
 begin
   GetTokenBounds(LogX1, LogX2);
 
@@ -1510,7 +1553,7 @@ begin
   if Result <> 0 then
     exit;
 
-  Result := FMinimumCodeFoldBlockLevel - Range.FMinimumCodeFoldBlockLevel;
+    Result := FMinimumCodeFoldBlockLevel - Range.FMinimumCodeFoldBlockLevel;
   if Result <> 0 then
     exit;
   Result := FCodeFoldStackSize - Range.FCodeFoldStackSize;
@@ -1527,7 +1570,6 @@ begin
     exit(nil);
   end;
   Result := FTop.Child[ABlockType];
-  Result.Foldable := IncreaseLevel;
   inc(FNestFoldStackSize);
   if IncreaseLevel then
     inc(FCodeFoldStackSize);
@@ -1683,8 +1725,17 @@ end;
 constructor TSynCustomFoldConfig.Create;
 begin
   Inherited;
+  FIsEssential := True;
   FSupportedModes := [fmFold];
   Modes := [fmFold];
+end;
+
+constructor TSynCustomFoldConfig.Create(
+  ASupportedModes: TSynCustomFoldConfigModes; AnIsEssential: Boolean);
+begin
+  Create;
+  FSupportedModes := ASupportedModes;
+  FIsEssential := AnIsEssential;
 end;
 
 procedure TSynCustomFoldConfig.Assign(Src: TSynCustomFoldConfig);

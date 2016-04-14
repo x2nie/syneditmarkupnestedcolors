@@ -10,29 +10,12 @@
       <SearchPaths>
         <UnitOutputDirectory Value="units/$(TargetCPU)-$(TargetOS)/$(LCLWidgetType)"/>
       </SearchPaths>
-      <Parsing>
-        <SyntaxOptions>
-          <IncludeAssertionCode Value="True"/>
-        </SyntaxOptions>
-      </Parsing>
       <CodeGeneration>
         <VerifyObjMethodCallValidity Value="True"/>
-        <Optimizations>
-          <OptimizationLevel Value="0"/>
-        </Optimizations>
       </CodeGeneration>
-      <Linking>
-        <Debugging>
-          <DebugInfoType Value="dsDwarf2"/>
-        </Debugging>
-      </Linking>
       <Other>
         <Verbosity>
           <ShowGenInfo Value="False"/>
-          <ShoLineNum Value="True"/>
-          <ShowDebugInfo Value="True"/>
-          <ShowUsedFiles Value="True"/>
-          <ShowExecInfo Value="True"/>
         </Verbosity>
         <CompilerMessages>
           <IgnoredMessages idx5024="True" idx4055="True"/>
@@ -54,7 +37,7 @@ Alternatively, the contents of these files may be used under the terms of the GN
 If you wish to allow use of your version of these files only under the terms of the GPL and not to allow others to use your version of this file under the MPL, indicate your decision by deleting the provisions above and replace them with the notice and other provisions required by the GPL. If you do not delete the provisions above, a recipient may use your version of this file under either the MPL or the GPL.
 "/>
     <Version Major="1"/>
-    <Files Count="86">
+    <Files Count="84">
       <Item1>
         <Filename Value="synbeautifier.pas"/>
         <UnitName Value="SynBeautifier"/>
@@ -376,11 +359,11 @@ If you wish to allow use of your version of these files only under the terms of 
       </Item79>
       <Item80>
         <Filename Value="synedittextsystemcharwidth.pas"/>
-        <UnitName Value="SynEditTextSystemCharWidth"/>
+        <UnitName Value="synedittextsystemcharwidth"/>
       </Item80>
       <Item81>
         <Filename Value="syneditmarkupifdef.pp"/>
-        <UnitName Value="SynEditMarkupIfDef"/>
+        <UnitName Value="syneditmarkupifdef"/>
       </Item81>
       <Item82>
         <Filename Value="synpluginmulticaret.pp"/>
@@ -394,13 +377,6 @@ If you wish to allow use of your version of these files only under the terms of 
         <Filename Value="syneditmarkupfoldcoloring.pas"/>
         <UnitName Value="SynEditMarkupFoldColoring"/>
       </Item84>
-      <Item85>
-        <AddToUsesPkgSection Value="False"/>
-      </Item85>
-      <Item86>
-        <Filename Value="lazsyneditnestedfoldslist.pas"/>
-        <UnitName Value="LazSynEditNestedFoldsList"/>
-      </Item86>
     </Files>
     <LazDoc Paths="docs\xml"/>
     <i18n>
