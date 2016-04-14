@@ -41,7 +41,6 @@ Features:
 
 
 Known Issues:
-  - Slowdown scrolling in large file ( > 4000 lines )
   - wrong drawing vertical lines position when a line is mixed with tab char
   - poor configuration
   - no design time
