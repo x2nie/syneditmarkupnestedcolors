@@ -261,13 +261,6 @@ var
   procedure AddVerticalLine( ANode: TSynFoldNodeInfo );
   var x,j : integer;
   begin
-
-    //don't replace; don't add when already found
-    x  := ANode.LogXStart + 1;
-    for j := 0 to Pred(length(FHighlights)) do
-      if FHighlights[j].X = x then
-       ;//exit; //
-
     z := Length(FHighlights);
     SetLength(FHighlights, z+1);
     with FHighlights[z] do begin
@@ -282,8 +275,7 @@ var
         Ignore := True;
       if not Border and (sfaOutlineNoColor in ANode.FoldAction) then
         Ignore := True;
-      //else
-        ColorIdx := lvl mod (length(Colors))
+      ColorIdx := lvl mod (length(Colors))
     end;
   end;
 
@@ -317,13 +309,10 @@ begin
       Later(i);
       TmpNode := FNestList.HLNode[i];
     end;
-    //if not (sfaInvalid in TmpNode.FoldAction) then}
 
-    if (sfaOutline in TmpNode.FoldAction ) then
+    if (sfaOutline in TmpNode.FoldAction ) and
     //avoid bug of IncludeOpeningOnLine := False;
-    if (sfaOpen in TmpNode.FoldAction)  and (TmpNode.LineIndex + 1 = aRow) then
-    begin {do nothing here} end
-    else
+    not ((sfaOpen in TmpNode.FoldAction)  and (TmpNode.LineIndex + 1 = aRow)) then
     begin
       lvlB := lvl;
 
@@ -646,7 +635,6 @@ var
   EndFoldLine,y : integer;
 begin
   if EndLine < 0 then exit; //already refreshed by syn
-  exit;//debug
 
   y := Caret.LineBytePos.y;
   EndFoldLine := IsFoldMoved(y);
