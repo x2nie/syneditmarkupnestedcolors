@@ -137,7 +137,7 @@ var
         inc(ANodeIdx);
         Result := NodeList[ANodeIdx];
       until (sfaInvalid in Result.FoldAction)
-         or (Result.NestLvlEnd <= StartNode.NestLvlStart);
+         or ((Result.NestLvlEnd <= StartNode.NestLvlStart) and (Result.FoldGroup = StartNode.FoldGroup) );
     end;
   begin
     Result := SearchLine(YIndex, NIndex);
@@ -171,7 +171,7 @@ var
         dec(ANodeIdx);
         Result := NodeList[ANodeIdx];
       until (sfaInvalid in Result.FoldAction)
-         or (Result.NestLvlStart <= EndNode.NestLvlEnd);
+         or ((Result.NestLvlStart <= EndNode.NestLvlEnd) and (Result.FoldGroup = EndNode.FoldGroup) );
     end;
   begin
     Result := SearchLine(YIndex, NIndex);
