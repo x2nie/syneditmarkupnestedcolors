@@ -75,13 +75,19 @@ uses
 // sample of routine declaration inside Implementation
 Procedure First (n : longint); forward;
 
+Procedure ProcName (Args : TPRocArgs);external;  
+{$LinkLib ’Name’}
+
+Procedure ProcName (Args : TPRocArgs); external ’Name’  
+                                       name ’OtherProcName’;
+
 Procedure Second;
 begin
   WriteLn ('In second. Calling first...');
   First (1);
 end;
 
-Function strlen (P : PChar) : Longint; cdecl; external;
+Function strlen (P : PChar) : Longint; cdecl; 
 begin
   WriteLn ('Length of (',p,') : ',strlen(p))
 end;
