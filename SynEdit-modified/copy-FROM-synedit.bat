@@ -3,18 +3,20 @@ del *.pp
 del *.lpk
 
 REM SET LAZ=c:\lazarus_1_6_x
-rem SET LAZ=C:\lazarus_trunk
-set LAZ=D:\v\githubs\syneditmarkupnestedcolors\SAMPAH\lazdummy
+SET LAZ=C:\lazarus_trunk
+rem set LAZ=D:\v\githubs\syneditmarkupnestedcolors\SAMPAH\lazdummy
 rem SET LAZ=E:\v\Githubs\LiteZarus
 
 SET SYNEDIT=%LAZ%\components\synedit
 copy %SYNEDIT%\SynEdit.LPK
+copy %SYNEDIT%\SynEdit.pp
 copy %SYNEDIT%\SynEditHighlighterFoldBase.pas
 copy %SYNEDIT%\SynEditFoldedView.pp
 copy %SYNEDIT%\SynHighlighterXML.pas
 copy %SYNEDIT%\SynHighlighterLFM.pas
 copy %SYNEDIT%\SynHighlighterPAS.pp
 copy %SYNEDIT%\SynHighlighterJScript.pas
+copy %SYNEDIT%\SynEditMarkup.pp
 copy %SYNEDIT%\SynEditMarkupFoldColoring.pas
 copy %SYNEDIT%\SynEditMarkupWordGroup.pp
 copy %SYNEDIT%\LazSynEditNestedFoldsList.pas
